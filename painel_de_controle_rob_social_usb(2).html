@@ -1496,16 +1496,16 @@
     <!-- ======================================================================== -->
     <div id="roboldoFloatingWidget" class="fixed right-4 bottom-5 z-40 flex flex-col items-end gap-3 pointer-events-none">
 
-        <!-- Janela Popover do Simulador (Só fica aberta quando o usuário clica para ver) -->
-        <div id="simulatorFloatingPanel" class="hidden pointer-events-auto w-[340px] sm:w-[375px] glass-shell rounded-3xl p-4 sm:p-5 flex-col gap-3.5 border border-[#238689]/25 shadow-2xl transition-all duration-200">
+        <!-- Janela Popover do Simulador 3D (Só fica aberta quando o usuário clica para ver) -->
+        <div id="simulatorFloatingPanel" class="hidden pointer-events-auto w-[355px] sm:w-[400px] glass-shell rounded-3xl p-4 sm:p-5 flex-col gap-3 border border-[#238689]/25 shadow-2xl transition-all duration-200">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2">
                     <img src="assets/logo-roboldo.png" alt="Roboldo" class="w-7 h-7 rounded-lg object-contain bg-white border border-slate-200 p-0.5">
                     <div>
                         <span class="text-xs font-extrabold uppercase tracking-wider text-[#021225] block leading-none">
-                            Simulador do Roboldo
+                            Simulador 3D do Roboldo
                         </span>
-                        <span class="text-[10px] text-slate-500">Status cinético em tempo real</span>
+                        <span class="text-[10px] text-slate-500">Arraste para girar • Cinemática 3-DoF Real</span>
                     </div>
                 </div>
                 <div class="flex items-center gap-1.5">
@@ -1518,75 +1518,44 @@
                 </div>
             </div>
 
-            <!-- Palco do Roboldo com as Cores Originais Azuis Clássicas do Roboldo -->
-            <div class="w-full h-56 rounded-2xl bg-gradient-to-b from-blue-50/90 via-sky-50/60 to-white border border-blue-100 flex items-center justify-center relative overflow-hidden shadow-inner">
-                <svg id="robotSvg" viewBox="0 0 400 230" class="w-full h-full">
-                    <defs>
-                        <linearGradient id="bodyGrad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="#2563eb"/>
-                            <stop offset="100%" stop-color="#1d4ed8"/>
-                        </linearGradient>
-                        <linearGradient id="armGrad" x1="0" y1="0" x2="1" y2="1">
-                            <stop offset="0%" stop-color="#3b82f6"/>
-                            <stop offset="100%" stop-color="#1d4ed8"/>
-                        </linearGradient>
-                    </defs>
+            <!-- Botões Rápidos de Ângulo de Câmera 3D -->
+            <div class="flex items-center justify-between gap-1.5 bg-blue-50/70 border border-blue-100 rounded-xl px-2.5 py-1.5 text-[10px]">
+                <span class="font-bold text-blue-800 flex items-center gap-1">
+                    <i class="fa-solid fa-cube text-blue-600"></i> Câmera 3D:
+                </span>
+                <div class="flex items-center gap-1">
+                    <button type="button" onclick="setSim3DCameraPreset('iso')" id="camBtnIso" class="px-2 py-0.5 rounded-lg font-bold bg-blue-600 text-white transition">3/4 Perspectiva</button>
+                    <button type="button" onclick="setSim3DCameraPreset('front')" id="camBtnFront" class="px-2 py-0.5 rounded-lg font-semibold text-blue-700 hover:bg-blue-100 transition">Frontal</button>
+                    <button type="button" onclick="setSim3DCameraPreset('side')" id="camBtnSide" class="px-2 py-0.5 rounded-lg font-semibold text-blue-700 hover:bg-blue-100 transition">Lateral (Pitch)</button>
+                </div>
+            </div>
 
-                    <!-- Torso -->
-                    <rect x="145" y="135" width="110" height="80" rx="18" fill="url(#bodyGrad)" stroke="#1e40af" stroke-width="2"/>
-                    <circle cx="200" cy="170" r="14" fill="#ffffff" stroke="#93c5fd" stroke-width="2"/>
-                    <circle cx="200" cy="170" r="6" fill="#1a73e8"/>
+            <!-- Palco 3D do Roboldo com as Cores Originais Azuis Clássicas e Profundidade Z -->
+            <div id="robot3DStageContainer" class="w-full h-60 rounded-2xl bg-gradient-to-b from-blue-50/95 via-sky-50/65 to-white border border-blue-100 flex items-center justify-center relative overflow-hidden shadow-inner cursor-grab active:cursor-grabbing select-none">
+                <canvas id="robot3DCanvas" width="380" height="240" class="w-full h-full"></canvas>
 
-                    <!-- Pescoço -->
-                    <rect id="svgNeck" x="186" y="115" width="28" height="24" rx="4" fill="#60a5fa" stroke="#2563eb" stroke-width="1.5"/>
-
-                    <!-- BRAÇO DIREITO -->
-                    <g id="svgRightArmGroup" transform="translate(145, 150)">
-                        <circle cx="0" cy="0" r="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
-                        <g id="svgRightUpperArm" transform="rotate(0)">
-                            <rect x="-45" y="-6" width="45" height="12" rx="6" fill="url(#armGrad)"/>
-                            <g id="svgRightForearm" transform="translate(-42, 0) rotate(0)">
-                                <circle cx="0" cy="0" r="6" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
-                                <rect x="-38" y="-5" width="38" height="10" rx="5" fill="#60a5fa"/>
-                                <circle cx="-40" cy="0" r="6" fill="#1a73e8"/>
-                            </g>
-                        </g>
-                    </g>
-
-                    <!-- BRAÇO ESQUERDO -->
-                    <g id="svgLeftArmGroup" transform="translate(255, 150)">
-                        <circle cx="0" cy="0" r="10" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
-                        <g id="svgLeftUpperArm" transform="rotate(0)">
-                            <rect x="0" y="-6" width="45" height="12" rx="6" fill="url(#armGrad)"/>
-                            <g id="svgLeftForearm" transform="translate(42, 0) rotate(0)">
-                                <circle cx="0" cy="0" r="6" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
-                                <rect x="0" y="-5" width="38" height="10" rx="5" fill="#60a5fa"/>
-                                <circle cx="40" cy="0" r="6" fill="#1a73e8"/>
-                            </g>
-                        </g>
-                    </g>
-
-                    <!-- CABEÇA DWIN (Fundo do Rosto Branco com Olhos, Sobrancelhas e Boca Azuis Originais) -->
-                    <g id="svgHeadGroup" transform="translate(200, 75)">
-                        <g id="svgEarRight" transform="translate(-62, 0) rotate(0)">
-                            <rect x="-12" y="-22" width="12" height="36" rx="6" fill="#3b82f6" stroke="#1d4ed8" stroke-width="1.5"/>
-                        </g>
-                        <g id="svgEarLeft" transform="translate(62, 0) rotate(0)">
-                            <rect x="0" y="-22" width="12" height="36" rx="6" fill="#3b82f6" stroke="#1d4ed8" stroke-width="1.5"/>
-                        </g>
-                        <rect x="-60" y="-45" width="120" height="86" rx="24" fill="url(#bodyGrad)" stroke="#1e40af" stroke-width="2"/>
-                        <!-- Fundo do rosto branco -->
-                        <rect x="-48" y="-34" width="96" height="64" rx="16" fill="#ffffff" stroke="#bfdbfe" stroke-width="2"/>
-                        <!-- Sobrancelhas, Olhos e Boca em Azul Original (#1a73e8) -->
-                        <line id="svgBrowLeft" x1="-34" y1="-20" x2="-14" y2="-20" stroke="#1a73e8" stroke-width="3.5" stroke-linecap="round"/>
-                        <line id="svgBrowRight" x1="14" y1="-20" x2="34" y2="-20" stroke="#1a73e8" stroke-width="3.5" stroke-linecap="round"/>
-                        <ellipse id="svgEyeLeft" cx="-24" cy="-6" rx="9" ry="10" fill="#1a73e8" class="eye-glow"/>
-                        <ellipse id="svgEyeRight" cx="24" cy="-6" rx="9" ry="10" fill="#1a73e8" class="eye-glow"/>
-                        <path id="svgMouth" d="M -18 14 Q 0 24 18 14" stroke="#1a73e8" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-                    </g>
+                <!-- SVG oculto de compatibilidade para referências legadas -->
+                <svg id="robotSvg" viewBox="0 0 400 230" class="hidden">
+                    <g id="svgHeadGroup"></g>
+                    <g id="svgEarRight"></g>
+                    <g id="svgEarLeft"></g>
+                    <line id="svgBrowLeft"/><line id="svgBrowRight"/>
+                    <ellipse id="svgEyeLeft"/><ellipse id="svgEyeRight"/>
+                    <path id="svgMouth"/>
+                    <g id="svgRightUpperArm"></g><g id="svgRightForearm"></g>
+                    <g id="svgLeftUpperArm"></g><g id="svgLeftForearm"></g>
                 </svg>
 
-                <div id="keyframeProgressBadge" class="hidden absolute bottom-2.5 px-3 py-0.5 rounded-full text-[11px] font-bold bg-blue-600 text-white shadow">
+                <div class="absolute bottom-2 left-2.5 right-2.5 flex items-center justify-between pointer-events-none">
+                    <span class="px-2 py-0.5 rounded-lg bg-white/85 backdrop-blur-xs border border-blue-200 text-[9px] font-mono font-bold text-blue-800" id="sim3DCamAngleBadge">
+                        Cam Yaw: -24° • Pitch: 14°
+                    </span>
+                    <span class="px-2 py-0.5 rounded-lg bg-blue-600/90 text-white text-[9px] font-bold">
+                        Pitch: Frente/Trás • Roll: Cima/Baixo
+                    </span>
+                </div>
+
+                <div id="keyframeProgressBadge" class="hidden absolute top-2.5 px-3 py-0.5 rounded-full text-[11px] font-bold bg-blue-600 text-white shadow">
                     Coreografia...
                 </div>
             </div>
@@ -2335,77 +2304,622 @@
             runNextStep();
         }
 
-        function updateRobotSvgVisuals() {
-            const neckOffsetX = ((headState.neckAngle - 90) / 45) * 18;
-            const neckOffsetY = ((90 - headState.neckPitchAngle) / 40) * 14;
-            const neckTilt    = ((headState.neckAngle - 90) / 45) * 6;
-            document.getElementById('svgHeadGroup').setAttribute('transform', `translate(${200 + neckOffsetX}, ${75 + neckOffsetY}) rotate(${neckTilt})`);
+        // =========================================================================
+        // MOTOR DE VISUALIZAÇÃO 3D DO ROBOLDO (CINEMÁTICA 3-DoF REAL PITCH/ROLL/ELBOW)
+        // =========================================================================
+        let sim3DCamYaw = -24;   // graus (visão 3/4 isométrica por padrão para ver frente/trás e cima/baixo)
+        let sim3DCamPitch = 13;  // graus
+        let sim3DDragging = false;
+        let sim3DLastMouse = { x: 0, y: 0 };
+        let sim3DMouthOpen = false;
 
-            const earRRot = ((headState.earRightAngle - 90) / 80) * -38;
-            const earLRot = ((headState.earLeftAngle - 90) / 80) * 38;
-            document.getElementById('svgEarRight').setAttribute('transform', `translate(-62, 0) rotate(${earRRot})`);
-            document.getElementById('svgEarLeft').setAttribute('transform', `translate(62, 0) rotate(${earLRot})`);
+        function setSim3DCameraPreset(preset) {
+            if (preset === 'iso')   { sim3DCamYaw = -26; sim3DCamPitch = 14; }
+            if (preset === 'front') { sim3DCamYaw = 0;   sim3DCamPitch = 6;  }
+            if (preset === 'side')  { sim3DCamYaw = -68; sim3DCamPitch = 12; }
 
-            const browL = document.getElementById('svgBrowLeft');
-            const browR = document.getElementById('svgBrowRight');
-            const eyeL  = document.getElementById('svgEyeLeft');
-            const eyeR  = document.getElementById('svgEyeRight');
-            const mouth = document.getElementById('svgMouth');
-
-            eyeL.setAttribute('rx', 9); eyeL.setAttribute('ry', 10);
-            eyeR.setAttribute('rx', 9); eyeR.setAttribute('ry', 10);
-
-            if (headState.mode === 0) {
-                browL.setAttribute('y1', -20); browL.setAttribute('y2', -20);
-                browR.setAttribute('y1', -20); browR.setAttribute('y2', -20);
-                mouth.setAttribute('d', 'M -14 15 Q 0 15 14 15');
-            } else if (headState.mode === 1) {
-                const e = headState.emotion;
-                if (e === 0) {
-                    browL.setAttribute('y1', -23); browL.setAttribute('y2', -15);
-                    browR.setAttribute('y1', -15); browR.setAttribute('y2', -23);
-                    eyeL.setAttribute('ry', 7); eyeR.setAttribute('ry', 7);
-                    mouth.setAttribute('d', 'M -16 18 Q 0 10 16 18');
-                } else if (e === 1) {
-                    browL.setAttribute('y1', -25); browL.setAttribute('y2', -22);
-                    browR.setAttribute('y1', -16); browR.setAttribute('y2', -20);
-                    mouth.setAttribute('d', 'M -15 16 Q -5 11 5 17 T 16 14');
-                } else if (e === 2) {
-                    browL.setAttribute('y1', -16); browL.setAttribute('y2', -24);
-                    browR.setAttribute('y1', -24); browR.setAttribute('y2', -16);
-                    mouth.setAttribute('d', 'M -12 18 Q 0 8 12 18');
-                } else if (e === 3) {
-                    browL.setAttribute('y1', -22); browL.setAttribute('y2', -24);
-                    browR.setAttribute('y1', -24); browR.setAttribute('y2', -22);
-                    mouth.setAttribute('d', 'M -18 12 Q 0 26 18 12');
-                } else if (e === 4) {
-                    browL.setAttribute('y1', -15); browL.setAttribute('y2', -22);
-                    browR.setAttribute('y1', -22); browR.setAttribute('y2', -15);
-                    eyeL.setAttribute('ry', 6); eyeR.setAttribute('ry', 6);
-                    mouth.setAttribute('d', 'M -16 20 Q 0 10 16 20');
-                } else if (e === 5) {
-                    browL.setAttribute('y1', -26); browL.setAttribute('y2', -26);
-                    browR.setAttribute('y1', -26); browR.setAttribute('y2', -26);
-                    eyeL.setAttribute('rx', 11); eyeL.setAttribute('ry', 13);
-                    eyeR.setAttribute('rx', 11); eyeR.setAttribute('ry', 13);
-                    mouth.setAttribute('d', 'M -8 15 A 8 8 0 1 0 8 15 A 8 8 0 1 0 -8 15');
+            ['Iso', 'Front', 'Side'].forEach(k => {
+                const btn = document.getElementById('camBtn' + k);
+                if (!btn) return;
+                if (k.toLowerCase() === preset) {
+                    btn.className = "px-2 py-0.5 rounded-lg font-bold bg-blue-600 text-white transition";
+                } else {
+                    btn.className = "px-2 py-0.5 rounded-lg font-semibold text-blue-700 hover:bg-blue-100 transition";
                 }
+            });
+            updateSim3DCamBadge();
+            renderRobot3DScene();
+        }
+
+        function updateSim3DCamBadge() {
+            const b = document.getElementById('sim3DCamAngleBadge');
+            if (b) b.textContent = `Cam Yaw: ${Math.round(sim3DCamYaw)}° • Pitch: ${Math.round(sim3DCamPitch)}°`;
+        }
+
+        function initRobot3DOrbitControls() {
+            const stage = document.getElementById('robot3DStageContainer');
+            if (!stage) return;
+
+            stage.addEventListener('pointerdown', (e) => {
+                sim3DDragging = true;
+                sim3DLastMouse = { x: e.clientX, y: e.clientY };
+                stage.setPointerCapture(e.pointerId);
+            });
+            stage.addEventListener('pointermove', (e) => {
+                if (!sim3DDragging) return;
+                const dx = e.clientX - sim3DLastMouse.x;
+                const dy = e.clientY - sim3DLastMouse.y;
+                sim3DLastMouse = { x: e.clientX, y: e.clientY };
+                sim3DCamYaw = Math.max(-85, Math.min(85, sim3DCamYaw + dx * 0.55));
+                sim3DCamPitch = Math.max(-25, Math.min(45, sim3DCamPitch + dy * 0.45));
+                updateSim3DCamBadge();
+                renderRobot3DScene();
+            });
+            stage.addEventListener('pointerup', () => { sim3DDragging = false; });
+            stage.addEventListener('pointercancel', () => { sim3DDragging = false; });
+        }
+
+        // Operações vetoriais 3D
+        function vec3Add(a, b) { return { x: a.x + b.x, y: a.y + b.y, z: a.z + b.z }; }
+        function vec3Scale(v, s) { return { x: v.x * s, y: v.y * s, z: v.z * s }; }
+
+        // Rotação de Rodrigues em torno de eixo unitário k por ângulo theta (rad)
+        function rotateAroundAxis3D(v, k, theta) {
+            const cosT = Math.cos(theta);
+            const sinT = Math.sin(theta);
+            const dot = v.x * k.x + v.y * k.y + v.z * k.z;
+            const cross = {
+                x: k.y * v.z - k.z * v.y,
+                y: k.z * v.x - k.x * v.z,
+                z: k.x * v.y - k.y * v.x
+            };
+            return {
+                x: v.x * cosT + cross.x * sinT + k.x * dot * (1 - cosT),
+                y: v.y * cosT + cross.y * sinT + k.y * dot * (1 - cosT),
+                z: v.z * cosT + cross.z * sinT + k.z * dot * (1 - cosT)
+            };
+        }
+
+        // Calcula os pontos 3D (Ombro -> Cotovelo -> Mão) de cada braço respeitando:
+        // - Ombro Pitch (pra frente e pra trás / cima e baixo no plano sagital Y-Z)
+        // - Ombro Roll  (abertura vertical cima/baixo e afastamento lateral X-Y)
+        // - Cotovelo    (flexão real do antebraço para frente/cima em relação ao úmero)
+        function computeArm3DKinematics(side, pose, shoulderOrigin) {
+            const isRight = (side === 'right');
+            const signX = isRight ? -1 : 1; // Braço Direito do robô fica em X < 0 (esquerda da tela frontal)
+            const L1 = 44; // Comprimento do braço superior (úmero)
+            const L2 = 38; // Comprimento do antebraço
+
+            // Normaliza os ângulos dos servos (0..180°) para desvios em radianos a partir do neutro (90°)
+            // Na montagem física espelhada do Roboldo:
+            // - Pitch: controla avanço frontal/traseiro e elevação sagital
+            // - Roll: controla elevação/abaixamento lateral do braço
+            // - Elbow: controla dobra do cotovelo
+            const pitchDeltaDeg = isRight ? (pose.pitch - 90) : (90 - pose.pitch);
+            const rollDeltaDeg  = isRight ? (pose.roll - 90)  : (90 - pose.roll);
+            const elbowDeltaDeg = isRight ? (pose.elbow - 90) : (90 - pose.elbow);
+
+            const pitchRad = (pitchDeltaDeg * Math.PI) / 180; // Positivo = ombro gira pra frente/cima
+            const rollRad  = (rollDeltaDeg  * Math.PI) / 180; // Positivo = braço sobe / fecha; Negativo = braço abaixa
+            const elbowRad = (elbowDeltaDeg * Math.PI) / 180; // Flexão do cotovelo
+
+            // Base local do ombro antes do Pitch/Roll: apontando para fora lateralmente (signX, 0, 0)
+            // 1) Aplicamos Roll (elevação cima/baixo no plano frontal X-Y e avanço no abraço):
+            // Quando Roll = 90° (0 rad), o braço está aberto horizontalmente.
+            // Quando Roll aumenta (>90°), o braço sobe/fecha para frente; quando diminui (<90°), abaixa.
+            let dirUpper = {
+                x: signX * Math.cos(rollRad * 0.85),
+                y: -Math.sin(rollRad * 0.75),
+                z: Math.sin(rollRad * 0.55)
+            };
+            // Normaliza dirUpper
+            const lenU = Math.hypot(dirUpper.x, dirUpper.y, dirUpper.z) || 1;
+            dirUpper = { x: dirUpper.x / lenU, y: dirUpper.y / lenU, z: dirUpper.z / lenU };
+
+            // 2) Aplicamos o Pitch do Ombro (rotação em torno do eixo lateral X: gira o braço para FRENTE +Z / TRÁS -Z e CIMA -Y / BAIXO +Y)
+            const axisX = { x: 1, y: 0, z: 0 };
+            dirUpper = rotateAroundAxis3D(dirUpper, axisX, pitchRad);
+
+            // Vetor perpendicular para articulação do cotovelo (dobrando para frente/cima do robô)
+            let bendAxis = rotateAroundAxis3D({ x: 0, y: 1, z: 0 }, axisX, pitchRad);
+            const dirForearm = rotateAroundAxis3D(dirUpper, bendAxis, -signX * elbowRad * 0.9);
+            // Também aplica componente sagital direta do cotovelo (para frente/cima)
+            const dirForearmFinal = rotateAroundAxis3D(dirForearm, axisX, elbowRad * 0.55);
+
+            const elbowPos = vec3Add(shoulderOrigin, vec3Scale(dirUpper, L1));
+            const handPos  = vec3Add(elbowPos, vec3Scale(dirForearmFinal, L2));
+
+            return {
+                shoulder: shoulderOrigin,
+                elbow: elbowPos,
+                hand: handPos
+            };
+        }
+
+        function projectPoint3D(pt, W, H) {
+            const yawRad   = (sim3DCamYaw * Math.PI) / 180;
+            const pitchRad = (sim3DCamPitch * Math.PI) / 180;
+
+            // Rotação da câmera (Yaw em torno de Y)
+            const cosY = Math.cos(yawRad), sinY = Math.sin(yawRad);
+            const x1 = pt.x * cosY + pt.z * sinY;
+            const z1 = -pt.x * sinY + pt.z * cosY;
+            const y1 = pt.y;
+
+            // Rotação da câmera (Pitch em torno de X)
+            const cosP = Math.cos(pitchRad), sinP = Math.sin(pitchRad);
+            const y2 = y1 * cosP - z1 * sinP;
+            const z2 = y1 * sinP + z1 * cosP;
+            const x2 = x1;
+
+            const fov = 360;
+            const camDist = 340;
+            const scale = fov / Math.max(80, camDist - z2);
+
+            return {
+                x: (W / 2) + x2 * scale,
+                y: (H / 2 + 12) + y2 * scale,
+                z: z2,
+                scale: scale
+            };
+        }
+
+        function draw3DCapsuleLimb(ctx, p1, p2, radius1, radius2, colorStart, colorEnd, borderColor) {
+            const dx = p2.x - p1.x;
+            const dy = p2.y - p1.y;
+            const dist = Math.hypot(dx, dy);
+
+            const rAvg = ((radius1 * p1.scale) + (radius2 * p2.scale)) * 0.5;
+
+            // Sombra/Borda externa
+            ctx.save();
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.lineWidth = rAvg * 2 + 3.5;
+            ctx.strokeStyle = borderColor || '#1e40af';
+            ctx.stroke();
+
+            // Preenchimento cilíndrico com gradiente 3D
+            const grad = ctx.createLinearGradient(p1.x, p1.y - rAvg, p2.x, p2.y + rAvg);
+            grad.addColorStop(0, colorStart);
+            grad.addColorStop(1, colorEnd);
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.lineWidth = rAvg * 2;
+            ctx.strokeStyle = grad;
+            ctx.stroke();
+
+            // Brilho especular 3D ao longo do cilindro
+            if (dist > 4) {
+                ctx.beginPath();
+                ctx.moveTo(p1.x, p1.y - rAvg * 0.35);
+                ctx.lineTo(p2.x, p2.y - rAvg * 0.35);
+                ctx.lineWidth = Math.max(1.5, rAvg * 0.45);
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.32)';
+                ctx.stroke();
+            }
+            ctx.restore();
+        }
+
+        function draw3DSphereJoint(ctx, p, radius, fillColor, strokeColor, highlight) {
+            const r = Math.max(3, radius * p.scale);
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+            ctx.fillStyle = fillColor;
+            ctx.fill();
+            if (strokeColor) {
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = strokeColor;
+                ctx.stroke();
+            }
+            if (highlight !== false) {
+                ctx.beginPath();
+                ctx.arc(p.x - r * 0.28, p.y - r * 0.28, r * 0.32, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
+                ctx.fill();
+            }
+            ctx.restore();
+        }
+
+        function draw3DRoundedPrism(ctx, center3D, w, h, d, rotYawDeg, rotPitchDeg, frontColors, sideColor, strokeColor, onDrawFrontFace) {
+            const hw = w / 2, hh = h / 2, hd = d / 2;
+            const localCorners = [
+                { x: -hw, y: -hh, z:  hd }, // 0: Front Top Left
+                { x:  hw, y: -hh, z:  hd }, // 1: Front Top Right
+                { x:  hw, y:  hh, z:  hd }, // 2: Front Bottom Right
+                { x: -hw, y:  hh, z:  hd }, // 3: Front Bottom Left
+                { x: -hw, y: -hh, z: -hd }, // 4: Back Top Left
+                { x:  hw, y: -hh, z: -hd }, // 5: Back Top Right
+                { x:  hw, y:  hh, z: -hd }, // 6: Back Bottom Right
+                { x: -hw, y:  hh, z: -hd }  // 7: Back Bottom Left
+            ];
+
+            const yawR   = (rotYawDeg * Math.PI) / 180;
+            const pitchR = (rotPitchDeg * Math.PI) / 180;
+            const canvas = document.getElementById('robot3DCanvas');
+            const W = canvas.width, H = canvas.height;
+
+            const worldCorners = localCorners.map(c => {
+                // Pitch local (X)
+                let p = rotateAroundAxis3D(c, { x: 1, y: 0, z: 0 }, pitchR);
+                // Yaw local (Y)
+                p = rotateAroundAxis3D(p, { x: 0, y: 1, z: 0 }, yawR);
+                return vec3Add(center3D, p);
+            });
+
+            const proj = worldCorners.map(c => projectPoint3D(c, W, H));
+
+            // Faces laterais para volume 3D
+            const faces = [
+                { idx: [4, 5, 6, 7], color: '#1e3a8a', name: 'back' },
+                { idx: [0, 3, 7, 4], color: sideColor || '#1d4ed8', name: 'left' },
+                { idx: [1, 5, 6, 2], color: sideColor || '#1d4ed8', name: 'right' },
+                { idx: [4, 5, 1, 0], color: '#3b82f6', name: 'top' },
+                { idx: [3, 2, 6, 7], color: '#1e40af', name: 'bottom' },
+                { idx: [0, 1, 2, 3], color: frontColors[0], name: 'front' }
+            ];
+
+            // Ordena faces da mais distante para a mais próxima (Painter's Algorithm)
+            faces.forEach(f => {
+                f.avgZ = f.idx.reduce((acc, i) => acc + proj[i].z, 0) / 4;
+            });
+            faces.sort((a, b) => a.avgZ - b.avgZ);
+
+            faces.forEach(f => {
+                ctx.save();
+                ctx.beginPath();
+                ctx.moveTo(proj[f.idx[0]].x, proj[f.idx[0]].y);
+                for (let i = 1; i < f.idx.length; i++) {
+                    ctx.lineTo(proj[f.idx[i]].x, proj[f.idx[i]].y);
+                }
+                ctx.closePath();
+
+                if (f.name === 'front' && frontColors.length > 1) {
+                    const g = ctx.createLinearGradient(proj[0].x, proj[0].y, proj[3].x, proj[3].y);
+                    g.addColorStop(0, frontColors[0]);
+                    g.addColorStop(1, frontColors[1]);
+                    ctx.fillStyle = g;
+                } else {
+                    ctx.fillStyle = f.color;
+                }
+                ctx.fill();
+                ctx.lineWidth = 1.6;
+                ctx.lineJoin = 'round';
+                ctx.strokeStyle = strokeColor || '#1e40af';
+                ctx.stroke();
+                ctx.restore();
+
+                if (f.name === 'front' && typeof onDrawFrontFace === 'function') {
+                    onDrawFrontFace(ctx, worldCorners, W, H);
+                }
+            });
+        }
+
+        function renderRobot3DScene() {
+            const canvas = document.getElementById('robot3DCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const W = canvas.width, H = canvas.height;
+
+            ctx.clearRect(0, 0, W, H);
+
+            // 1. Piso 3D em perspectiva (Grid espacial para percepção imediata de frente/trás Z e altura Y)
+            ctx.save();
+            const floorY = 78;
+            for (let gx = -90; gx <= 90; gx += 30) {
+                const pA = projectPoint3D({ x: gx, y: floorY, z: -70 }, W, H);
+                const pB = projectPoint3D({ x: gx, y: floorY, z:  85 }, W, H);
+                ctx.beginPath();
+                ctx.moveTo(pA.x, pA.y);
+                ctx.lineTo(pB.x, pB.y);
+                ctx.strokeStyle = 'rgba(37, 99, 235, 0.13)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
+            for (let gz = -60; gz <= 80; gz += 28) {
+                const pA = projectPoint3D({ x: -95, y: floorY, z: gz }, W, H);
+                const pB = projectPoint3D({ x:  95, y: floorY, z: gz }, W, H);
+                ctx.beginPath();
+                ctx.moveTo(pA.x, pA.y);
+                ctx.lineTo(pB.x, pB.y);
+                ctx.strokeStyle = 'rgba(37, 99, 235, 0.13)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
             }
 
+            // Sombra projetada do robô no chão 3D
+            const shadowCenter = projectPoint3D({ x: 0, y: floorY, z: 0 }, W, H);
+            ctx.beginPath();
+            ctx.ellipse(shadowCenter.x, shadowCenter.y, 58 * shadowCenter.scale, 18 * shadowCenter.scale, 0, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(29, 78, 216, 0.14)';
+            ctx.fill();
+            ctx.restore();
+
+            // 2. Calcula a cinemática 3D dos dois braços (Ombro -> Cotovelo -> Mão)
+            const rArm = computeArm3DKinematics('right', armState.customPose.right, { x: -50, y: 6, z: 0 });
+            const lArm = computeArm3DKinematics('left',  armState.customPose.left,  { x:  50, y: 6, z: 0 });
+
+            // Sombra das mãos no chão para enxergar claramente quando o braço vai pra frente (+Z) ou pra trás (-Z)
+            [rArm.hand, lArm.hand].forEach(hand3D => {
+                const hShadow = projectPoint3D({ x: hand3D.x, y: floorY, z: hand3D.z }, W, H);
+                const hProj   = projectPoint3D(hand3D, W, H);
+                ctx.save();
+                // Linha tracejada vertical de referência até o chão
+                ctx.beginPath();
+                ctx.setLineDash([2, 3]);
+                ctx.moveTo(hProj.x, hProj.y);
+                ctx.lineTo(hShadow.x, hShadow.y);
+                ctx.strokeStyle = 'rgba(37, 99, 235, 0.22)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.setLineDash([]);
+                // Sombra circular da mão no piso
+                ctx.beginPath();
+                ctx.ellipse(hShadow.x, hShadow.y, 7 * hShadow.scale, 3.5 * hShadow.scale, 0, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(37, 99, 235, 0.22)';
+                ctx.fill();
+                ctx.restore();
+            });
+
+            // 3. Monta a lista de componentes 3D ordenados por profundidade Z da câmera (Painter's Algorithm)
+            const headYawDeg   = (headState.neckAngle - 90) * 0.85;
+            const headPitchDeg = (90 - headState.neckPitchAngle) * 0.75;
+            const headCenter3D = {
+                x: Math.sin((headYawDeg * Math.PI) / 180) * 8,
+                y: -52 + Math.sin((headPitchDeg * Math.PI) / 180) * 6,
+                z: -Math.sin((headPitchDeg * Math.PI) / 180) * 10
+            };
+
+            const renderables = [];
+
+            // Torso 3D
+            const torsoProj = projectPoint3D({ x: 0, y: 30, z: 0 }, W, H);
+            renderables.push({
+                z: torsoProj.z,
+                draw: () => {
+                    draw3DRoundedPrism(
+                        ctx,
+                        { x: 0, y: 32, z: 0 },
+                        86, 68, 44,
+                        0, 0,
+                        ['#2563eb', '#1d4ed8'],
+                        '#1e40af',
+                        '#1e3a8a',
+                        (ctxFront) => {
+                            // Emblema circular branco/azul no peito do Roboldo
+                            const chestPt = projectPoint3D({ x: 0, y: 32, z: 23 }, W, H);
+                            draw3DSphereJoint(ctxFront, chestPt, 12, '#ffffff', '#93c5fd', false);
+                            draw3DSphereJoint(ctxFront, chestPt, 5,  '#1a73e8', null, false);
+                        }
+                    );
+                }
+            });
+
+            // Pescoço Cilíndrico 3D
+            const neckTop = { x: headCenter3D.x * 0.5, y: -14, z: headCenter3D.z * 0.5 };
+            const neckBot = { x: 0, y: 2, z: 0 };
+            const pNeckTop = projectPoint3D(neckTop, W, H);
+            const pNeckBot = projectPoint3D(neckBot, W, H);
+            renderables.push({
+                z: (pNeckTop.z + pNeckBot.z) * 0.5,
+                draw: () => {
+                    draw3DCapsuleLimb(ctx, pNeckBot, pNeckTop, 11, 10, '#60a5fa', '#3b82f6', '#2563eb');
+                }
+            });
+
+            // Função auxiliar para enfileirar os segmentos de cada braço com ordenação Z individual
+            function enqueueArm3D(armKin) {
+                const pShoulder = projectPoint3D(armKin.shoulder, W, H);
+                const pElbow    = projectPoint3D(armKin.elbow, W, H);
+                const pHand     = projectPoint3D(armKin.hand, W, H);
+
+                // Junta do Ombro
+                renderables.push({
+                    z: pShoulder.z,
+                    draw: () => draw3DSphereJoint(ctx, pShoulder, 9.5, '#dbeafe', '#2563eb', true)
+                });
+                // Braço Superior (Úmero)
+                renderables.push({
+                    z: (pShoulder.z + pElbow.z) * 0.5,
+                    draw: () => draw3DCapsuleLimb(ctx, pShoulder, pElbow, 6.5, 6, '#3b82f6', '#1d4ed8', '#1e40af')
+                });
+                // Junta do Cotovelo
+                renderables.push({
+                    z: pElbow.z,
+                    draw: () => draw3DSphereJoint(ctx, pElbow, 6.2, '#ffffff', '#2563eb', true)
+                });
+                // Antebraço
+                renderables.push({
+                    z: (pElbow.z + pHand.z) * 0.5,
+                    draw: () => draw3DCapsuleLimb(ctx, pElbow, pHand, 5.5, 5, '#60a5fa', '#3b82f6', '#2563eb')
+                });
+                // Mão esférica azul original
+                renderables.push({
+                    z: pHand.z + 1,
+                    draw: () => draw3DSphereJoint(ctx, pHand, 6.8, '#1a73e8', '#ffffff', true)
+                });
+            }
+
+            enqueueArm3D(rArm);
+            enqueueArm3D(lArm);
+
+            // Cabeça 3D com Orelhas Articuladas e Visor Branco/Azul Original
+            const headProj = projectPoint3D(headCenter3D, W, H);
+            renderables.push({
+                z: headProj.z + 2,
+                draw: () => {
+                    // Orelhas Direita e Esquerda articuladas
+                    const earRDelta = ((headState.earRightAngle - 90) * Math.PI) / 180;
+                    const earLDelta = ((headState.earLeftAngle  - 90) * Math.PI) / 180;
+
+                    function transformHeadLocal(ptLocal) {
+                        const pitchR = (headPitchDeg * Math.PI) / 180;
+                        const yawR   = (headYawDeg   * Math.PI) / 180;
+                        let p = rotateAroundAxis3D(ptLocal, { x: 1, y: 0, z: 0 }, pitchR);
+                        p = rotateAroundAxis3D(p, { x: 0, y: 1, z: 0 }, yawR);
+                        return projectPoint3D(vec3Add(headCenter3D, p), W, H);
+                    }
+
+                    // Orelha Direita (X = -56)
+                    const earRBase = transformHeadLocal({ x: -56, y: 4, z: 0 });
+                    const earRTip  = transformHeadLocal({
+                        x: -58 - Math.cos(earRDelta) * 4,
+                        y: -18,
+                        z: Math.sin(earRDelta) * 16
+                    });
+                    draw3DCapsuleLimb(ctx, earRBase, earRTip, 5.5, 5, '#3b82f6', '#2563eb', '#1d4ed8');
+
+                    // Orelha Esquerda (X = +56)
+                    const earLBase = transformHeadLocal({ x: 56, y: 4, z: 0 });
+                    const earLTip  = transformHeadLocal({
+                        x: 58 + Math.cos(earLDelta) * 4,
+                        y: -18,
+                        z: Math.sin(earLDelta) * 16
+                    });
+                    draw3DCapsuleLimb(ctx, earLBase, earLTip, 5.5, 5, '#3b82f6', '#2563eb', '#1d4ed8');
+
+                    // Bloco 3D da Cabeça Azul com Visor Frontal Branco e Expressão Facial DWIN
+                    draw3DRoundedPrism(
+                        ctx,
+                        headCenter3D,
+                        98, 68, 46,
+                        headYawDeg, headPitchDeg,
+                        ['#2563eb', '#1d4ed8'],
+                        '#1e40af',
+                        '#1e3a8a',
+                        (ctxFace) => {
+                            // Visor Branco Frontal (z = +23.5 local)
+                            const screenCorners = [
+                                transformHeadLocal({ x: -39, y: -24, z: 23.8 }),
+                                transformHeadLocal({ x:  39, y: -24, z: 23.8 }),
+                                transformHeadLocal({ x:  39, y:  24, z: 23.8 }),
+                                transformHeadLocal({ x: -39, y:  24, z: 23.8 })
+                            ];
+                            ctxFace.save();
+                            ctxFace.beginPath();
+                            ctxFace.moveTo(screenCorners[0].x, screenCorners[0].y);
+                            screenCorners.slice(1).forEach(p => ctxFace.lineTo(p.x, p.y));
+                            ctxFace.closePath();
+                            ctxFace.fillStyle = '#ffffff';
+                            ctxFace.fill();
+                            ctxFace.lineWidth = 2;
+                            ctxFace.strokeStyle = '#bfdbfe';
+                            ctxFace.stroke();
+
+                            // Geometria das Sobrancelhas, Olhos e Boca no espaço 3D da face
+                            let browLY1 = -14, browLY2 = -14, browRY1 = -14, browRY2 = -14;
+                            let eyeRx = 7.5, eyeRy = 8.5;
+                            let mouthType = 'smile'; // neutral, smile, sad, open, wave
+
+                            if (headState.mode === 0) {
+                                mouthType = 'neutral';
+                            } else if (headState.mode === 2) {
+                                mouthType = sim3DMouthOpen ? 'talk_open' : 'neutral';
+                            } else {
+                                const e = headState.emotion;
+                                if (e === 0) { // Angry
+                                    browLY1 = -17; browLY2 = -11; browRY1 = -11; browRY2 = -17;
+                                    eyeRy = 6; mouthType = 'sad';
+                                } else if (e === 1) { // Confused
+                                    browLY1 = -18; browLY2 = -15; browRY1 = -12; browRY2 = -15;
+                                    mouthType = 'wave';
+                                } else if (e === 2) { // Fear
+                                    browLY1 = -11; browLY2 = -17; browRY1 = -17; browRY2 = -11;
+                                    mouthType = 'sad';
+                                } else if (e === 3) { // Happy
+                                    browLY1 = -15; browLY2 = -17; browRY1 = -17; browRY2 = -15;
+                                    mouthType = 'smile';
+                                } else if (e === 4) { // Sad
+                                    browLY1 = -11; browLY2 = -16; browRY1 = -16; browRY2 = -11;
+                                    eyeRy = 5.5; mouthType = 'sad';
+                                } else if (e === 5) { // Surprised
+                                    browLY1 = -19; browLY2 = -19; browRY1 = -19; browRY2 = -19;
+                                    eyeRx = 9; eyeRy = 10.5; mouthType = 'circle';
+                                }
+                            }
+
+                            // Desenha Sobrancelhas Azuis (#1a73e8)
+                            const bL1 = transformHeadLocal({ x: -27, y: browLY1, z: 24.5 });
+                            const bL2 = transformHeadLocal({ x: -11, y: browLY2, z: 24.5 });
+                            const bR1 = transformHeadLocal({ x:  11, y: browRY1, z: 24.5 });
+                            const bR2 = transformHeadLocal({ x:  27, y: browRY2, z: 24.5 });
+
+                            ctxFace.strokeStyle = '#1a73e8';
+                            ctxFace.lineWidth = 3.2;
+                            ctxFace.lineCap = 'round';
+                            ctxFace.beginPath();
+                            ctxFace.moveTo(bL1.x, bL1.y); ctxFace.lineTo(bL2.x, bL2.y);
+                            ctxFace.moveTo(bR1.x, bR1.y); ctxFace.lineTo(bR2.x, bR2.y);
+                            ctxFace.stroke();
+
+                            // Desenha Olhos Azuis (#1a73e8)
+                            const eyeL = transformHeadLocal({ x: -19, y: -3, z: 24.5 });
+                            const eyeR = transformHeadLocal({ x:  19, y: -3, z: 24.5 });
+                            ctxFace.fillStyle = '#1a73e8';
+                            ctxFace.beginPath();
+                            ctxFace.ellipse(eyeL.x, eyeL.y, eyeRx * eyeL.scale, eyeRy * eyeL.scale, 0, 0, Math.PI * 2);
+                            ctxFace.ellipse(eyeR.x, eyeR.y, eyeRx * eyeR.scale, eyeRy * eyeR.scale, 0, 0, Math.PI * 2);
+                            ctxFace.fill();
+
+                            // Desenha Boca Azul (#1a73e8)
+                            const mL = transformHeadLocal({ x: -14, y: 12, z: 24.5 });
+                            const mC = transformHeadLocal({ x:   0, y: 12, z: 24.5 });
+                            const mR = transformHeadLocal({ x:  14, y: 12, z: 24.5 });
+
+                            ctxFace.beginPath();
+                            if (mouthType === 'neutral') {
+                                ctxFace.moveTo(mL.x, mL.y);
+                                ctxFace.lineTo(mR.x, mR.y);
+                                ctxFace.stroke();
+                            } else if (mouthType === 'smile') {
+                                const mCtrl = transformHeadLocal({ x: 0, y: 22, z: 24.5 });
+                                ctxFace.moveTo(mL.x, mL.y - 2);
+                                ctxFace.quadraticCurveTo(mCtrl.x, mCtrl.y, mR.x, mR.y - 2);
+                                ctxFace.stroke();
+                            } else if (mouthType === 'sad') {
+                                const mCtrl = transformHeadLocal({ x: 0, y: 5, z: 24.5 });
+                                ctxFace.moveTo(mL.x, mL.y + 3);
+                                ctxFace.quadraticCurveTo(mCtrl.x, mCtrl.y, mR.x, mR.y + 3);
+                                ctxFace.stroke();
+                            } else if (mouthType === 'wave') {
+                                const mCtrl1 = transformHeadLocal({ x: -5, y: 8,  z: 24.5 });
+                                const mCtrl2 = transformHeadLocal({ x:  5, y: 17, z: 24.5 });
+                                ctxFace.moveTo(mL.x, mL.y + 1);
+                                ctxFace.bezierCurveTo(mCtrl1.x, mCtrl1.y, mCtrl2.x, mCtrl2.y, mR.x, mR.y - 1);
+                                ctxFace.stroke();
+                            } else if (mouthType === 'circle' || mouthType === 'talk_open') {
+                                const rM = (mouthType === 'talk_open' ? 7.5 : 6.5) * mC.scale;
+                                ctxFace.arc(mC.x, mC.y + 1, rM, 0, Math.PI * 2);
+                                if (mouthType === 'talk_open') {
+                                    ctxFace.fillStyle = '#1a73e8';
+                                    ctxFace.fill();
+                                } else {
+                                    ctxFace.stroke();
+                                }
+                            }
+                            ctxFace.restore();
+                        }
+                    );
+                }
+            });
+
+            // Ordena todos os elementos 3D por profundidade Z e desenha
+            renderables.sort((a, b) => a.z - b.z);
+            renderables.forEach(item => item.draw());
+        }
+
+        function updateRobotSvgVisuals() {
             const r = armState.customPose.right;
             const l = armState.customPose.left;
-            const rShoulderAngle = ((r.pitch - 90) * 0.55) + ((r.roll - 90) * 0.45);
-            const rElbowAngle    = (r.elbow - 90) * 0.85;
-            document.getElementById('svgRightUpperArm').setAttribute('transform', `rotate(${rShoulderAngle})`);
-            document.getElementById('svgRightForearm').setAttribute('transform', `translate(-42, 0) rotate(${rElbowAngle})`);
-
-            const lShoulderAngle = -(((90 - l.pitch) * 0.55) + ((90 - l.roll) * 0.45));
-            const lElbowAngle    = -((90 - l.elbow) * 0.85);
-            document.getElementById('svgLeftUpperArm').setAttribute('transform', `rotate(${lShoulderAngle})`);
-            document.getElementById('svgLeftForearm').setAttribute('transform', `translate(42, 0) rotate(${lElbowAngle})`);
 
             document.getElementById('liveHeadAnglesBadge').textContent = `${headState.earRightAngle}°,${headState.earLeftAngle}° | Y:${headState.neckAngle}° P:${headState.neckPitchAngle}°`;
             document.getElementById('liveArmAnglesBadge').textContent = `${r.pitch},${r.roll},${r.elbow} | ${l.pitch},${l.roll},${l.elbow}`;
+
+            renderRobot3DScene();
         }
 
         function updateInspectorAndVisuals() {
@@ -2429,17 +2943,10 @@
         }
 
         function startTalkMouthLoop() {
-            let open = false;
             talkMouthTimer = setInterval(() => {
                 if (headState.mode !== 2) return;
-                open = !open;
-                const mouth = document.getElementById('svgMouth');
-                if (open) {
-                    const depth = headState.talkStyle === 1 ? 28 : 21;
-                    mouth.setAttribute('d', `M -16 12 Q 0 ${depth} 16 12 Q 0 6 -16 12`);
-                } else {
-                    mouth.setAttribute('d', 'M -14 15 Q 0 17 14 15');
-                }
+                sim3DMouthOpen = !sim3DMouthOpen;
+                renderRobot3DScene();
             }, 150);
         }
 
@@ -3191,6 +3698,7 @@
         }
 
         window.onload = function () {
+            initRobot3DOrbitControls();
             selectHeadEmotion(3);
             triggerArmGesture(1, 'n');
             startTalkMouthLoop();
