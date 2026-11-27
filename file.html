@@ -196,15 +196,22 @@
   <div class="header-row">
     <div style="display:flex;align-items:center;gap:12px;">
       <img src="assets/logo-roboldo.png" alt="Logo Roboldo" style="width:42px;height:42px;border-radius:12px;object-fit:contain;background:#fff;border:1px solid rgba(35,134,137,0.2);padding:2px;">
-      <h1>Roboldo <span>Voz Offline</span></h1>
+      <h1 id="pageTitle">Roboldo <span>Voz Offline</span></h1>
     </div>
-    <span class="badge">Piper TTS</span>
+    <div style="display:flex;align-items:center;gap:6px;">
+      <span class="badge">Piper TTS</span>
+      <div style="display:inline-flex;background:rgba(255,255,255,0.85);border:1px solid rgba(35,134,137,0.22);border-radius:10px;padding:2px;">
+        <button type="button" onclick="setVoicePanelLang('pt')" data-vlang="pt" class="vlang-btn" style="padding:3px 7px;font-size:0.7rem;border-radius:7px;border:none;background:#238689;color:#fff;font-weight:800;cursor:pointer;">PT</button>
+        <button type="button" onclick="setVoicePanelLang('en')" data-vlang="en" class="vlang-btn" style="padding:3px 7px;font-size:0.7rem;border-radius:7px;border:none;background:transparent;color:#196669;font-weight:700;cursor:pointer;">EN</button>
+        <button type="button" onclick="setVoicePanelLang('es')" data-vlang="es" class="vlang-btn" style="padding:3px 7px;font-size:0.7rem;border-radius:7px;border:none;background:transparent;color:#196669;font-weight:700;cursor:pointer;">ES</button>
+      </div>
+    </div>
   </div>
   
   <textarea id="texto">Olá, eu sou o Roboldo! Robô social da UERN! É um prazer estar com você aqui no COIN! Eu sou a versão 2.0. Meu irmão 1.0 e 1.2 também estão aqui presentes. Por ser o irmão mais novo, eu tenho braços, um rostinho dinâmico e posso ter acesso à câmera! Também tenho suporte pra tablet, onde podem ser alocados programas com jogos e pranchas assistivas. Quer saber mais sobre mim? Pergunta pra minha programadora, Artemísia! Bom evento!</textarea>
 
   <div class="control-group">
-    <label for="vozes">Modelo de Voz Local:</label>
+    <label for="vozes" id="lblVozes">Modelo de Voz Local:</label>
     <select id="vozes">
       <option value="pt-BR-FranciscaNeural">Faber (Neural Offline)</option>
       <option value="pt-BR-AntonioNeural">Antônio (Neural Offline)</option>
@@ -212,17 +219,17 @@
   </div>
 
   <div class="control-group">
-    <label>Tom / Agudo (Pitch): <span id="pitch-val">1.0</span></label>
+    <label><span id="lblPitch" style="font-family:inherit;color:var(--ink-black);">Tom / Agudo (Pitch):</span> <span id="pitch-val">1.0</span></label>
     <input type="range" id="pitch" min="0.5" max="2.0" step="0.1" value="1.0">
   </div>
 
   <div class="control-group">
-    <label>Velocidade (Rate): <span id="rate-val">1.05</span></label>
+    <label><span id="lblRate" style="font-family:inherit;color:var(--ink-black);">Velocidade (Rate):</span> <span id="rate-val">1.05</span></label>
     <input type="range" id="rate" min="0.5" max="2.0" step="0.05" value="1.05">
   </div>
 
   <div class="control-group">
-    <label>Volume: <span id="vol-val">1.0</span></label>
+    <label><span id="lblVol" style="font-family:inherit;color:var(--ink-black);">Volume:</span> <span id="vol-val">1.0</span></label>
     <input type="range" id="volume" min="0.1" max="1.0" step="0.1" value="1.0">
   </div>
 
@@ -245,6 +252,81 @@
   let audioAtual = null;
   let requisicaoAtual = null;
   let urlAudioAtual = null;
+  let currentVoiceLang = localStorage.getItem('roboldo_ide_lang') || 'pt';
+
+  const VOICE_PANEL_I18N = {
+    pt: {
+      title: 'Roboldo <span>Voz Offline</span>',
+      lblVozes: 'Modelo de Voz Local:',
+      lblPitch: 'Tom / Agudo (Pitch):',
+      lblRate: 'Velocidade (Rate):',
+      lblVol: 'Volume:',
+      btnFalar: '🔊 Apresentar Roboldo',
+      btnParar: '⏹ Parar',
+      statusReady: 'Pronto para falar offline.',
+      statusGenerating: 'Gerando voz local (Piper)...',
+      statusDone: '✅ Apresentação concluída!',
+      statusSpeaking: '🗣️ Roboldo está falando (Offline)...',
+      statusStopped: '⏹ Fala interrompida.',
+      defaultText: 'Olá, eu sou o Roboldo! Robô social da UERN! É um prazer estar com você aqui no COIN! Eu sou a versão 2.0. Meu irmão 1.0 e 1.2 também estão aqui presentes. Por ser o irmão mais novo, eu tenho braços, um rostinho dinâmico e posso ter acesso à câmera! Também tenho suporte pra tablet, onde podem ser alocados programas com jogos e pranchas assistivas. Quer saber mais sobre mim? Pergunta pra minha programadora, Artemísia! Bom evento!'
+    },
+    en: {
+      title: 'Roboldo <span>Offline Voice</span>',
+      lblVozes: 'Local Voice Model:',
+      lblPitch: 'Pitch:',
+      lblRate: 'Speed (Rate):',
+      lblVol: 'Volume:',
+      btnFalar: '🔊 Introduce Roboldo',
+      btnParar: '⏹ Stop',
+      statusReady: 'Ready to speak offline.',
+      statusGenerating: 'Generating local voice (Piper)...',
+      statusDone: '✅ Presentation completed!',
+      statusSpeaking: '🗣️ Roboldo is speaking (Offline)...',
+      statusStopped: '⏹ Speech stopped.',
+      defaultText: 'Hello, I am Roboldo! The social robot from UERN! It is a pleasure to be here with you at COIN! I am version 2.0. My brothers 1.0 and 1.2 are also here today. As the youngest brother, I have articulated arms, a dynamic face, and camera vision! I also have a tablet mount for educational games and assistive communication boards. Want to know more about me? Ask my programmer, Artemísia! Enjoy the event!'
+    },
+    es: {
+      title: 'Roboldo <span>Voz Offline</span>',
+      lblVozes: 'Modelo de Voz Local:',
+      lblPitch: 'Tono / Agudo (Pitch):',
+      lblRate: 'Velocidad (Rate):',
+      lblVol: 'Volumen:',
+      btnFalar: '🔊 Presentar a Roboldo',
+      btnParar: '⏹ Detener',
+      statusReady: 'Listo para hablar offline.',
+      statusGenerating: 'Generando voz local (Piper)...',
+      statusDone: '✅ ¡Presentación concluida!',
+      statusSpeaking: '🗣️ Roboldo está hablando (Offline)...',
+      statusStopped: '⏹ Voz interrumpida.',
+      defaultText: '¡Hola, soy Roboldo! ¡El robot social de la UERN! ¡Es un placer estar contigo aquí en COIN! Soy la versión 2.0. Mis hermanos 1.0 y 1.2 también están presentes. ¡Por ser el hermano menor, tengo brazos articulados, una carita dinámica y acceso a la cámara! También tengo soporte para tablet con juegos y tableros asistivos. ¿Quieres saber más sobre mí? ¡Pregúntale a mi programadora, Artemísia! ¡Buen evento!'
+    }
+  };
+
+  function setVoicePanelLang(lang) {
+    if (!VOICE_PANEL_I18N[lang]) lang = 'pt';
+    currentVoiceLang = lang;
+    localStorage.setItem('roboldo_ide_lang', lang);
+    const d = VOICE_PANEL_I18N[lang];
+    document.getElementById('pageTitle').innerHTML = d.title;
+    document.getElementById('lblVozes').textContent = d.lblVozes;
+    document.getElementById('lblPitch').textContent = d.lblPitch;
+    document.getElementById('lblRate').textContent = d.lblRate;
+    document.getElementById('lblVol').textContent = d.lblVol;
+    document.getElementById('btnFalar').textContent = d.btnFalar;
+    document.getElementById('btnParar').textContent = d.btnParar;
+    statusDiv.textContent = d.statusReady;
+
+    const isDefault = Object.values(VOICE_PANEL_I18N).some(x => x.defaultText.trim() === txtArea.value.trim());
+    if (isDefault) txtArea.value = d.defaultText;
+
+    document.querySelectorAll('.vlang-btn').forEach(btn => {
+      const act = btn.dataset.vlang === lang;
+      btn.style.background = act ? '#238689' : 'transparent';
+      btn.style.color = act ? '#fff' : '#196669';
+      btn.style.fontWeight = act ? '800' : '700';
+    });
+  }
+  setVoicePanelLang(currentVoiceLang);
 
   function pararFala() {
     if (requisicaoAtual) {

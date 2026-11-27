@@ -269,11 +269,19 @@
 
             <div class="p-7 sm:p-8 flex flex-col gap-6">
                 <!-- Header -->
-                <div class="flex items-center gap-4">
-                    <img src="assets/logo-roboldo.png" alt="Logo Roboldo" class="w-14 h-14 rounded-2xl object-contain bg-white border border-slate-200 p-1 shrink-0 shadow-sm">
-                    <div>
-                        <h2 class="text-xl font-extrabold text-[#021225] tracking-tight">Olá! Bem-vindo ao RoboControl Studio</h2>
-                        <p class="text-xs text-slate-500 mt-0.5">Ambiente translúcido de calibração, movimentos 3-DoF e voz neural do Roboldo (LAR / UERN)</p>
+                <div class="flex items-start justify-between gap-3">
+                    <div class="flex items-center gap-4">
+                        <img src="assets/logo-roboldo.png" alt="Logo Roboldo" class="w-14 h-14 rounded-2xl object-contain bg-white border border-slate-200 p-1 shrink-0 shadow-sm">
+                        <div>
+                            <h2 id="onboardTitle" class="text-xl font-extrabold text-[#021225] tracking-tight">Olá! Bem-vindo ao RoboControl Studio</h2>
+                            <p id="onboardSubtitle" class="text-xs text-slate-500 mt-0.5">Ambiente translúcido de calibração, movimentos 3-DoF e voz neural do Roboldo (LAR / UERN)</p>
+                        </div>
+                    </div>
+                    <!-- Seletor de Idioma no Modal de Boas-Vindas -->
+                    <div class="flex items-center gap-1 bg-white/85 border border-[#238689]/20 rounded-xl p-1 shrink-0 shadow-xs" title="Idioma / Language / Idioma">
+                        <button type="button" onclick="setAppLanguage('pt')" data-lang-btn="pt" class="lang-switch-btn px-2 py-1 rounded-lg text-[11px] font-extrabold transition bg-[#238689] text-white">PT</button>
+                        <button type="button" onclick="setAppLanguage('en')" data-lang-btn="en" class="lang-switch-btn px-2 py-1 rounded-lg text-[11px] font-bold text-[#196669] hover:bg-[#F2FFF6] transition">EN</button>
+                        <button type="button" onclick="setAppLanguage('es')" data-lang-btn="es" class="lang-switch-btn px-2 py-1 rounded-lg text-[11px] font-bold text-[#196669] hover:bg-[#F2FFF6] transition">ES</button>
                     </div>
                 </div>
 
@@ -422,6 +430,14 @@
                 <button type="button" onclick="startGuidedTour()" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl text-xs font-bold btn-glass-soft flex items-center justify-center" title="Mini Tutorial Guiado">
                     <i class="fa-regular fa-circle-question text-[#238689]"></i>
                 </button>
+
+                <!-- Seletor de Idioma (PT / EN / ES) -->
+                <div class="flex items-center bg-white/80 border border-[#238689]/20 rounded-xl p-0.5 shadow-xs" title="Idioma / Language / Idioma">
+                    <i class="fa-solid fa-globe text-[#238689] text-[11px] ml-2 mr-1 hidden sm:inline"></i>
+                    <button type="button" onclick="setAppLanguage('pt')" data-lang-btn="pt" class="lang-switch-btn px-2 py-1 rounded-lg text-[11px] font-extrabold transition bg-[#238689] text-white" title="Português (PT-BR)">PT</button>
+                    <button type="button" onclick="setAppLanguage('en')" data-lang-btn="en" class="lang-switch-btn px-2 py-1 rounded-lg text-[11px] font-bold text-[#196669] hover:bg-[#F2FFF6] transition" title="English (EN)">EN</button>
+                    <button type="button" onclick="setAppLanguage('es')" data-lang-btn="es" class="lang-switch-btn px-2 py-1 rounded-lg text-[11px] font-bold text-[#196669] hover:bg-[#F2FFF6] transition" title="Español (ES)">ES</button>
+                </div>
             </div>
         </div>
 
@@ -1619,67 +1635,1303 @@
         let currentOperatorName = localStorage.getItem('roboldo_ide_operator_name') || '';
         let currentModuleId = 'overview';
         let activeTourStep = 0;
+        let currentAppLang = localStorage.getItem('roboldo_ide_lang') || 'pt';
 
-        const TOUR_STEPS = [
-            {
-                module: 'overview',
-                tag: 'PASSO 1 DE 8 • INÍCIO & PARTES',
-                title: 'Conheça as Partes do Roboldo',
-                desc: 'Use as Ações Rápidas para testar o robô inteiro ou clique em qualquer cartão para abrir o módulo correspondente.'
+        // =========================================================================
+        // SISTEMA MULTILÍNGUE (PORTUGUÊS, INGLÊS E ESPANHOL)
+        // =========================================================================
+        const I18N_TEXT_MAP = {
+            "Olá! Bem-vindo ao RoboControl Studio": {
+                en: "Hello! Welcome to RoboControl Studio",
+                es: "¡Hola! Bienvenido a RoboControl Studio"
             },
-            {
-                module: 'head',
-                tag: 'PASSO 2 DE 8 • CABEÇA & PESCOÇO 2-DoF',
-                title: 'Expressões Faciais, Orelhas e Pescoço 2-DoF',
-                desc: 'Mude a expressão do rosto DWIN ou ajuste as orelhas e os 2 eixos do pescoço (Yaw lados e Pitch cima/baixo).'
+            "Ambiente translúcido de calibração, movimentos 3-DoF e voz neural do Roboldo (LAR / UERN)": {
+                en: "Translucent calibration environment, 3-DoF kinematics and neural voice for Roboldo (LAR / UERN)",
+                es: "Entorno translúcido de calibración, movimientos 3-DoF y voz neuronal de Roboldo (LAR / UERN)"
             },
-            {
-                module: 'arms',
-                tag: 'PASSO 3 DE 8 • BRAÇOS ARTICULADOS',
-                title: 'Coreografias e 6 Ângulos dos Braços',
-                desc: 'Escolha um gesto pronto (como Aceno ou Abraço) ou personalize os 6 ângulos dos ombros e cotovelos.'
+            "Como podemos chamar você?": {
+                en: "What should we call you?",
+                es: "¿Cómo podemos llamarte?"
             },
-            {
-                module: 'voice',
-                tag: 'PASSO 4 DE 8 • VOZ DO ROBOLDO',
-                title: 'Síntese de Voz em Português',
-                desc: 'Digite qualquer texto para o Roboldo falar com sincronia automática da boca.'
+            "1º Contato": {
+                en: "First Time",
+                es: "1er Contacto"
             },
-            {
-                module: 'mapping',
-                tag: 'PASSO 5 DE 8 • MAPEAMENTO & CÂMERA (SLAM)',
-                title: 'Mapeamento 2D do Ambiente com Câmera',
-                desc: 'Use a câmera para mapear o ambiente, marcar obstáculos e navegar até Pontos de Interesse (POIs).'
+            "Fazer Mini Tutorial": {
+                en: "Take Mini Tutorial",
+                es: "Hacer Mini Tutorial"
             },
-            {
-                module: 'vision',
-                tag: 'PASSO 6 DE 8 • VISÃO COMPUTACIONAL',
-                title: 'Detecção Facial, Gestos e Auto-Tracking',
-                desc: 'Detecte rostos, mãos e objetos e faça o pescoço 2-DoF acompanhar o alvo automaticamente.'
+            "Um passeio guiado pelos 8 módulos de controle e simulação do Roboldo.": {
+                en: "A guided tour through the 8 control and simulation modules of Roboldo.",
+                es: "Un recorrido guiado por los 8 módulos de control y simulación de Roboldo."
             },
-            {
-                module: 'sequencer',
-                tag: 'PASSO 7 DE 8 • MONTAGEM DE SCRIPTS',
-                title: 'Crie Roteiros e Coreografias',
-                desc: 'Combine poses capturadas dos sliders, expressões e falas em uma sequência passo a passo.'
+            "Iniciar Tutorial": {
+                en: "Start Tutorial",
+                es: "Iniciar Tutorial"
             },
-            {
-                module: 'telemetry',
-                tag: 'PASSO 8 DE 8 • MONITOR SERIAL',
-                title: 'Comunicação USB com os 2 ESP32',
-                desc: 'Acompanhe os comandos enviados em tempo real para a Cabeça e para os Braços.'
+            "Acesso Direto": {
+                en: "Direct Access",
+                es: "Acceso Directo"
+            },
+            "Explorar Livremente": {
+                en: "Explore Freely",
+                es: "Explorar Libremente"
+            },
+            "Navegue direto pelas partes do Roboldo, câmera SLAM e montagem de scripts.": {
+                en: "Navigate directly through Roboldo's parts, SLAM camera and script builder.",
+                es: "Navega directamente por las partes de Roboldo, cámara SLAM y creador de scripts."
+            },
+            "Acessar Estúdio": {
+                en: "Enter Studio",
+                es: "Entrar al Estudio"
+            },
+            "Anterior": {
+                en: "Previous",
+                es: "Anterior"
+            },
+            "Próximo": {
+                en: "Next",
+                es: "Siguiente"
+            },
+            "Concluir": {
+                en: "Finish",
+                es: "Finalizar"
+            },
+            "Roboldo IDE • Controle Dual-ESP, Visão & Coreografias": {
+                en: "Roboldo IDE • Dual-ESP Control, Vision & Choreographies",
+                es: "Roboldo IDE • Control Dual-ESP, Visión y Coreografías"
+            },
+            "Visitante": {
+                en: "Guest",
+                es: "Visitante"
+            },
+            "Simulação": {
+                en: "Simulation",
+                es: "Simulación"
+            },
+            "Conectado": {
+                en: "Connected",
+                es: "Conectado"
+            },
+            "Conectar": {
+                en: "Connect",
+                es: "Conectar"
+            },
+            "1. Início": {
+                en: "1. Home",
+                es: "1. Inicio"
+            },
+            "2. Cabeça": {
+                en: "2. Head",
+                es: "2. Cabeza"
+            },
+            "3. Braços": {
+                en: "3. Arms",
+                es: "3. Brazos"
+            },
+            "4. Voz": {
+                en: "4. Voice",
+                es: "4. Voz"
+            },
+            "5. Mapa": {
+                en: "5. Map",
+                es: "5. Mapa"
+            },
+            "6. Visão": {
+                en: "6. Vision",
+                es: "6. Visión"
+            },
+            "7. Scripts": {
+                en: "7. Scripts",
+                es: "7. Scripts"
+            },
+            "8. Serial": {
+                en: "8. Serial",
+                es: "8. Serial"
+            },
+            "Módulos do Roboldo": {
+                en: "Roboldo Modules",
+                es: "Módulos de Roboldo"
+            },
+            "1. Início & Partes": {
+                en: "1. Home & Parts",
+                es: "1. Inicio y Partes"
+            },
+            "Visão geral e macros": {
+                en: "Overview and macros",
+                es: "Vista general y macros"
+            },
+            "2. Cabeça & Rosto": {
+                en: "2. Head & Face",
+                es: "2. Cabeza y Rostro"
+            },
+            "Expressões e pescoço 2-DoF": {
+                en: "Expressions & 2-DoF neck",
+                es: "Expresiones y cuello 2-DoF"
+            },
+            "3. Braços (3-DoF)": {
+                en: "3. Arms (3-DoF)",
+                es: "3. Brazos (3-DoF)"
+            },
+            "Coreografias e 6 ângulos": {
+                en: "Choreographies & 6 angles",
+                es: "Coreografías y 6 ángulos"
+            },
+            "4. Voz do Roboldo": {
+                en: "4. Roboldo's Voice",
+                es: "4. Voz de Roboldo"
+            },
+            "Piper TTS e lip-sync": {
+                en: "Piper TTS & lip-sync",
+                es: "Piper TTS y lip-sync"
+            },
+            "5. Mapeamento & SLAM": {
+                en: "5. Mapping & SLAM",
+                es: "5. Mapeo y SLAM"
+            },
+            "Câmera e mapa 2D": {
+                en: "Camera & 2D map",
+                es: "Cámara y mapa 2D"
+            },
+            "6. Visão Computacional": {
+                en: "6. Computer Vision",
+                es: "6. Visión Artificial"
+            },
+            "Rastreamento e detecção": {
+                en: "Tracking & detection",
+                es: "Seguimiento y detección"
+            },
+            "7. Montar Scripts": {
+                en: "7. Script Builder",
+                es: "7. Crear Scripts"
+            },
+            "Timeline e roteiros": {
+                en: "Timeline & routines",
+                es: "Línea de tiempo y guiones"
+            },
+            "8. Monitor Serial": {
+                en: "8. Serial Monitor",
+                es: "8. Monitor Serial"
+            },
+            "Comandos USB C++/JSON": {
+                en: "USB C++/JSON commands",
+                es: "Comandos USB C++/JSON"
+            },
+            "Painel Unificado do Roboldo": {
+                en: "Unified Roboldo Dashboard",
+                es: "Panel Unificado de Roboldo"
+            },
+            "Bem-vindo(a)! Conheça as Partes do Roboldo": {
+                en: "Welcome! Meet Roboldo's Parts",
+                es: "¡Bienvenido(a)! Conoce las Partes de Roboldo"
+            },
+            "Mini Tutorial": {
+                en: "Mini Tutorial",
+                es: "Mini Tutorial"
+            },
+            "Montar Script": {
+                en: "Build Script",
+                es: "Crear Script"
+            },
+            "Ações Rápidas Sincronizadas (Cabeça + Braços)": {
+                en: "Synchronized Quick Actions (Head + Arms)",
+                es: "Acciones Rápidas Sincronizadas (Cabeza + Brazos)"
+            },
+            "Neutro Total": {
+                en: "Full Neutral",
+                es: "Neutro Total"
+            },
+            "Olá Feliz": {
+                en: "Happy Hello",
+                es: "Hola Feliz"
+            },
+            "Abraço Acolhedor": {
+                en: "Warm Hug",
+                es: "Abrazo Cálido"
+            },
+            "Cumprimento": {
+                en: "Handshake",
+                es: "Saludo Formal"
+            },
+            "Surpreso + Aceno Duplo": {
+                en: "Surprised + Double Wave",
+                es: "Sorprendido + Saludo Doble"
+            },
+            "Mãos na Cintura": {
+                en: "Hands on Hips",
+                es: "Manos en la Cintura"
+            },
+            "Modo Festa": {
+                en: "Party Mode",
+                es: "Modo Fiesta"
+            },
+            "Arquitetura do Sistema • Roboldo IDE": {
+                en: "System Architecture • Roboldo IDE",
+                es: "Arquitectura del Sistema • Roboldo IDE"
+            },
+            "O que é o Roboldo IDE e como o Roboldo funciona?": {
+                en: "What is Roboldo IDE and how does Roboldo work?",
+                es: "¿Qué es Roboldo IDE y cómo funciona Roboldo?"
+            },
+            "Cabeça DWIN & Pescoço 2-DoF": {
+                en: "DWIN Head & 2-DoF Neck",
+                es: "Cabeza DWIN y Cuello 2-DoF"
+            },
+            "Tela facial dinâmica, orelhas articuladas e pescoço com rotação horizontal (Yaw) e vertical (Pitch).": {
+                en: "Dynamic facial display, articulated ears and neck with horizontal (Yaw) and vertical (Pitch) rotation.",
+                es: "Pantalla facial dinámica, orejas articuladas y cuello con rotación horizontal (Yaw) y vertical (Pitch)."
+            },
+            "Braços 3-DoF & Voz Offline": {
+                en: "3-DoF Arms & Offline Voice",
+                es: "Brazos 3-DoF y Voz Offline"
+            },
+            "6 juntas controladas via PWM de 14-Bits sincronizadas com síntese neural Piper TTS e lip-sync.": {
+                en: "6 joints controlled via 14-Bit PWM synchronized with Piper TTS neural synthesis and lip-sync.",
+                es: "6 articulaciones controladas vía PWM de 14-Bits sincronizadas con síntesis neuronal Piper TTS y lip-sync."
+            },
+            "Mapeamento SLAM & Visão": {
+                en: "SLAM Mapping & Vision",
+                es: "Mapeo SLAM y Visión"
+            },
+            "Câmera integrada para construção de mapa 2D do ambiente e rastreamento facial automático.": {
+                en: "Integrated camera for 2D environment mapping and automatic face tracking.",
+                es: "Cámara integrada para construcción de mapa 2D del entorno y seguimiento facial automático."
+            },
+            "Montagem de Scripts": {
+                en: "Script Builder",
+                es: "Creación de Scripts"
+            },
+            "Timeline visual para capturar poses dos sliders e criar coreografias completas sem regravar o ESP32.": {
+                en: "Visual timeline to capture slider poses and create full choreographies without reflashing the ESP32.",
+                es: "Línea de tiempo visual para capturar poses de los sliders y crear coreografías completas sin reprogramar el ESP32."
+            },
+            "Cabeça & Rosto DWIN (Pescoço 2-DoF)": {
+                en: "DWIN Head & Face (2-DoF Neck)",
+                es: "Cabeza y Rostro DWIN (Cuello 2-DoF)"
+            },
+            "Escolha entre 6 expressões faciais na tela do robô e movimente as duas orelhas e o pescoço em 2 eixos (Yaw e Pitch).": {
+                en: "Choose among 6 facial expressions on the robot screen and move both ears and the 2-axis neck (Yaw and Pitch).",
+                es: "Elige entre 6 expresiones faciales en la pantalla del robot y mueve las dos orejas y el cuello en 2 ejes (Yaw y Pitch)."
+            },
+            "Configurar Cabeça →": {
+                en: "Configure Head →",
+                es: "Configurar Cabeza →"
+            },
+            "Braços Articulados (3-DoF)": {
+                en: "Articulated Arms (3-DoF)",
+                es: "Brazos Articulados (3-DoF)"
+            },
+            "Acione coreografias prontas (acenos, abraço, dança) ou ajuste os 6 ângulos dos ombros e cotovelos com espelhamento.": {
+                en: "Trigger built-in choreographies (waves, hug, dance) or adjust the 6 shoulder and elbow angles with mirroring.",
+                es: "Activa coreografías listas (saludos, abrazo, baile) o ajusta los 6 ángulos de hombros y codos con simetría."
+            },
+            "Configurar Braços →": {
+                en: "Configure Arms →",
+                es: "Configurar Brazos →"
+            },
+            "Voz Offline & Sincronia Labial": {
+                en: "Offline Voice & Lip-Sync",
+                es: "Voz Offline y Sincronía Labial"
+            },
+            "Digite qualquer frase para o Roboldo falar em português com síntese neural Piper TTS e ritmo labial DWIN.": {
+                en: "Type any phrase for Roboldo to speak with Piper TTS neural synthesis and DWIN lip-sync rhythm.",
+                es: "Escribe cualquier frase para que Roboldo hable con síntesis neuronal Piper TTS y ritmo labial DWIN."
+            },
+            "Abrir Painel de Voz →": {
+                en: "Open Voice Panel →",
+                es: "Abrir Panel de Voz →"
+            },
+            "Mapeamento & Câmera (SLAM)": {
+                en: "Mapping & Camera (SLAM)",
+                es: "Mapeo y Cámara (SLAM)"
+            },
+            "Acesse a câmera ao vivo para mapear o ambiente 2D (Occupancy Grid), marcar obstáculos e definir destinos (POIs).": {
+                en: "Access the live camera to map the 2D environment (Occupancy Grid), mark obstacles and set destinations (POIs).",
+                es: "Accede a la cámara en vivo para mapear el entorno 2D (Occupancy Grid), marcar obstáculos y definir destinos (POIs)."
+            },
+            "Abrir Mapeamento →": {
+                en: "Open Mapping →",
+                es: "Abrir Mapeo →"
+            },
+            "Visão Computacional": {
+                en: "Computer Vision",
+                es: "Visión Artificial"
+            },
+            "Detecção de rostos, gestos e objetos com auto-tracking sincronizado ao pescoço 2-DoF (Yaw e Pitch).": {
+                en: "Face, gesture and object detection with auto-tracking synchronized with the 2-DoF neck (Yaw and Pitch).",
+                es: "Detección de rostros, gestos y objetos con seguimiento automático sincronizado al cuello 2-DoF (Yaw y Pitch)."
+            },
+            "Abrir Visão Computacional →": {
+                en: "Open Computer Vision →",
+                es: "Abrir Visión Artificial →"
+            },
+            "Crie apresentações passo a passo combinando poses dos sliders, expressões e falas no tempo certo.": {
+                en: "Create step-by-step presentations combining slider poses, facial expressions and speech with accurate timing.",
+                es: "Crea presentaciones paso a paso combinando poses de los sliders, expresiones y voz en el tiempo exacto."
+            },
+            "Montar Scripts →": {
+                en: "Build Scripts →",
+                es: "Crear Scripts →"
+            },
+            "Cabeça & Expressões Faciais DWIN": {
+                en: "DWIN Head & Facial Expressions",
+                es: "Cabeza y Expresiones Faciales DWIN"
+            },
+            "Enviar para Cabeça": {
+                en: "Send to Head",
+                es: "Enviar a Cabeza"
+            },
+            "1. Modo do Rosto": {
+                en: "1. Face Mode",
+                es: "1. Modo del Rostro"
+            },
+            "Neutro": {
+                en: "Neutral",
+                es: "Neutro"
+            },
+            "Emoção": {
+                en: "Emotion",
+                es: "Emoción"
+            },
+            "Falando": {
+                en: "Talking",
+                es: "Hablando"
+            },
+            "2. Escolha a Expressão": {
+                en: "2. Choose Expression",
+                es: "2. Elige la Expresión"
+            },
+            "Feliz ('h')": {
+                en: "Happy ('h')",
+                es: "Feliz ('h')"
+            },
+            "Surpreso ('u')": {
+                en: "Surprised ('u')",
+                es: "Sorprendido ('u')"
+            },
+            "Confuso ('c')": {
+                en: "Confused ('c')",
+                es: "Confundido ('c')"
+            },
+            "Bravo ('a')": {
+                en: "Angry ('a')",
+                es: "Enojado ('a')"
+            },
+            "Medo ('f')": {
+                en: "Fear ('f')",
+                es: "Miedo ('f')"
+            },
+            "Triste ('s')": {
+                en: "Sad ('s')",
+                es: "Triste ('s')"
+            },
+            "3. Ritmo da Boca ao Falar": {
+                en: "3. Lip-Sync Talking Rhythm",
+                es: "3. Ritmo de la Boca al Hablar"
+            },
+            "Sílabas ('1')": {
+                en: "Syllables ('1')",
+                es: "Sílabas ('1')"
+            },
+            "Animado ('2')": {
+                en: "Animated ('2')",
+                es: "Animado ('2')"
+            },
+            "Rápido ('3')": {
+                en: "Fast ('3')",
+                es: "Rápido ('3')"
+            },
+            "4. Posição das Orelhas e Pescoço 2-DoF (Lados + Cima/Baixo)": {
+                en: "4. Ears & 2-DoF Neck Position (Yaw + Pitch)",
+                es: "4. Posición de Orejas y Cuello 2-DoF (Lados + Arriba/Abajo)"
+            },
+            "Controle independente de Orelhas, Pescoço Horizontal (Yaw) e Pescoço Vertical (Pitch)": {
+                en: "Independent control of Ears, Horizontal Neck (Yaw) and Vertical Neck (Pitch)",
+                es: "Control independiente de Orejas, Cuello Horizontal (Yaw) y Cuello Vertical (Pitch)"
+            },
+            "Modo Manual RAW": {
+                en: "RAW Manual Mode",
+                es: "Modo Manual RAW"
+            },
+            "Orelha Direita": {
+                en: "Right Ear",
+                es: "Oreja Derecha"
+            },
+            "Orelha Esquerda": {
+                en: "Left Ear",
+                es: "Oreja Izquierda"
+            },
+            "Pescoço — Lados (Yaw / Esq-Dir)": {
+                en: "Neck — Horizontal (Yaw / Left-Right)",
+                es: "Cuello — Lados (Yaw / Izq-Der)"
+            },
+            "Pescoço — Cima e Baixo (Pitch)": {
+                en: "Neck — Vertical (Pitch / Up-Down)",
+                es: "Cuello — Arriba y Abajo (Pitch)"
+            },
+            "Suavidade do Movimento (Delay por Grau)": {
+                en: "Movement Smoothness (Delay per Degree)",
+                es: "Suavidad del Movimiento (Retardo por Grado)"
+            },
+            "Salvar Pose no Script": {
+                en: "Save Pose to Script",
+                es: "Guardar Pose en Script"
+            },
+            "Enviar 6 Ângulos": {
+                en: "Send 6 Angles",
+                es: "Enviar 6 Ángulos"
+            },
+            "1. Coreografias Prontas em Hardware": {
+                en: "1. Hardware Built-in Choreographies",
+                es: "1. Coreografías Listas en Hardware"
+            },
+            "Neutro ('n')": {
+                en: "Neutral ('n')",
+                es: "Neutro ('n')"
+            },
+            "Aceno Dir ('ad')": {
+                en: "Right Wave ('ad')",
+                es: "Saludo Der ('ad')"
+            },
+            "Aceno Esq ('ae')": {
+                en: "Left Wave ('ae')",
+                es: "Saludo Izq ('ae')"
+            },
+            "Aceno Duplo ('a2')": {
+                en: "Double Wave ('a2')",
+                es: "Saludo Doble ('a2')"
+            },
+            "Abraço ('ab')": {
+                en: "Hug ('ab')",
+                es: "Abrazo ('ab')"
+            },
+            "Na Cintura ('mc')": {
+                en: "On Hips ('mc')",
+                es: "En Cintura ('mc')"
+            },
+            "Aperto Mão ('am')": {
+                en: "Handshake ('am')",
+                es: "Apretón Manos ('am')"
+            },
+            "Dancinha ('d')": {
+                en: "Dance ('d')",
+                es: "Baile ('d')"
+            },
+            "2. Ajuste Manual dos 6 Ângulos (0° a 180°)": {
+                en: "2. Manual Adjustment of the 6 Angles (0° to 180°)",
+                es: "2. Ajuste Manual de los 6 Ángulos (0° a 180°)"
+            },
+            "Espelhar Braços": {
+                en: "Mirror Arms",
+                es: "Espejar Brazos"
+            },
+            "Braço Direito": {
+                en: "Right Arm",
+                es: "Brazo Derecho"
+            },
+            "Braço Esquerdo": {
+                en: "Left Arm",
+                es: "Brazo Izquierdo"
+            },
+            "Ombro Pitch": {
+                en: "Shoulder Pitch",
+                es: "Hombro Pitch"
+            },
+            "Ombro Roll": {
+                en: "Shoulder Roll",
+                es: "Hombro Roll"
+            },
+            "Cotovelo": {
+                en: "Elbow",
+                es: "Codo"
+            },
+            "Voz do Roboldo (Piper TTS Offline)": {
+                en: "Roboldo's Voice (Piper TTS Offline)",
+                es: "Voz de Roboldo (Piper TTS Offline)"
+            },
+            "Síntese neural em português com sincronia labial DWIN": {
+                en: "Neural voice synthesis with DWIN lip-sync",
+                es: "Síntesis neuronal de voz con sincronía labial DWIN"
+            },
+            "Pronto": {
+                en: "Ready",
+                es: "Listo"
+            },
+            "Texto para o Roboldo Falar:": {
+                en: "Text for Roboldo to Speak:",
+                es: "Texto para que Roboldo Hable:"
+            },
+            "Restaurar texto COIN": {
+                en: "Restore COIN text",
+                es: "Restaurar texto COIN"
+            },
+            "Tom (Pitch)": {
+                en: "Pitch",
+                es: "Tono (Pitch)"
+            },
+            "Velocidade": {
+                en: "Speed (Rate)",
+                es: "Velocidad"
+            },
+            "Volume": {
+                en: "Volume",
+                es: "Volumen"
+            },
+            "Voz Local:": {
+                en: "Local Voice:",
+                es: "Voz Local:"
+            },
+            "Ritmo da Boca DWIN:": {
+                en: "DWIN Mouth Rhythm:",
+                es: "Ritmo de Boca DWIN:"
+            },
+            "Falar Agora": {
+                en: "Speak Now",
+                es: "Hablar Ahora"
+            },
+            "Parar": {
+                en: "Stop",
+                es: "Detener"
+            },
+            "Pronto para falar offline.": {
+                en: "Ready to speak offline.",
+                es: "Listo para hablar offline."
+            },
+            "Mapeamento do Ambiente & Acesso à Câmera (SLAM)": {
+                en: "Environment Mapping & Camera Access (SLAM)",
+                es: "Mapeo del Entorno y Acceso a Cámara (SLAM)"
+            },
+            "MAPEAMENTO ATIVO": {
+                en: "MAPPING ACTIVE",
+                es: "MAPEO ACTIVO"
+            },
+            "Use a câmera do Roboldo para escanear o ambiente e construir o mapa de ocupação 2D": {
+                en: "Use Roboldo's camera to scan the environment and build the 2D occupancy grid map",
+                es: "Usa la cámara de Roboldo para escanear el entorno y construir el mapa de ocupación 2D"
+            },
+            "Ativar Câmera Real": {
+                en: "Enable Real Camera",
+                es: "Activar Cámara Real"
+            },
+            "Desativar Câmera": {
+                en: "Disable Camera",
+                es: "Desactivar Cámara"
+            },
+            "Escanear Setor": {
+                en: "Scan Sector",
+                es: "Escanear Sector"
+            },
+            "Limpar Mapa": {
+                en: "Clear Map",
+                es: "Limpiar Mapa"
+            },
+            "Modo Simulação 3D": {
+                en: "3D Simulation Mode",
+                es: "Modo Simulación 3D"
+            },
+            "Câmera Ao Vivo": {
+                en: "Live Camera",
+                es: "Cámara en Vivo"
+            },
+            "Marcar Destino": {
+                en: "Set Destination",
+                es: "Marcar Destino"
+            },
+            "Obstáculo": {
+                en: "Obstacle",
+                es: "Obstáculo"
+            },
+            "Salvar POI": {
+                en: "Save POI",
+                es: "Guardar POI"
+            },
+            "Navegar →": {
+                en: "Navigate →",
+                es: "Navegar →"
+            },
+            "Pontos de Interesse (POIs) Mapeados:": {
+                en: "Mapped Points of Interest (POIs):",
+                es: "Puntos de Interés (POIs) Mapeados:"
+            },
+            "📍 Bancada Principal (2.0, 2.0)": {
+                en: "📍 Main Workbench (2.0, 2.0)",
+                es: "📍 Mesa Principal (2.0, 2.0)"
+            },
+            "📍 Entrada LAR/UERN (9.0, 2.0)": {
+                en: "📍 LAR/UERN Entrance (9.0, 2.0)",
+                es: "📍 Entrada LAR/UERN (9.0, 2.0)"
+            },
+            "📍 Palco COIN (10.0, 5.0)": {
+                en: "📍 COIN Stage (10.0, 5.0)",
+                es: "📍 Escenario COIN (10.0, 5.0)"
+            },
+            "⚡ Base Auto-Docking (1.0, 6.0)": {
+                en: "⚡ Auto-Docking Base (1.0, 6.0)",
+                es: "⚡ Base Auto-Docking (1.0, 6.0)"
+            },
+            "Visão Computacional & Percepção IHR": {
+                en: "Computer Vision & HRI Perception",
+                es: "Visión Artificial y Percepción IHR"
+            },
+            "DETECÇÃO ATIVA (30 FPS)": {
+                en: "DETECTION ACTIVE (30 FPS)",
+                es: "DETECCIÓN ACTIVA (30 FPS)"
+            },
+            "Detecção facial, gestos e objetos com rastreamento automático pelo pescoço 2-DoF": {
+                en: "Face, gesture and object detection with automatic 2-DoF neck tracking",
+                es: "Detección facial, gestos y objetos con seguimiento automático del cuello 2-DoF"
+            },
+            "Usar Webcam Real": {
+                en: "Use Real Webcam",
+                es: "Usar Webcam Real"
+            },
+            "Desativar Webcam": {
+                en: "Disable Webcam",
+                es: "Desactivar Webcam"
+            },
+            "Seguir Alvo c/ Pescoço 2-DoF": {
+                en: "Track Target w/ 2-DoF Neck",
+                es: "Seguir Objetivo c/ Cuello 2-DoF"
+            },
+            "Detecção Facial & Emoção": {
+                en: "Face & Emotion Detection",
+                es: "Detección Facial y Emoción"
+            },
+            "Gestos & Mãos (MediaPipe)": {
+                en: "Gestures & Hands (MediaPipe)",
+                es: "Gestos y Manos (MediaPipe)"
+            },
+            "Objetos (YOLO / OpenCV)": {
+                en: "Objects (YOLO / OpenCV)",
+                es: "Objetos (YOLO / OpenCV)"
+            },
+            "Marcadores ArUco / QR": {
+                en: "ArUco / QR Markers",
+                es: "Marcadores ArUco / QR"
+            },
+            "Feed de Visão Computacional (Clique p/ mover o alvo)": {
+                en: "Computer Vision Feed (Click to move target)",
+                es: "Feed de Visión Artificial (Clic para mover objetivo)"
+            },
+            "Detecções em Tempo Real": {
+                en: "Real-Time Detections",
+                es: "Detecciones en Tiempo Real"
+            },
+            "Classe Principal": {
+                en: "Primary Class",
+                es: "Clase Principal"
+            },
+            "Pessoa (Rosto Sorrindo)": {
+                en: "Person (Smiling Face)",
+                es: "Persona (Rostro Sonriendo)"
+            },
+            "Tracking Pescoço 2-DoF": {
+                en: "2-DoF Neck Tracking",
+                es: "Seguimiento Cuello 2-DoF"
+            },
+            "Ativo": {
+                en: "Active",
+                es: "Activo"
+            },
+            "Reação Social do Roboldo (IHR)": {
+                en: "Roboldo Social Reaction (HRI)",
+                es: "Reacción Social de Roboldo (IHR)"
+            },
+            "Espelhando sorriso ('h') e mantendo contato visual com o visitante.": {
+                en: "Mirroring smile ('h') and maintaining eye contact with the visitor.",
+                es: "Reflejando sonrisa ('h') y manteniendo contacto visual con el visitante."
+            },
+            "Reagir ao Alvo Detectado": {
+                en: "React to Detected Target",
+                es: "Reaccionar al Objetivo Detectado"
+            },
+            "Montagem de Scripts & Coreografias": {
+                en: "Script & Choreography Builder",
+                es: "Creación de Scripts y Coreografías"
+            },
+            "PARADO": {
+                en: "STOPPED",
+                es: "DETENIDO"
+            },
+            "EXECUTANDO": {
+                en: "RUNNING",
+                es: "EJECUTANDO"
+            },
+            "Monte passos sequenciais com cabeça, braços e voz sincronizados": {
+                en: "Build sequential steps with synchronized head, arms and voice",
+                es: "Crea pasos secuenciales con cabeza, brazos y voz sincronizados"
+            },
+            "1. Apresentação Oficial COIN": {
+                en: "1. Official COIN Presentation",
+                es: "1. Presentación Oficial COIN"
+            },
+            "2. Coreografia Customizada": {
+                en: "2. Custom Choreography",
+                es: "2. Coreografía Personalizada"
+            },
+            "3. Reação Empática & Abraço": {
+                en: "3. Empathetic Reaction & Hug",
+                es: "3. Reacción Empática y Abrazo"
+            },
+            "Passo": {
+                en: "Step",
+                es: "Paso"
+            },
+            "Cabeça": {
+                en: "Head",
+                es: "Cabeza"
+            },
+            "Braços": {
+                en: "Arms",
+                es: "Brazos"
+            },
+            "Fala": {
+                en: "Speech",
+                es: "Voz"
+            },
+            "Tempo": {
+                en: "Delay",
+                es: "Tiempo"
+            },
+            "Ações": {
+                en: "Actions",
+                es: "Acciones"
+            },
+            "Monitor Serial & Payloads Dual-ESP": {
+                en: "Serial Monitor & Dual-ESP Payloads",
+                es: "Monitor Serial y Payloads Dual-ESP"
+            },
+            "Comunicação USB Web Serial com ESP1 Cabeça e ESP2 Braços": {
+                en: "USB Web Serial communication with ESP1 Head and ESP2 Arms",
+                es: "Comunicación USB Web Serial con ESP1 Cabeza y ESP2 Brazos"
+            },
+            "Nativo C++": {
+                en: "Native C++",
+                es: "Nativo C++"
+            },
+            "USB 1 • CABEÇA (9600 bps)": {
+                en: "USB 1 • HEAD (9600 bps)",
+                es: "USB 1 • CABEZA (9600 bps)"
+            },
+            "USB 2 • BRAÇOS (115200 bps)": {
+                en: "USB 2 • ARMS (115200 bps)",
+                es: "USB 2 • BRAZOS (115200 bps)"
+            },
+            "String Nativa": {
+                en: "Native String",
+                es: "String Nativa"
+            },
+            "Pronto para transmitir comandos seriais.": {
+                en: "Ready to transmit serial commands.",
+                es: "Listo para transmitir comandos seriales."
+            },
+            "USB 1 (Cabeça)": {
+                en: "USB 1 (Head)",
+                es: "USB 1 (Cabeza)"
+            },
+            "USB 2 (Braços)": {
+                en: "USB 2 (Arms)",
+                es: "USB 2 (Brazos)"
+            },
+            "Enviar": {
+                en: "Send",
+                es: "Enviar"
+            },
+            "Simulador 3D do Roboldo": {
+                en: "Roboldo 3D Simulator",
+                es: "Simulador 3D de Roboldo"
+            },
+            "Arraste para girar • Cinemática 3-DoF Real": {
+                en: "Drag to rotate • Real 3-DoF Kinematics",
+                es: "Arrastra para girar • Cinemática 3-DoF Real"
+            },
+            "PRONTO": {
+                en: "READY",
+                es: "LISTO"
+            },
+            "3/4 Perspectiva": {
+                en: "3/4 Perspective",
+                es: "3/4 Perspectiva"
+            },
+            "Frontal": {
+                en: "Front",
+                es: "Frontal"
+            },
+            "Lateral (Pitch)": {
+                en: "Side (Pitch)",
+                es: "Lateral (Pitch)"
+            },
+            "Pitch: Frente/Trás • Roll: Cima/Baixo": {
+                en: "Pitch: Front/Back • Roll: Up/Down",
+                es: "Pitch: Frente/Atrás • Roll: Arriba/Abajo"
+            },
+            "Coreografia...": {
+                en: "Choreography...",
+                es: "Coreografía..."
+            },
+            "Cabeça (Orelhas | Pesc)": {
+                en: "Head (Ears | Neck)",
+                es: "Cabeza (Orejas | Cuello)"
+            },
+            "Braços (Dir | Esq)": {
+                en: "Arms (Right | Left)",
+                es: "Brazos (Der | Izq)"
+            },
+            "Serial →": {
+                en: "Serial →",
+                es: "Serial →"
+            },
+            "Ver Robô": {
+                en: "View Robot",
+                es: "Ver Robot"
+            },
+            "Simulador Roboldo": {
+                en: "Roboldo Simulator",
+                es: "Simulador Roboldo"
+            },
+            "Fechar Simulador": {
+                en: "Close Simulator",
+                es: "Cerrar Simulador"
             }
-        ];
+        };
+
+        const TOUR_STEPS_I18N = {
+            pt: [
+                {
+                    module: 'overview',
+                    tag: 'PASSO 1 DE 8 • INÍCIO & PARTES',
+                    title: 'Conheça as Partes do Roboldo',
+                    desc: 'Use as Ações Rápidas para testar o robô inteiro ou clique em qualquer cartão para abrir o módulo correspondente.'
+                },
+                {
+                    module: 'head',
+                    tag: 'PASSO 2 DE 8 • CABEÇA & PESCOÇO 2-DoF',
+                    title: 'Expressões Faciais, Orelhas e Pescoço 2-DoF',
+                    desc: 'Mude a expressão do rosto DWIN ou ajuste as orelhas e os 2 eixos do pescoço (Yaw lados e Pitch cima/baixo).'
+                },
+                {
+                    module: 'arms',
+                    tag: 'PASSO 3 DE 8 • BRAÇOS ARTICULADOS',
+                    title: 'Coreografias e 6 Ângulos dos Braços',
+                    desc: 'Escolha um gesto pronto (como Aceno ou Abraço) ou personalize os 6 ângulos dos ombros e cotovelos.'
+                },
+                {
+                    module: 'voice',
+                    tag: 'PASSO 4 DE 8 • VOZ DO ROBOLDO',
+                    title: 'Síntese de Voz em Português',
+                    desc: 'Digite qualquer texto para o Roboldo falar com sincronia automática da boca.'
+                },
+                {
+                    module: 'mapping',
+                    tag: 'PASSO 5 DE 8 • MAPEAMENTO & CÂMERA (SLAM)',
+                    title: 'Mapeamento 2D do Ambiente com Câmera',
+                    desc: 'Use a câmera para mapear o ambiente, marcar obstáculos e navegar até Pontos de Interesse (POIs).'
+                },
+                {
+                    module: 'vision',
+                    tag: 'PASSO 6 DE 8 • VISÃO COMPUTACIONAL',
+                    title: 'Detecção Facial, Gestos e Auto-Tracking',
+                    desc: 'Detecte rostos, mãos e objetos e faça o pescoço 2-DoF acompanhar o alvo automaticamente.'
+                },
+                {
+                    module: 'sequencer',
+                    tag: 'PASSO 7 DE 8 • MONTAGEM DE SCRIPTS',
+                    title: 'Crie Roteiros e Coreografias',
+                    desc: 'Combine poses capturadas dos sliders, expressões e falas em uma sequência passo a passo.'
+                },
+                {
+                    module: 'telemetry',
+                    tag: 'PASSO 8 DE 8 • MONITOR SERIAL',
+                    title: 'Comunicação USB com os 2 ESP32',
+                    desc: 'Acompanhe os comandos enviados em tempo real para a Cabeça e para os Braços.'
+                }
+            ],
+            en: [
+                {
+                    module: 'overview',
+                    tag: 'STEP 1 OF 8 • HOME & PARTS',
+                    title: 'Meet Roboldo’s Parts',
+                    desc: 'Use Quick Actions to test the entire robot or click any card to open its corresponding module.'
+                },
+                {
+                    module: 'head',
+                    tag: 'STEP 2 OF 8 • HEAD & 2-DoF NECK',
+                    title: 'Facial Expressions, Ears & 2-DoF Neck',
+                    desc: 'Change the DWIN facial expression or adjust the ears and 2-axis neck (horizontal Yaw and vertical Pitch).'
+                },
+                {
+                    module: 'arms',
+                    tag: 'STEP 3 OF 8 • ARTICULATED ARMS',
+                    title: 'Choreographies & 6 Arm Angles',
+                    desc: 'Choose a built-in gesture (like Wave or Hug) or customize all 6 shoulder and elbow angles.'
+                },
+                {
+                    module: 'voice',
+                    tag: 'STEP 4 OF 8 • ROBOLDO’S VOICE',
+                    title: 'Neural Voice Synthesis & Lip-Sync',
+                    desc: 'Type any text for Roboldo to speak with automatic mouth synchronization.'
+                },
+                {
+                    module: 'mapping',
+                    tag: 'STEP 5 OF 8 • MAPPING & CAMERA (SLAM)',
+                    title: '2D Environment Mapping with Camera',
+                    desc: 'Use the camera to scan the room, mark obstacles and navigate to Points of Interest (POIs).'
+                },
+                {
+                    module: 'vision',
+                    tag: 'STEP 6 OF 8 • COMPUTER VISION',
+                    title: 'Face Detection, Gestures & Auto-Tracking',
+                    desc: 'Detect faces, hands and objects and let the 2-DoF neck track the target automatically.'
+                },
+                {
+                    module: 'sequencer',
+                    tag: 'STEP 7 OF 8 • SCRIPT BUILDER',
+                    title: 'Build Routines & Choreographies',
+                    desc: 'Combine captured slider poses, expressions and speech in a step-by-step timeline.'
+                },
+                {
+                    module: 'telemetry',
+                    tag: 'STEP 8 OF 8 • SERIAL MONITOR',
+                    title: 'USB Communication with Both ESP32s',
+                    desc: 'Inspect real-time commands sent to the Head and Arms controllers.'
+                }
+            ],
+            es: [
+                {
+                    module: 'overview',
+                    tag: 'PASO 1 DE 8 • INICIO Y PARTES',
+                    title: 'Conoce las Partes de Roboldo',
+                    desc: 'Usa las Acciones Rápidas para probar todo el robot o haz clic en cualquier tarjeta para abrir su módulo.'
+                },
+                {
+                    module: 'head',
+                    tag: 'PASO 2 DE 8 • CABEZA Y CUELLO 2-DoF',
+                    title: 'Expresiones Faciales, Orejas y Cuello 2-DoF',
+                    desc: 'Cambia la expresión del rostro DWIN o ajusta las orejas y los 2 ejes del cuello (Yaw lados y Pitch arriba/abajo).'
+                },
+                {
+                    module: 'arms',
+                    tag: 'PASO 3 DE 8 • BRAZOS ARTICULADOS',
+                    title: 'Coreografías y 6 Ángulos de Brazos',
+                    desc: 'Elige un gesto listo (como Saludo o Abrazo) o personaliza los 6 ángulos de hombros y codos.'
+                },
+                {
+                    module: 'voice',
+                    tag: 'PASO 4 DE 8 • VOZ DE ROBOLDO',
+                    title: 'Síntesis de Voz y Sincronía Labial',
+                    desc: 'Escribe cualquier texto para que Roboldo hable con sincronización automática de la boca.'
+                },
+                {
+                    module: 'mapping',
+                    tag: 'PASO 5 DE 8 • MAPEO Y CÁMARA (SLAM)',
+                    title: 'Mapeo 2D del Entorno con Cámara',
+                    desc: 'Usa la cámara para mapear el entorno, marcar obstáculos y navegar hacia Puntos de Interés (POIs).'
+                },
+                {
+                    module: 'vision',
+                    tag: 'PASO 6 DE 8 • VISIÓN ARTIFICIAL',
+                    title: 'Detección Facial, Gestos y Auto-Tracking',
+                    desc: 'Detecta rostros, manos y objetos y haz que el cuello 2-DoF siga al objetivo automáticamente.'
+                },
+                {
+                    module: 'sequencer',
+                    tag: 'PASO 7 DE 8 • CREACIÓN DE SCRIPTS',
+                    title: 'Crea Guiones y Coreografías',
+                    desc: 'Combina poses capturadas de los sliders, expresiones y voz en una secuencia paso a paso.'
+                },
+                {
+                    module: 'telemetry',
+                    tag: 'PASO 8 DE 8 • MONITOR SERIAL',
+                    title: 'Comunicación USB con los 2 ESP32',
+                    desc: 'Sigue los comandos enviados en tiempo real a la Cabeza y a los Brazos.'
+                }
+            ]
+        };
+
+        const DEFAULT_COIN_TEXT_I18N = {
+            pt: "Olá, eu sou o Roboldo! Robô social da UERN! É um prazer estar com você aqui no COIN! Eu sou a versão 2.0. Meu irmão 1.0 e 1.2 também estão aqui presentes. Por ser o irmão mais novo, eu tenho braços, um rostinho dinâmico e posso ter acesso à câmera! Também tenho suporte pra tablet, onde podem ser alocados programas com jogos e pranchas assistivas. Quer saber mais sobre mim? Pergunta pra minha programadora, Artemísia! Bom evento!",
+            en: "Hello, I am Roboldo! The social robot from UERN! It is a pleasure to be here with you at COIN! I am version 2.0. My brothers 1.0 and 1.2 are also here today. As the youngest brother, I have articulated arms, a dynamic face, and camera vision! I also have a tablet mount for educational games and assistive communication boards. Want to know more about me? Ask my programmer, Artemísia! Enjoy the event!",
+            es: "¡Hola, soy Roboldo! ¡El robot social de la UERN! ¡Es un placer estar contigo aquí en COIN! Soy la versión 2.0. Mis hermanos 1.0 y 1.2 también están presentes. ¡Por ser el hermano menor, tengo brazos articulados, una carita dinámica y acceso a la cámara! También tengo soporte para tablet con juegos y tableros asistivos. ¿Quieres saber más sobre mí? ¡Pregúntale a mi programadora, Artemísia! ¡Buen evento!"
+        };
+
+        const PRESET_SCRIPTS_I18N = {
+            pt: {
+                coin_presentation: [
+                    { label: "1. Saudação Inicial + Aceno", headCmd: "h", armCmd: "ad", speakText: "Olá, eu sou o Roboldo! Robô social da UERN! É um prazer estar com você aqui no COIN!", talkStyle: "2", waitForSpeech: true, delayMs: 600 },
+                    { label: "2. Apresentar Irmãos", headCmd: "RAW:135,135,112,12", armCmd: "60,135,110,120,45,70", speakText: "Eu sou a versão 2.0. Meu irmão 1.0 e 1.2 também estão aqui presentes.", talkStyle: "1", waitForSpeech: true, delayMs: 500 },
+                    { label: "3. Mostrar Braços e Rosto", headCmd: "u", armCmd: "150,160,145,30,25,35", speakText: "Por ser o irmão mais novo, eu tenho braços, um rostinho dinâmico e posso ter acesso à câmera!", talkStyle: "2", waitForSpeech: true, delayMs: 500 },
+                    { label: "4. Homenagem + Abraço", headCmd: "h", armCmd: "ab", speakText: "Quer saber mais sobre mim? Pergunta pra minha programadora, Artemísia! Bom evento!", talkStyle: "2", waitForSpeech: true, delayMs: 800 },
+                    { label: "5. Retorno ao Neutro", headCmd: "n", armCmd: "n", speakText: "", talkStyle: "1", waitForSpeech: false, delayMs: 800 }
+                ],
+                custom_choreo: [
+                    { label: "Passo 1: Atenção", headCmd: "RAW:155,155,90,8", armCmd: "75,165,155,105,15,25", speakText: "Iniciando demonstração de movimentos customizados!", talkStyle: "2", waitForSpeech: true, delayMs: 400 },
+                    { label: "Passo 2: Pose Assimétrica", headCmd: "RAW:160,40,65,10", armCmd: "165,160,130,20,80,90", speakText: "", talkStyle: "1", waitForSpeech: false, delayMs: 900 },
+                    { label: "Passo 3: Pose de Vitória", headCmd: "h", armCmd: "170,165,120,10,20,60", speakText: "Qualquer ângulo pode ser coreografado pelo painel!", talkStyle: "2", waitForSpeech: true, delayMs: 800 },
+                    { label: "Passo 4: Neutro", headCmd: "n", armCmd: "90,90,90,90,90,90", speakText: "", talkStyle: "1", waitForSpeech: false, delayMs: 600 }
+                ],
+                empathy_hug: [
+                    { label: "1. Surpresa", headCmd: "u", armCmd: "130,145,70,50,35,110", speakText: "Uau! Que alegria encontrar você por aqui!", talkStyle: "2", waitForSpeech: true, delayMs: 400 },
+                    { label: "2. Sorriso + Abraço", headCmd: "h", armCmd: "ab", speakText: "Vem cá me dar um abraço de robô!", talkStyle: "2", waitForSpeech: true, delayMs: 1000 },
+                    { label: "3. Aceno Duplo", headCmd: "h", armCmd: "a2", speakText: "", talkStyle: "1", waitForSpeech: false, delayMs: 1200 }
+                ]
+            },
+            en: {
+                coin_presentation: [
+                    { label: "1. Initial Greeting + Wave", headCmd: "h", armCmd: "ad", speakText: "Hello, I am Roboldo! The social robot from UERN! It is a pleasure to be here with you at COIN!", talkStyle: "2", waitForSpeech: true, delayMs: 600 },
+                    { label: "2. Introduce Brothers", headCmd: "RAW:135,135,112,12", armCmd: "60,135,110,120,45,70", speakText: "I am version 2.0. My brothers 1.0 and 1.2 are also here today.", talkStyle: "1", waitForSpeech: true, delayMs: 500 },
+                    { label: "3. Show Arms & Face", headCmd: "u", armCmd: "150,160,145,30,25,35", speakText: "As the youngest brother, I have articulated arms, a dynamic face, and camera vision!", talkStyle: "2", waitForSpeech: true, delayMs: 500 },
+                    { label: "4. Tribute + Hug", headCmd: "h", armCmd: "ab", speakText: "Want to know more about me? Ask my programmer, Artemísia! Enjoy the event!", talkStyle: "2", waitForSpeech: true, delayMs: 800 },
+                    { label: "5. Return to Neutral", headCmd: "n", armCmd: "n", speakText: "", talkStyle: "1", waitForSpeech: false, delayMs: 800 }
+                ],
+                custom_choreo: [
+                    { label: "Step 1: Attention", headCmd: "RAW:155,155,90,8", armCmd: "75,165,155,105,15,25", speakText: "Starting custom movement demonstration!", talkStyle: "2", waitForSpeech: true, delayMs: 400 },
+                    { label: "Step 2: Asymmetric Pose", headCmd: "RAW:160,40,65,10", armCmd: "165,160,130,20,80,90", speakText: "", talkStyle: "1", waitForSpeech: false, delayMs: 900 },
+                    { label: "Step 3: Victory Pose", headCmd: "h", armCmd: "170,165,120,10,20,60", speakText: "Any angle can be choreographed from the dashboard!", talkStyle: "2", waitForSpeech: true, delayMs: 800 },
+                    { label: "Step 4: Neutral", headCmd: "n", armCmd: "90,90,90,90,90,90", speakText: "", talkStyle: "1", waitForSpeech: false, delayMs: 600 }
+                ],
+                empathy_hug: [
+                    { label: "1. Surprise", headCmd: "u", armCmd: "130,145,70,50,35,110", speakText: "Wow! What a joy to see you here!", talkStyle: "2", waitForSpeech: true, delayMs: 400 },
+                    { label: "2. Smile + Hug", headCmd: "h", armCmd: "ab", speakText: "Come here and give me a robot hug!", talkStyle: "2", waitForSpeech: true, delayMs: 1000 },
+                    { label: "3. Double Wave", headCmd: "h", armCmd: "a2", speakText: "", talkStyle: "1", waitForSpeech: false, delayMs: 1200 }
+                ]
+            },
+            es: {
+                coin_presentation: [
+                    { label: "1. Saludo Inicial + Mano", headCmd: "h", armCmd: "ad", speakText: "¡Hola, soy Roboldo! ¡El robot social de la UERN! ¡Es un placer estar contigo aquí en COIN!", talkStyle: "2", waitForSpeech: true, delayMs: 600 },
+                    { label: "2. Presentar Hermanos", headCmd: "RAW:135,135,112,12", armCmd: "60,135,110,120,45,70", speakText: "Soy la versión 2.0. Mis hermanos 1.0 y 1.2 también están presentes.", talkStyle: "1", waitForSpeech: true, delayMs: 500 },
+                    { label: "3. Mostrar Brazos y Rostro", headCmd: "u", armCmd: "150,160,145,30,25,35", speakText: "¡Por ser el hermano menor, tengo brazos articulados, una carita dinámica y acceso a la cámara!", talkStyle: "2", waitForSpeech: true, delayMs: 500 },
+                    { label: "4. Homenaje + Abrazo", headCmd: "h", armCmd: "ab", speakText: "¿Quieres saber más sobre mí? ¡Pregúntale a mi programadora, Artemísia! ¡Buen evento!", talkStyle: "2", waitForSpeech: true, delayMs: 800 },
+                    { label: "5. Retorno al Neutro", headCmd: "n", armCmd: "n", speakText: "", talkStyle: "1", waitForSpeech: false, delayMs: 800 }
+                ],
+                custom_choreo: [
+                    { label: "Paso 1: Atención", headCmd: "RAW:155,155,90,8", armCmd: "75,165,155,105,15,25", speakText: "¡Iniciando demostración de movimientos personalizados!", talkStyle: "2", waitForSpeech: true, delayMs: 400 },
+                    { label: "Paso 2: Pose Asimétrica", headCmd: "RAW:160,40,65,10", armCmd: "165,160,130,20,80,90", speakText: "", talkStyle: "1", waitForSpeech: false, delayMs: 900 },
+                    { label: "Paso 3: Pose de Victoria", headCmd: "h", armCmd: "170,165,120,10,20,60", speakText: "¡Cualquier ángulo puede ser coreografiado desde el panel!", talkStyle: "2", waitForSpeech: true, delayMs: 800 },
+                    { label: "Paso 4: Neutro", headCmd: "n", armCmd: "90,90,90,90,90,90", speakText: "", talkStyle: "1", waitForSpeech: false, delayMs: 600 }
+                ],
+                empathy_hug: [
+                    { label: "1. Sorpresa", headCmd: "u", armCmd: "130,145,70,50,35,110", speakText: "¡Guau! ¡Qué alegría encontrarte por aquí!", talkStyle: "2", waitForSpeech: true, delayMs: 400 },
+                    { label: "2. Sonrisa + Abrazo", headCmd: "h", armCmd: "ab", speakText: "¡Ven aquí y dame un abrazo de robot!", talkStyle: "2", waitForSpeech: true, delayMs: 1000 },
+                    { label: "3. Saludo Doble", headCmd: "h", armCmd: "a2", speakText: "", talkStyle: "1", waitForSpeech: false, delayMs: 1200 }
+                ]
+            }
+        };
+
+        const I18N_UI_STRINGS = {
+            pt: {
+                htmlLang: 'pt-BR',
+                speechLang: 'pt-BR',
+                guest: 'Visitante',
+                researcher: 'Pesquisador(a)',
+                helloUser: (n) => `Olá, ${n}`,
+                welcomeOverview: (n) => `Olá, ${n}! Conheça as Partes do Roboldo`,
+                overviewHeroDesc: `Acione gestos sincronizados com um clique ou explore os módulos de <strong class="text-[#238689]">Cabeça DWIN</strong>, <strong class="text-[#238689]">Braços 3-DoF</strong>, <strong class="text-[#238689]">Voz Neural</strong> e <strong class="text-[#238689]">Visão & SLAM</strong>.`,
+                aboutIdeDesc: `O <strong class="text-[#021225]">Roboldo</strong> é um robô social, assistivo e educacional desenvolvido no <strong class="text-[#238689]">Laboratório de Automação e Robótica (LAR / UERN)</strong> para interação humano-robô (IHR), atividades pedagógicas e inclusão. O <strong class="text-[#021225]">RoboControl Studio</strong> integra todos os subsistemas em tempo real:`,
+                onboardPlaceholder: 'Digite seu nome (ex: Artemísia)...',
+                serialPlaceholder: 'Enviar comando manual (ex: RAW:130,130,90,90,10 ou ad)',
+                stepSpeechPlaceholder: '(Opcional) Fala...',
+                stepsCount: (count, sec) => `Passos: ${count} (~${sec}s)`,
+                stepDefaultName: (n) => `Passo ${n}`,
+                capturedPoseName: (n) => `Pose Capturada #${n}`,
+                headCmdPrefix: 'Comando atual:',
+                sim3DCamLabel: 'Câmera 3D:',
+                btnExecutar: '<i class="fa-solid fa-play mr-1"></i>Executar',
+                btnNovoPasso: '<i class="fa-solid fa-plus mr-1"></i>Novo Passo',
+                btnCapturarPose: '<i class="fa-solid fa-camera mr-1"></i>Capturar Pose dos Sliders',
+                btnExportarJson: '<i class="fa-solid fa-download mr-1"></i>Exportar JSON',
+                slamCamTitle: '<i class="fa-solid fa-camera"></i> Câmera do Roboldo (Visual SLAM)',
+                slamMapTitle: '<i class="fa-solid fa-map"></i> Mapa do Ambiente 2D (Occupancy Grid)',
+                legendRoute: 'Rota A*',
+                legendObstacle: 'Obstáculo',
+                depthAvgPrefix: 'Profundidade Média:',
+                targetPrefix: 'Alvo:',
+                langChangedToast: 'Idioma alterado para Português (PT-BR).'
+            },
+            en: {
+                htmlLang: 'en',
+                speechLang: 'en-US',
+                guest: 'Guest',
+                researcher: 'Researcher',
+                helloUser: (n) => `Hello, ${n}`,
+                welcomeOverview: (n) => `Hello, ${n}! Meet Roboldo's Parts`,
+                overviewHeroDesc: `Trigger synchronized gestures with a single click or explore the <strong class="text-[#238689]">DWIN Head</strong>, <strong class="text-[#238689]">3-DoF Arms</strong>, <strong class="text-[#238689]">Neural Voice</strong> and <strong class="text-[#238689]">Vision & SLAM</strong> modules.`,
+                aboutIdeDesc: `<strong class="text-[#021225]">Roboldo</strong> is a social, assistive and educational robot developed at the <strong class="text-[#238689]">Automation and Robotics Laboratory (LAR / UERN)</strong> for human-robot interaction (HRI), teaching activities and inclusion. <strong class="text-[#021225]">RoboControl Studio</strong> integrates all subsystems in real time:`,
+                onboardPlaceholder: 'Enter your name (e.g., Artemísia)...',
+                serialPlaceholder: 'Send manual command (e.g., RAW:130,130,90,90,10 or ad)',
+                stepSpeechPlaceholder: '(Optional) Speech...',
+                stepsCount: (count, sec) => `Steps: ${count} (~${sec}s)`,
+                stepDefaultName: (n) => `Step ${n}`,
+                capturedPoseName: (n) => `Captured Pose #${n}`,
+                headCmdPrefix: 'Current command:',
+                sim3DCamLabel: '3D Camera:',
+                btnExecutar: '<i class="fa-solid fa-play mr-1"></i>Run',
+                btnNovoPasso: '<i class="fa-solid fa-plus mr-1"></i>New Step',
+                btnCapturarPose: '<i class="fa-solid fa-camera mr-1"></i>Capture Slider Pose',
+                btnExportarJson: '<i class="fa-solid fa-download mr-1"></i>Export JSON',
+                slamCamTitle: '<i class="fa-solid fa-camera"></i> Roboldo Camera (Visual SLAM)',
+                slamMapTitle: '<i class="fa-solid fa-map"></i> 2D Environment Map (Occupancy Grid)',
+                legendRoute: 'A* Route',
+                legendObstacle: 'Obstacle',
+                depthAvgPrefix: 'Avg Depth:',
+                targetPrefix: 'Target:',
+                langChangedToast: 'Language switched to English (EN).'
+            },
+            es: {
+                htmlLang: 'es',
+                speechLang: 'es-ES',
+                guest: 'Visitante',
+                researcher: 'Investigador(a)',
+                helloUser: (n) => `Hola, ${n}`,
+                welcomeOverview: (n) => `¡Hola, ${n}! Conoce las Partes de Roboldo`,
+                overviewHeroDesc: `Activa gestos sincronizados con un clic o explora los módulos de <strong class="text-[#238689]">Cabeza DWIN</strong>, <strong class="text-[#238689]">Brazos 3-DoF</strong>, <strong class="text-[#238689]">Voz Neuronal</strong> y <strong class="text-[#238689]">Visión y SLAM</strong>.`,
+                aboutIdeDesc: `<strong class="text-[#021225]">Roboldo</strong> es un robot social, asistivo y educativo desarrollado en el <strong class="text-[#238689]">Laboratorio de Automatización y Robótica (LAR / UERN)</strong> para interacción humano-robot (IHR), actividades pedagógicas e inclusión. <strong class="text-[#021225]">RoboControl Studio</strong> integra todos los subsistemas en tiempo real:`,
+                onboardPlaceholder: 'Escribe tu nombre (ej: Artemísia)...',
+                serialPlaceholder: 'Enviar comando manual (ej: RAW:130,130,90,90,10 o ad)',
+                stepSpeechPlaceholder: '(Opcional) Voz...',
+                stepsCount: (count, sec) => `Pasos: ${count} (~${sec}s)`,
+                stepDefaultName: (n) => `Paso ${n}`,
+                capturedPoseName: (n) => `Pose Capturada #${n}`,
+                headCmdPrefix: 'Comando actual:',
+                sim3DCamLabel: 'Cámara 3D:',
+                btnExecutar: '<i class="fa-solid fa-play mr-1"></i>Ejecutar',
+                btnNovoPasso: '<i class="fa-solid fa-plus mr-1"></i>Nuevo Paso',
+                btnCapturarPose: '<i class="fa-solid fa-camera mr-1"></i>Capturar Pose de Sliders',
+                btnExportarJson: '<i class="fa-solid fa-download mr-1"></i>Exportar JSON',
+                slamCamTitle: '<i class="fa-solid fa-camera"></i> Cámara de Roboldo (Visual SLAM)',
+                slamMapTitle: '<i class="fa-solid fa-map"></i> Mapa del Entorno 2D (Occupancy Grid)',
+                legendRoute: 'Ruta A*',
+                legendObstacle: 'Obstáculo',
+                depthAvgPrefix: 'Profundidad Media:',
+                targetPrefix: 'Objetivo:',
+                langChangedToast: 'Idioma cambiado a Español (ES).'
+            }
+        };
+
+        let i18nTrackedTextNodes = [];
+
+        function initI18nTextNodes() {
+            if (i18nTrackedTextNodes.length > 0) return;
+            const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+            let node;
+            while ((node = walker.nextNode())) {
+                const parentTag = node.parentElement ? node.parentElement.tagName : '';
+                if (parentTag === 'SCRIPT' || parentTag === 'STYLE' || parentTag === 'TEXTAREA') continue;
+                const trimmed = node.nodeValue.trim();
+                if (trimmed && I18N_TEXT_MAP[trimmed]) {
+                    i18nTrackedTextNodes.push({
+                        node: node,
+                        ptText: trimmed,
+                        leading: node.nodeValue.match(/^\s*/)[0],
+                        trailing: node.nodeValue.match(/\s*$/)[0]
+                    });
+                }
+            }
+        }
+
+        function tStr(ptKey) {
+            if (currentAppLang === 'pt') return ptKey;
+            const entry = I18N_TEXT_MAP[ptKey];
+            return (entry && entry[currentAppLang]) ? entry[currentAppLang] : ptKey;
+        }
+
+        function setAppLanguage(lang, silent = false) {
+            if (!['pt', 'en', 'es'].includes(lang)) lang = 'pt';
+            initI18nTextNodes();
+
+            const prevLang = currentAppLang;
+            currentAppLang = lang;
+            localStorage.setItem('roboldo_ide_lang', lang);
+
+            const ui = I18N_UI_STRINGS[lang];
+            document.documentElement.lang = ui.htmlLang;
+
+            // Atualiza botões seletores de idioma (topo e modal onboarding)
+            document.querySelectorAll('.lang-switch-btn').forEach(btn => {
+                const isAct = btn.dataset.langBtn === lang;
+                btn.className = isAct
+                    ? "lang-switch-btn px-2 py-1 rounded-lg text-[11px] font-extrabold transition bg-[#238689] text-white shadow-xs"
+                    : "lang-switch-btn px-2 py-1 rounded-lg text-[11px] font-bold text-[#196669] hover:bg-[#F2FFF6] transition";
+            });
+
+            // Traduz todos os nós de texto mapeados no DOM
+            i18nTrackedTextNodes.forEach(item => {
+                const translated = (lang === 'pt')
+                    ? item.ptText
+                    : (I18N_TEXT_MAP[item.ptText] && I18N_TEXT_MAP[item.ptText][lang]) || item.ptText;
+                item.node.nodeValue = item.leading + translated + item.trailing;
+            });
+
+            // Atualiza parágrafos compostos com HTML e placeholders
+            const heroParagraph = document.querySelector('#mod-overview .glass-card p.text-xs.text-slate-600');
+            if (heroParagraph) heroParagraph.innerHTML = ui.overviewHeroDesc;
+
+            const aboutParagraphs = document.querySelectorAll('#mod-overview .glass-card p.text-xs.text-slate-600.leading-relaxed');
+            if (aboutParagraphs.length > 1) aboutParagraphs[1].innerHTML = ui.aboutIdeDesc;
+
+            const onboardInput = document.getElementById('onboardUserName');
+            if (onboardInput) onboardInput.placeholder = ui.onboardPlaceholder;
+
+            const customSerialInput = document.getElementById('customSerialInput');
+            if (customSerialInput) customSerialInput.placeholder = ui.serialPlaceholder;
+
+            // Atualiza botões com ícones embutidos na seção de scripts
+            const playBtn = document.querySelector('button[onclick="playCurrentScript()"]');
+            if (playBtn) playBtn.innerHTML = ui.btnExecutar;
+            const addStepBtn = document.querySelector('button[onclick="addEmptyScriptStep()"]');
+            if (addStepBtn) addStepBtn.innerHTML = ui.btnNovoPasso;
+            const capPoseBtns = document.querySelectorAll('button[onclick="captureCurrentSlidersToStep()"]');
+            if (capPoseBtns.length > 1) capPoseBtns[1].innerHTML = ui.btnCapturarPose;
+            const expJsonBtn = document.querySelector('button[onclick="exportScriptJsonFile()"]');
+            if (expJsonBtn) expJsonBtn.innerHTML = ui.btnExportarJson;
+
+            // Atualiza texto padrão do TTS se estiver usando o texto oficial de algum idioma
+            const txtArea = document.getElementById('texto');
+            if (txtArea) {
+                const curVal = txtArea.value.trim();
+                const isDefaultText = Object.values(DEFAULT_COIN_TEXT_I18N).some(t => t.trim() === curVal);
+                if (isDefaultText) {
+                    txtArea.value = DEFAULT_COIN_TEXT_I18N[lang];
+                }
+            }
+
+            // Atualiza passos do Mini Tutorial e Roteiros de Script
+            TOUR_STEPS = TOUR_STEPS_I18N[lang];
+            if (!document.getElementById('guidedTourBanner').classList.contains('hidden')) {
+                renderTourStep();
+            }
+
+            // Atualiza o roteiro selecionado se o usuário trocou de idioma
+            const presetSel = document.getElementById('presetScriptSelect');
+            if (presetSel && PRESET_SCRIPTS_I18N[lang] && PRESET_SCRIPTS_I18N[lang][presetSel.value]) {
+                if (!isScriptRunning && prevLang !== lang) {
+                    scriptSteps = JSON.parse(JSON.stringify(PRESET_SCRIPTS_I18N[lang][presetSel.value]));
+                }
+            }
+            renderScriptStepsTable();
+
+            // Atualiza saudação do operador e pipeline de visão computacional
+            applyOperatorNameUI(currentOperatorName);
+            selectCvPipeline(currentCvPipeline);
+
+            if (!silent) {
+                showToast(ui.langChangedToast, 'info');
+            }
+        }
+
+        let TOUR_STEPS = TOUR_STEPS_I18N[currentAppLang] || TOUR_STEPS_I18N.pt;
 
         function applyOperatorNameUI(name) {
-            const cleanName = (name || '').trim() || 'Visitante';
+            const ui = I18N_UI_STRINGS[currentAppLang] || I18N_UI_STRINGS.pt;
+            const raw = (name || '').trim();
+            const isDefaultGuest = !raw || ['Visitante', 'Guest', 'Pesquisador(a)', 'Researcher', 'Investigador(a)'].includes(raw);
+            const cleanName = isDefaultGuest ? ui.guest : raw;
             currentOperatorName = cleanName;
             localStorage.setItem('roboldo_ide_operator_name', cleanName);
 
-            document.getElementById('userGreetingBadge').textContent = `Olá, ${cleanName}`;
+            document.getElementById('userGreetingBadge').textContent = ui.helloUser(cleanName);
             document.getElementById('sidebarUserName').textContent = cleanName;
             document.getElementById('sidebarAvatarInitial').textContent = cleanName.charAt(0).toUpperCase();
-            document.getElementById('overviewWelcomeTitle').textContent = `Olá, ${cleanName}! Conheça as Partes do Roboldo`;
+            document.getElementById('overviewWelcomeTitle').textContent = ui.welcomeOverview(cleanName);
         }
 
         function openOnboardingModal() {
@@ -1721,11 +2973,11 @@
             if (nextState) {
                 panel.classList.remove('hidden');
                 panel.classList.add('flex');
-                if (label) label.textContent = 'Fechar Simulador';
+                if (label) label.textContent = tStr('Fechar Simulador');
             } else {
                 panel.classList.add('hidden');
                 panel.classList.remove('flex');
-                if (label) label.textContent = 'Simulador Roboldo';
+                if (label) label.textContent = tStr('Simulador Roboldo');
             }
         }
 
@@ -1809,9 +3061,10 @@
             const prevBtn = document.getElementById('btnTourPrev');
             const nextBtn = document.getElementById('btnTourNext');
             prevBtn.style.visibility = activeTourStep === 0 ? 'hidden' : 'visible';
+            prevBtn.textContent = tStr('Anterior');
             nextBtn.innerHTML = (activeTourStep === TOUR_STEPS.length - 1)
-                ? `<span>Concluir</span><i class="fa-solid fa-check ml-1.5"></i>`
-                : `<span>Próximo</span><i class="fa-solid fa-chevron-right ml-1.5"></i>`;
+                ? `<span>${tStr('Concluir')}</span><i class="fa-solid fa-check ml-1.5"></i>`
+                : `<span>${tStr('Próximo')}</span><i class="fa-solid fa-chevron-right ml-1.5"></i>`;
         }
 
         let protocolMode = 'NATIVE';
@@ -2973,8 +4226,13 @@
         }
 
         function resetRoboldoDefaultText() {
-            document.getElementById('texto').value = DEFAULT_COIN_TEXT;
-            showToast("Texto oficial do COIN restaurado!", "info");
+            document.getElementById('texto').value = DEFAULT_COIN_TEXT_I18N[currentAppLang] || DEFAULT_COIN_TEXT;
+            const msg = currentAppLang === 'en'
+                ? "Official COIN text restored!"
+                : currentAppLang === 'es'
+                ? "¡Texto oficial de COIN restaurado!"
+                : "Texto oficial do COIN restaurado!";
+            showToast(msg, "info");
         }
 
         function pararFalaPiper(restorePose = false) {
@@ -3051,7 +4309,7 @@
                     return await new Promise((resolve) => {
                         window.speechSynthesis.cancel();
                         const utter = new SpeechSynthesisUtterance(textClean);
-                        utter.lang = 'pt-BR';
+                        utter.lang = (I18N_UI_STRINGS[currentAppLang] && I18N_UI_STRINGS[currentAppLang].speechLang) || 'pt-BR';
                         utter.rate = Number(rateInput.value);
                         utter.pitch = Number(pitchInput.value);
                         utter.volume = Number(volInput.value);
@@ -3140,10 +4398,12 @@
 
         function loadPresetScript(presetKey) {
             if (isScriptRunning) stopCurrentScript();
-            const template = PRESET_SCRIPTS[presetKey] || PRESET_SCRIPTS.coin_presentation;
+            const langPresets = PRESET_SCRIPTS_I18N[currentAppLang] || PRESET_SCRIPTS;
+            const template = langPresets[presetKey] || langPresets.coin_presentation;
             scriptSteps = JSON.parse(JSON.stringify(template));
             renderScriptStepsTable();
-            showToast("Roteiro carregado!", "info");
+            const msg = currentAppLang === 'en' ? "Script loaded!" : currentAppLang === 'es' ? "¡Guion cargado!" : "Roteiro carregado!";
+            showToast(msg, "info");
         }
 
         function renderScriptStepsTable() {
@@ -3196,12 +4456,14 @@
                 tbody.appendChild(tr);
             });
 
-            document.getElementById('scriptProgressText').textContent = `Passos: ${scriptSteps.length} (~${(totalMs / 1000).toFixed(1)}s)`;
+            const ui = I18N_UI_STRINGS[currentAppLang] || I18N_UI_STRINGS.pt;
+            document.getElementById('scriptProgressText').textContent = ui.stepsCount(scriptSteps.length, (totalMs / 1000).toFixed(1));
         }
 
         function addEmptyScriptStep() {
+            const ui = I18N_UI_STRINGS[currentAppLang] || I18N_UI_STRINGS.pt;
             scriptSteps.push({
-                label: `Passo ${scriptSteps.length + 1}`,
+                label: ui.stepDefaultName(scriptSteps.length + 1),
                 headCmd: "h",
                 armCmd: "90,90,90,90,90,90",
                 speakText: "",
@@ -3213,13 +4475,14 @@
         }
 
         function captureCurrentSlidersToStep() {
+            const ui = I18N_UI_STRINGS[currentAppLang] || I18N_UI_STRINGS.pt;
             const r = armState.customPose.right;
             const l = armState.customPose.left;
             const customHeadRaw = `RAW:${headState.earRightAngle},${headState.earLeftAngle},${headState.neckAngle},${headState.neckPitchAngle},${headState.servoStepDelayMs}`;
             const customArmsCsv = `${r.pitch},${r.roll},${r.elbow},${l.pitch},${l.roll},${l.elbow}`;
 
             scriptSteps.push({
-                label: `Pose Capturada #${scriptSteps.length + 1}`,
+                label: ui.capturedPoseName(scriptSteps.length + 1),
                 headCmd: customHeadRaw,
                 armCmd: customArmsCsv,
                 speakText: "",
@@ -3228,7 +4491,8 @@
                 delayMs: 900
             });
             renderScriptStepsTable();
-            showToast("Pose atual salva no script!", "success");
+            const msg = currentAppLang === 'en' ? "Current pose saved to script!" : currentAppLang === 'es' ? "¡Pose actual guardada en el script!" : "Pose atual salva no script!";
+            showToast(msg, "success");
         }
 
         function removeScriptStep(index) {
@@ -3616,12 +4880,27 @@
                 btn.className = `cv-mode-btn p-3 rounded-2xl text-xs font-bold btn-glass-soft flex flex-col items-center gap-1 ${active ? 'active-tile' : ''}`;
             });
 
-            const meta = {
-                face:    { cls: "Pessoa (Rosto Sorrindo)", conf: "98.4%", react: "Espelhando sorriso ('h') e mantendo contato visual com o visitante." },
-                hands:   { cls: "Gesto: Mão Aberta (Aceno)", conf: "96.1%", react: "Gesto de saudação reconhecido! Pronto para responder com Aceno Direito ('ad')." },
-                objects: { cls: "Tablet Assistivo & Crachá UERN", conf: "94.7%", react: "Objeto educacional identificado na bancada." },
-                aruco:   { cls: "ArUco ID #04 (Estação LAR)", conf: "99.2%", react: "Marcador de localização alinhado para aproximação precisa." }
-            }[mode];
+            const metaByLang = {
+                pt: {
+                    face:    { cls: "Pessoa (Rosto Sorrindo)", conf: "98.4%", react: "Espelhando sorriso ('h') e mantendo contato visual com o visitante." },
+                    hands:   { cls: "Gesto: Mão Aberta (Aceno)", conf: "96.1%", react: "Gesto de saudação reconhecido! Pronto para responder com Aceno Direito ('ad')." },
+                    objects: { cls: "Tablet Assistivo & Crachá UERN", conf: "94.7%", react: "Objeto educacional identificado na bancada." },
+                    aruco:   { cls: "ArUco ID #04 (Estação LAR)", conf: "99.2%", react: "Marcador de localização alinhado para aproximação precisa." }
+                },
+                en: {
+                    face:    { cls: "Person (Smiling Face)", conf: "98.4%", react: "Mirroring smile ('h') and maintaining eye contact with the visitor." },
+                    hands:   { cls: "Gesture: Open Hand (Wave)", conf: "96.1%", react: "Greeting gesture recognized! Ready to reply with Right Wave ('ad')." },
+                    objects: { cls: "Assistive Tablet & UERN Badge", conf: "94.7%", react: "Educational object identified on the workbench." },
+                    aruco:   { cls: "ArUco ID #04 (LAR Station)", conf: "99.2%", react: "Localization marker aligned for precise docking." }
+                },
+                es: {
+                    face:    { cls: "Persona (Rostro Sonriendo)", conf: "98.4%", react: "Reflejando sonrisa ('h') y manteniendo contacto visual con el visitante." },
+                    hands:   { cls: "Gesto: Mano Abierta (Saludo)", conf: "96.1%", react: "¡Gesto de saludo reconocido! Listo para responder con Saludo Derecho ('ad')." },
+                    objects: { cls: "Tablet Asistiva y Credencial UERN", conf: "94.7%", react: "Objeto educativo identificado en la mesa." },
+                    aruco:   { cls: "ArUco ID #04 (Estación LAR)", conf: "99.2%", react: "Marcador de localización alineado para aproximación precisa." }
+                }
+            };
+            const meta = (metaByLang[currentAppLang] || metaByLang.pt)[mode];
 
             document.getElementById('cvDetectedClass').textContent = meta.cls;
             document.getElementById('cvConfidenceBadge').textContent = meta.conf;
@@ -3720,12 +4999,14 @@
         }
 
         window.onload = function () {
+            initI18nTextNodes();
             initRobot3DOrbitControls();
             selectHeadEmotion(3);
             triggerArmGesture(1, 'n');
             startTalkMouthLoop();
             loadPresetScript('coin_presentation');
             drawOccupancyGrid();
+            setAppLanguage(currentAppLang, true);
             setInterval(() => {
                 drawSlamCameraFeed();
                 drawCvDetectionViewport();
