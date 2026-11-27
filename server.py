@@ -69,6 +69,18 @@ class TTSHandler(BaseHTTPRequestHandler):
             self.wfile.write(html)
             return
 
+        if self.path.startswith("/assets/"):
+            asset_path = (ROOT / self.path.lstrip("/")).resolve()
+            if asset_path.exists() and asset_path.is_file() and str(asset_path).startswith(str(ROOT)):
+                data = asset_path.read_bytes()
+                self.send_response(200)
+                self.send_cors_headers()
+                self.send_header("Content-Type", "image/png")
+                self.send_header("Content-Length", str(len(data)))
+                self.end_headers()
+                self.wfile.write(data)
+                return
+
         self.send_json(404, {"error": "Página não encontrada."})
 
     def do_POST(self):

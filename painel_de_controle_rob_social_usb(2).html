@@ -504,43 +504,61 @@
                     </div>
                 </div>
 
-                <!-- Macros Sincronizadas Simplificadas -->
-                <div class="google-card rounded-3xl p-5 flex flex-col gap-3.5">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h3 class="text-sm font-extrabold text-slate-900">Ações Rápidas Sincronizadas (Cabeça + Braços)</h3>
-                            <p class="text-xs text-slate-500">Clique em uma ação para ver o Roboldo reagir no simulador ao lado</p>
-                        </div>
-                        <button onclick="triggerCombinedMacro('neutral')" class="px-3 py-1.5 rounded-xl text-xs font-bold btn-blue-soft">
-                            <i class="fa-solid fa-rotate-left mr-1"></i>Resetar Posição
-                        </button>
+                <!-- Sobre o Projeto Roboldo IDE & Como Funciona o Roboldo (Foto em uma lateral + Texto na outra) -->
+                <div class="google-card rounded-3xl p-5 sm:p-6 flex flex-col md:flex-row items-center gap-6 bg-gradient-to-br from-white via-blue-50/30 to-sky-50/50 border border-blue-100">
+                    <!-- Lateral Esquerda: Foto / Ilustração Oficial do Roboldo -->
+                    <div class="w-full md:w-60 shrink-0 bg-gradient-to-b from-blue-50 to-white border border-blue-100 rounded-2xl p-4 flex flex-col items-center justify-center relative shadow-inner">
+                        <img src="assets/feliz.png" alt="Robô Social Roboldo — LAR / UERN" class="w-44 h-44 object-contain drop-shadow-md transition-transform duration-300 hover:scale-105">
+                        <span class="mt-2 px-3 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-100/80 text-blue-700">
+                            Roboldo 2.0 • LAR / UERN
+                        </span>
                     </div>
 
-                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2.5">
-                        <button onclick="triggerCombinedMacro('greet_right')" class="p-3 rounded-2xl text-xs font-bold btn-blue-soft flex flex-col items-center gap-1.5">
-                            <span class="text-xl">👋😄</span>
-                            <span>Olá Feliz</span>
-                        </button>
-                        <button onclick="triggerCombinedMacro('warm_hug')" class="p-3 rounded-2xl text-xs font-bold btn-blue-soft flex flex-col items-center gap-1.5">
-                            <span class="text-xl">🤗💙</span>
-                            <span>Abraço</span>
-                        </button>
-                        <button onclick="triggerCombinedMacro('handshake')" class="p-3 rounded-2xl text-xs font-bold btn-blue-soft flex flex-col items-center gap-1.5">
-                            <span class="text-xl">🤝🗣️</span>
-                            <span>Cumprimento</span>
-                        </button>
-                        <button onclick="triggerCombinedMacro('angry_hips')" class="p-3 rounded-2xl text-xs font-bold btn-blue-soft flex flex-col items-center gap-1.5">
-                            <span class="text-xl">😠🦸</span>
-                            <span>Na Cintura</span>
-                        </button>
-                        <button onclick="triggerCombinedMacro('surprised_wave2')" class="p-3 rounded-2xl text-xs font-bold btn-blue-soft flex flex-col items-center gap-1.5">
-                            <span class="text-xl">😲🙌</span>
-                            <span>Aceno Duplo</span>
-                        </button>
-                        <button onclick="triggerCombinedMacro('party_dance')" class="p-3 rounded-2xl text-xs font-bold btn-blue-primary flex flex-col items-center gap-1.5">
-                            <span class="text-xl">🕺🎶</span>
-                            <span>Modo Festa</span>
-                        </button>
+                    <!-- Lateral Direita: Sobre o Projeto do Roboldo IDE e Como Funciona -->
+                    <div class="flex-1 flex flex-col gap-3">
+                        <div>
+                            <span class="inline-flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-blue-600 mb-1">
+                                <i class="fa-solid fa-circle-info"></i> Sobre o Projeto • Roboldo IDE
+                            </span>
+                            <h3 class="text-base sm:text-lg font-extrabold text-slate-900 leading-snug">
+                                O que é o Roboldo IDE e como o Roboldo funciona?
+                            </h3>
+                        </div>
+
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            O <strong class="text-slate-800">Roboldo</strong> é um robô social, assistivo e educacional desenvolvido no <strong class="text-blue-700">Laboratório de Automação e Robótica (LAR / UERN)</strong> para interação humano-robô (IHR), atividades pedagógicas e inclusão. O <strong class="text-slate-800">Roboldo IDE (RoboControl Studio)</strong> é o ambiente unificado que permite programar, calibrar e controlar todos os subsistemas do robô em tempo real:
+                        </p>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+                            <div class="bg-white/90 border border-blue-100 rounded-xl p-2.5 flex items-start gap-2">
+                                <i class="fa-regular fa-face-smile text-blue-600 mt-0.5"></i>
+                                <div>
+                                    <strong class="text-slate-800 block">Cabeça DWIN & Pescoço 2-DoF</strong>
+                                    <span class="text-[11px] text-slate-500">Tela facial dinâmica, orelhas articuladas e pescoço com rotação horizontal (Yaw) e vertical (Pitch).</span>
+                                </div>
+                            </div>
+                            <div class="bg-white/90 border border-blue-100 rounded-xl p-2.5 flex items-start gap-2">
+                                <i class="fa-solid fa-hands-asl-interpreting text-blue-600 mt-0.5"></i>
+                                <div>
+                                    <strong class="text-slate-800 block">Braços 3-DoF & Voz Offline</strong>
+                                    <span class="text-[11px] text-slate-500">6 juntas controladas via PWM de 14-Bits sincronizadas com síntese neural Piper TTS e lip-sync.</span>
+                                </div>
+                            </div>
+                            <div class="bg-white/90 border border-blue-100 rounded-xl p-2.5 flex items-start gap-2">
+                                <i class="fa-solid fa-map-location-dot text-blue-600 mt-0.5"></i>
+                                <div>
+                                    <strong class="text-slate-800 block">Mapeamento SLAM & Visão</strong>
+                                    <span class="text-[11px] text-slate-500">Câmera integrada para construção de mapa 2D do ambiente e rastreamento facial automático.</span>
+                                </div>
+                            </div>
+                            <div class="bg-white/90 border border-blue-100 rounded-xl p-2.5 flex items-start gap-2">
+                                <i class="fa-solid fa-film text-blue-600 mt-0.5"></i>
+                                <div>
+                                    <strong class="text-slate-800 block">Montagem de Scripts</strong>
+                                    <span class="text-[11px] text-slate-500">Timeline visual para capturar poses dos sliders e criar coreografias completas sem regravar o ESP32.</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
