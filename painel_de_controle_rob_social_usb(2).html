@@ -521,9 +521,9 @@
                             <div class="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-3 font-bold">
                                 <i class="fa-regular fa-face-smile text-lg"></i>
                             </div>
-                            <h4 class="text-sm font-extrabold text-slate-900">Cabeça & Rosto DWIN</h4>
+                            <h4 class="text-sm font-extrabold text-slate-900">Cabeça & Rosto DWIN (Pescoço 2-DoF)</h4>
                             <p class="text-xs text-slate-600 mt-1 leading-relaxed">
-                                Escolha entre 6 expressões faciais na tela do robô e movimente as duas orelhas e o pescoço.
+                                Escolha entre 6 expressões faciais na tela do robô e movimente as duas orelhas e o pescoço em 2 eixos (lados Yaw e cima/baixo Pitch).
                             </p>
                         </div>
                         <button onclick="switchModule('head')" class="w-full py-2 px-3 rounded-xl text-xs font-bold btn-blue-primary">
@@ -663,12 +663,12 @@
                         </div>
                     </div>
 
-                    <!-- 4. Sliders de Orelhas e Pescoço -->
+                    <!-- 4. Sliders de Orelhas e Pescoço 2-DoF (Yaw Lados + Pitch Cima/Baixo) -->
                     <div class="bg-blue-50/50 border border-blue-100 rounded-2xl p-4 flex flex-col gap-3">
                         <div class="flex items-center justify-between">
                             <div>
-                                <span class="text-xs font-bold text-slate-800 block">4. Posição das Orelhas e Pescoço</span>
-                                <span class="text-[11px] text-slate-500" id="overrideStatusDesc">Ajuste os controles abaixo para mover manualmente</span>
+                                <span class="text-xs font-bold text-slate-800 block">4. Posição das Orelhas e Pescoço 2-DoF (Lados + Cima/Baixo)</span>
+                                <span class="text-[11px] text-slate-500" id="overrideStatusDesc">Controle independente de Orelhas, Pescoço Horizontal (Yaw) e Pescoço Vertical (Pitch)</span>
                             </div>
                             <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-semibold text-blue-700">
                                 <input type="checkbox" id="overrideServosToggle" onchange="toggleHeadServoOverride(this.checked)" class="rounded text-blue-600">
@@ -695,7 +695,7 @@
 
                             <div class="bg-white p-3 rounded-xl border border-blue-100">
                                 <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1.5">
-                                    <span>Rotação do Pescoço</span>
+                                    <span>Pescoço — Lados (Yaw / Esq-Dir)</span>
                                     <span id="lbl_neckAngle" class="font-mono text-blue-600 font-bold">90°</span>
                                 </div>
                                 <input type="range" id="rng_neckAngle" min="45" max="135" value="90" oninput="onHeadServoSliderChange('neckAngle', this.value)">
@@ -703,7 +703,15 @@
 
                             <div class="bg-white p-3 rounded-xl border border-blue-100">
                                 <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1.5">
-                                    <span>Suavidade (Delay)</span>
+                                    <span>Pescoço — Cima e Baixo (Pitch)</span>
+                                    <span id="lbl_neckPitchAngle" class="font-mono text-blue-600 font-bold">90°</span>
+                                </div>
+                                <input type="range" id="rng_neckPitchAngle" min="50" max="130" value="90" oninput="onHeadServoSliderChange('neckPitchAngle', this.value)">
+                            </div>
+
+                            <div class="bg-white p-3 rounded-xl border border-blue-100 sm:col-span-2">
+                                <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1.5">
+                                    <span>Suavidade do Movimento (Delay por Grau)</span>
                                     <span id="lbl_servoStepDelayMs" class="font-mono text-blue-600 font-bold">10 ms/°</span>
                                 </div>
                                 <input type="range" id="rng_servoStepDelayMs" min="2" max="50" value="10" oninput="onHeadServoSliderChange('servoStepDelayMs', this.value)">
@@ -1128,8 +1136,8 @@
                 <!-- Resumo Limpo de Ângulos -->
                 <div class="grid grid-cols-2 gap-2.5 text-xs">
                     <div class="bg-blue-50/60 border border-blue-100 rounded-2xl p-3">
-                        <span class="text-slate-500 block text-[10px] font-bold uppercase">Cabeça (Orelhas/Pesc)</span>
-                        <span id="liveHeadAnglesBadge" class="font-mono text-blue-700 font-bold">130°, 130°, 90°</span>
+                        <span class="text-slate-500 block text-[10px] font-bold uppercase">Cabeça (Orelhas | Pesc 2-DoF)</span>
+                        <span id="liveHeadAnglesBadge" class="font-mono text-blue-700 font-bold">130°,130° | Y:90° P:90°</span>
                     </div>
                     <div class="bg-blue-50/60 border border-blue-100 rounded-2xl p-3">
                         <span class="text-slate-500 block text-[10px] font-bold uppercase">Braços (Dir | Esq)</span>
@@ -1311,6 +1319,7 @@
             earRightAngle: 130,
             earLeftAngle: 130,
             neckAngle: 90,
+            neckPitchAngle: 90,
             servoStepDelayMs: 10
         };
 
@@ -1325,16 +1334,16 @@
         };
 
         const HEAD_EMOTION_CATALOG = {
-            0: { name: "Angry",     cmd: "a", earR: 40,  earL: 40,  neck: 90,  speed: 8,  dwin: "Pág 3→4→5" },
-            1: { name: "Confused",  cmd: "c", earR: 135, earL: 55,  neck: 110, speed: 15, dwin: "Pág 6→7→8" },
-            2: { name: "Fear",      cmd: "f", earR: 30,  earL: 30,  neck: 75,  speed: 5,  dwin: "Pág 9→10→11" },
-            3: { name: "Happy",     cmd: "h", earR: 130, earL: 130, neck: 90,  speed: 10, dwin: "Pág 12→13→14" },
-            4: { name: "Sad",       cmd: "s", earR: 25,  earL: 25,  neck: 70,  speed: 30, dwin: "Pág 15→16→17" },
-            5: { name: "Surprised", cmd: "u", earR: 160, earL: 160, neck: 90,  speed: 4,  dwin: "Pág 18→19→20" }
+            0: { name: "Angry",     cmd: "a", earR: 40,  earL: 40,  neck: 90,  neckPitch: 82,  speed: 8,  dwin: "Pág 3→4→5" },
+            1: { name: "Confused",  cmd: "c", earR: 135, earL: 55,  neck: 110, neckPitch: 95,  speed: 15, dwin: "Pág 6→7→8" },
+            2: { name: "Fear",      cmd: "f", earR: 30,  earL: 30,  neck: 75,  neckPitch: 78,  speed: 5,  dwin: "Pág 9→10→11" },
+            3: { name: "Happy",     cmd: "h", earR: 130, earL: 130, neck: 90,  neckPitch: 95,  speed: 10, dwin: "Pág 12→13→14" },
+            4: { name: "Sad",       cmd: "s", earR: 25,  earL: 25,  neck: 70,  neckPitch: 68,  speed: 30, dwin: "Pág 15→16→17" },
+            5: { name: "Surprised", cmd: "u", earR: 160, earL: 160, neck: 90,  neckPitch: 108, speed: 4,  dwin: "Pág 18→19→20" }
         };
 
-        const HEAD_NEUTRAL_PRESET = { earR: 90,  earL: 90,  neck: 90, speed: 20 };
-        const HEAD_TALK_PRESET    = { earR: 105, earL: 105, neck: 90, speed: 15 };
+        const HEAD_NEUTRAL_PRESET = { earR: 90,  earL: 90,  neck: 90, neckPitch: 90, speed: 20 };
+        const HEAD_TALK_PRESET    = { earR: 105, earL: 105, neck: 90, neckPitch: 92, speed: 15 };
 
         const POSE_NEUTRA  = { right: { pitch: 90, roll: 90,  elbow: 90  }, left: { pitch: 90,  roll: 90, elbow: 90 } };
         const POSE_CINTURA = { right: { pitch: 0,  roll: 150, elbow: 130 }, left: { pitch: 180, roll: 40, elbow: 30 } };
@@ -1515,7 +1524,7 @@
             else if (headState.mode === 2) cmds.push(String(headState.talkStyle + 1));
 
             if (headState.overrideServos) {
-                cmds.push(`RAW:${headState.earRightAngle},${headState.earLeftAngle},${headState.neckAngle},${headState.servoStepDelayMs}`);
+                cmds.push(`RAW:${headState.earRightAngle},${headState.earLeftAngle},${headState.neckAngle},${headState.neckPitchAngle},${headState.servoStepDelayMs}`);
             }
             return cmds;
         }
@@ -1576,21 +1585,24 @@
             let p = HEAD_NEUTRAL_PRESET;
             if (headState.mode === 1) p = HEAD_EMOTION_CATALOG[headState.emotion] || HEAD_NEUTRAL_PRESET;
             else if (headState.mode === 2) p = HEAD_TALK_PRESET;
-            setHeadSlidersDOM(p.earR, p.earL, p.neck, p.speed);
+            setHeadSlidersDOM(p.earR, p.earL, p.neck, p.neckPitch ?? 90, p.speed);
         }
 
-        function setHeadSlidersDOM(r, l, n, s) {
+        function setHeadSlidersDOM(r, l, nYaw, nPitch, s) {
             headState.earRightAngle = r;
             headState.earLeftAngle = l;
-            headState.neckAngle = n;
+            headState.neckAngle = nYaw;
+            headState.neckPitchAngle = nPitch;
             headState.servoStepDelayMs = s;
 
             document.getElementById('rng_earRightAngle').value = r;
             document.getElementById('lbl_earRightAngle').textContent = `${r}°`;
             document.getElementById('rng_earLeftAngle').value = l;
             document.getElementById('lbl_earLeftAngle').textContent = `${l}°`;
-            document.getElementById('rng_neckAngle').value = n;
-            document.getElementById('lbl_neckAngle').textContent = `${n}°`;
+            document.getElementById('rng_neckAngle').value = nYaw;
+            document.getElementById('lbl_neckAngle').textContent = `${nYaw}°`;
+            document.getElementById('rng_neckPitchAngle').value = nPitch;
+            document.getElementById('lbl_neckPitchAngle').textContent = `${nPitch}°`;
             document.getElementById('rng_servoStepDelayMs').value = s;
             document.getElementById('lbl_servoStepDelayMs').textContent = `${s} ms/°`;
         }
@@ -1617,7 +1629,7 @@
 
             clearTimeout(headDebounceTimer);
             headDebounceTimer = setTimeout(() => {
-                const rawCmd = `RAW:${headState.earRightAngle},${headState.earLeftAngle},${headState.neckAngle},${headState.servoStepDelayMs}`;
+                const rawCmd = `RAW:${headState.earRightAngle},${headState.earLeftAngle},${headState.neckAngle},${headState.neckPitchAngle},${headState.servoStepDelayMs}`;
                 writeToEspSerial('head', rawCmd);
             }, 80);
         }
@@ -1788,9 +1800,10 @@
         }
 
         function updateRobotSvgVisuals() {
-            const neckOffset = ((headState.neckAngle - 90) / 45) * 18;
-            const neckTilt   = ((headState.neckAngle - 90) / 45) * 7;
-            document.getElementById('svgHeadGroup').setAttribute('transform', `translate(${200 + neckOffset}, 75) rotate(${neckTilt})`);
+            const neckOffsetX = ((headState.neckAngle - 90) / 45) * 18;
+            const neckOffsetY = ((90 - headState.neckPitchAngle) / 40) * 14;
+            const neckTilt    = ((headState.neckAngle - 90) / 45) * 6;
+            document.getElementById('svgHeadGroup').setAttribute('transform', `translate(${200 + neckOffsetX}, ${75 + neckOffsetY}) rotate(${neckTilt})`);
 
             const earRRot = ((headState.earRightAngle - 90) / 80) * -38;
             const earLRot = ((headState.earLeftAngle - 90) / 80) * 38;
@@ -1855,7 +1868,7 @@
             document.getElementById('svgLeftUpperArm').setAttribute('transform', `rotate(${lShoulderAngle})`);
             document.getElementById('svgLeftForearm').setAttribute('transform', `translate(42, 0) rotate(${lElbowAngle})`);
 
-            document.getElementById('liveHeadAnglesBadge').textContent = `${headState.earRightAngle}°, ${headState.earLeftAngle}°, ${headState.neckAngle}°`;
+            document.getElementById('liveHeadAnglesBadge').textContent = `${headState.earRightAngle}°,${headState.earLeftAngle}° | Y:${headState.neckAngle}° P:${headState.neckPitchAngle}°`;
             document.getElementById('liveArmAnglesBadge').textContent = `${r.pitch},${r.roll},${r.elbow} | ${l.pitch},${l.roll},${l.elbow}`;
         }
 
@@ -2003,12 +2016,18 @@
 
             if (clean.toUpperCase().startsWith("RAW:")) {
                 const parts = clean.substring(4).split(',').map(x => parseInt(x.trim(), 10));
-                if (parts.length >= 4 && !parts.some(isNaN)) {
+                if (parts.length >= 5 && !parts.some(isNaN)) {
                     headState.overrideServos = true;
                     document.getElementById('overrideServosToggle').checked = true;
-                    setHeadSlidersDOM(parts[0], parts[1], parts[2], parts[3]);
+                    setHeadSlidersDOM(parts[0], parts[1], parts[2], parts[3], parts[4]);
                     updateInspectorAndVisuals();
-                    await writeToEspSerial('head', `RAW:${parts[0]},${parts[1]},${parts[2]},${parts[3]}`);
+                    await writeToEspSerial('head', `RAW:${parts[0]},${parts[1]},${parts[2]},${parts[3]},${parts[4]}`);
+                } else if (parts.length === 4 && !parts.some(isNaN)) {
+                    headState.overrideServos = true;
+                    document.getElementById('overrideServosToggle').checked = true;
+                    setHeadSlidersDOM(parts[0], parts[1], parts[2], 90, parts[3]);
+                    updateInspectorAndVisuals();
+                    await writeToEspSerial('head', `RAW:${parts[0]},${parts[1]},${parts[2]},90,${parts[3]}`);
                 }
                 return;
             }
@@ -2131,7 +2150,7 @@
         function captureCurrentSlidersToStep() {
             const r = armState.customPose.right;
             const l = armState.customPose.left;
-            const customHeadRaw = `RAW:${headState.earRightAngle},${headState.earLeftAngle},${headState.neckAngle},${headState.servoStepDelayMs}`;
+            const customHeadRaw = `RAW:${headState.earRightAngle},${headState.earLeftAngle},${headState.neckAngle},${headState.neckPitchAngle},${headState.servoStepDelayMs}`;
             const customArmsCsv = `${r.pitch},${r.roll},${r.elbow},${l.pitch},${l.roll},${l.elbow}`;
 
             scriptSteps.push({
