@@ -355,71 +355,72 @@
     <div class="flex-1 flex overflow-hidden">
 
         <!-- MENU LATERAL DE MÓDULOS (SIDEBAR CLEAN GOOGLE DESIGN) -->
-        <aside class="w-64 bg-white/85 backdrop-blur-md border-r border-slate-200/90 p-4 flex flex-col justify-between shrink-0 select-none">
+        <aside class="w-64 bg-white/85 backdrop-blur-md border-r border-slate-200/90 p-4 flex flex-col justify-between shrink-0 select-none overflow-y-auto">
             <div class="flex flex-col gap-4">
                 <div>
                     <div class="px-3 mb-2 flex items-center justify-between">
                         <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Módulos do Roboldo</span>
-                        <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">6 Módulos</span>
+                        <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">8 Módulos</span>
                     </div>
 
-                    <nav class="flex flex-col gap-1.5" id="sidebarModuleNav">
-                        <button type="button" onclick="switchModule('overview')" data-mod="overview" class="nav-pill-btn nav-active w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-3">
+                    <nav class="flex flex-col gap-1" id="sidebarModuleNav">
+                        <button type="button" onclick="switchModule('overview')" data-mod="overview" class="nav-pill-btn nav-active w-full text-left px-3.5 py-2 rounded-2xl text-xs font-bold flex items-center gap-3">
                             <i class="fa-solid fa-layer-group text-sm w-5 text-center text-blue-600"></i>
                             <div>
                                 <div>1. Início & Partes</div>
                                 <div class="text-[10px] font-normal text-slate-400">Visão geral e ações</div>
                             </div>
                         </button>
-                        <button type="button" onclick="switchModule('head')" data-mod="head" class="nav-pill-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-3">
+                        <button type="button" onclick="switchModule('head')" data-mod="head" class="nav-pill-btn w-full text-left px-3.5 py-2 rounded-2xl text-xs font-bold flex items-center gap-3">
                             <i class="fa-regular fa-face-smile text-sm w-5 text-center text-blue-600"></i>
                             <div>
                                 <div>2. Cabeça & Rosto</div>
-                                <div class="text-[10px] font-normal text-slate-400">Expressões e orelhas</div>
+                                <div class="text-[10px] font-normal text-slate-400">Expressões e pescoço 2-DoF</div>
                             </div>
                         </button>
-                        <button type="button" onclick="switchModule('arms')" data-mod="arms" class="nav-pill-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-3">
+                        <button type="button" onclick="switchModule('arms')" data-mod="arms" class="nav-pill-btn w-full text-left px-3.5 py-2 rounded-2xl text-xs font-bold flex items-center gap-3">
                             <i class="fa-solid fa-hands-asl-interpreting text-sm w-5 text-center text-blue-600"></i>
                             <div>
                                 <div>3. Braços (3-DoF)</div>
                                 <div class="text-[10px] font-normal text-slate-400">Coreografias e 6 ângulos</div>
                             </div>
                         </button>
-                        <button type="button" onclick="switchModule('voice')" data-mod="voice" class="nav-pill-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-3">
+                        <button type="button" onclick="switchModule('voice')" data-mod="voice" class="nav-pill-btn w-full text-left px-3.5 py-2 rounded-2xl text-xs font-bold flex items-center gap-3">
                             <i class="fa-solid fa-microphone-lines text-sm w-5 text-center text-blue-600"></i>
                             <div>
                                 <div>4. Voz do Roboldo</div>
                                 <div class="text-[10px] font-normal text-slate-400">Piper TTS e lip-sync</div>
                             </div>
                         </button>
-                        <button type="button" onclick="switchModule('sequencer')" data-mod="sequencer" class="nav-pill-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-3">
+                        <button type="button" onclick="switchModule('mapping')" data-mod="mapping" class="nav-pill-btn w-full text-left px-3.5 py-2 rounded-2xl text-xs font-bold flex items-center gap-3">
+                            <i class="fa-solid fa-map-location-dot text-sm w-5 text-center text-blue-600"></i>
+                            <div>
+                                <div>5. Mapeamento & SLAM</div>
+                                <div class="text-[10px] font-normal text-slate-400">Câmera e mapa do ambiente</div>
+                            </div>
+                        </button>
+                        <button type="button" onclick="switchModule('vision')" data-mod="vision" class="nav-pill-btn w-full text-left px-3.5 py-2 rounded-2xl text-xs font-bold flex items-center gap-3">
+                            <i class="fa-solid fa-eye text-sm w-5 text-center text-blue-600"></i>
+                            <div>
+                                <div>6. Visão Computacional</div>
+                                <div class="text-[10px] font-normal text-slate-400">Rastreamento e detecção</div>
+                            </div>
+                        </button>
+                        <button type="button" onclick="switchModule('sequencer')" data-mod="sequencer" class="nav-pill-btn w-full text-left px-3.5 py-2 rounded-2xl text-xs font-bold flex items-center gap-3">
                             <i class="fa-solid fa-film text-sm w-5 text-center text-blue-600"></i>
                             <div>
-                                <div>5. Montar Scripts</div>
+                                <div>7. Montar Scripts</div>
                                 <div class="text-[10px] font-normal text-slate-400">Timeline e roteiros</div>
                             </div>
                         </button>
-                        <button type="button" onclick="switchModule('telemetry')" data-mod="telemetry" class="nav-pill-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-3">
+                        <button type="button" onclick="switchModule('telemetry')" data-mod="telemetry" class="nav-pill-btn w-full text-left px-3.5 py-2 rounded-2xl text-xs font-bold flex items-center gap-3">
                             <i class="fa-solid fa-terminal text-sm w-5 text-center text-blue-600"></i>
                             <div>
-                                <div>6. Monitor Serial</div>
+                                <div>8. Monitor Serial</div>
                                 <div class="text-[10px] font-normal text-slate-400">Comandos USB C++/JSON</div>
                             </div>
                         </button>
                     </nav>
-                </div>
-
-                <!-- Ações Rápidas na Sidebar -->
-                <div class="bg-gradient-to-b from-blue-50/70 to-white border border-blue-100 rounded-2xl p-3 flex flex-col gap-2">
-                    <span class="text-[10px] font-extrabold uppercase tracking-wider text-blue-700">Atalhos</span>
-                    <button type="button" onclick="triggerCombinedMacro('neutral')" class="w-full py-2 px-3 rounded-xl text-xs font-bold btn-blue-primary flex items-center justify-center gap-1.5">
-                        <i class="fa-solid fa-rotate-left"></i>
-                        <span>Posição Neutra</span>
-                    </button>
-                    <button type="button" onclick="startGuidedTour()" class="w-full py-2 px-3 rounded-xl text-xs font-bold btn-blue-soft flex items-center justify-center gap-1.5">
-                        <i class="fa-regular fa-compass"></i>
-                        <span>Mini Tutorial</span>
-                    </button>
                 </div>
             </div>
 
@@ -558,6 +559,36 @@
                         </div>
                         <button onclick="switchModule('voice')" class="w-full py-2 px-3 rounded-xl text-xs font-bold btn-blue-primary">
                             Abrir Painel de Voz &rarr;
+                        </button>
+                    </div>
+
+                    <div class="google-card rounded-3xl p-5 flex flex-col justify-between gap-4 hover:border-blue-300 transition">
+                        <div>
+                            <div class="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-3 font-bold">
+                                <i class="fa-solid fa-map-location-dot text-lg"></i>
+                            </div>
+                            <h4 class="text-sm font-extrabold text-slate-900">Mapeamento & Câmera (SLAM)</h4>
+                            <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                                Acesse a câmera ao vivo para mapear o ambiente 2D (Occupancy Grid), marcar obstáculos e definir destinos (POIs).
+                            </p>
+                        </div>
+                        <button onclick="switchModule('mapping')" class="w-full py-2 px-3 rounded-xl text-xs font-bold btn-blue-primary">
+                            Abrir Mapeamento &rarr;
+                        </button>
+                    </div>
+
+                    <div class="google-card rounded-3xl p-5 flex flex-col justify-between gap-4 hover:border-blue-300 transition">
+                        <div>
+                            <div class="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-3 font-bold">
+                                <i class="fa-solid fa-eye text-lg"></i>
+                            </div>
+                            <h4 class="text-sm font-extrabold text-slate-900">Visão Computacional</h4>
+                            <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                                Detecção de rostos, gestos e objetos com auto-tracking sincronizado ao pescoço 2-DoF (Yaw e Pitch).
+                            </p>
+                        </div>
+                        <button onclick="switchModule('vision')" class="w-full py-2 px-3 rounded-xl text-xs font-bold btn-blue-primary">
+                            Abrir Visão Computacional &rarr;
                         </button>
                     </div>
 
@@ -924,7 +955,225 @@
             </section>
 
             <!-- ================================================================ -->
-            <!-- MÓDULO 5: MONTAGEM DE SCRIPTS & TIMELINE                         -->
+            <!-- MÓDULO 5: MAPEAMENTO DO AMBIENTE & ACESSO À CÂMERA (SLAM 2D)     -->
+            <!-- ================================================================ -->
+            <section id="mod-mapping" class="module-view hidden flex-col gap-5">
+                <div class="google-card rounded-3xl p-6 flex flex-col gap-5">
+                    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h2 class="font-extrabold text-base text-slate-900">Mapeamento do Ambiente & Acesso à Câmera (SLAM)</h2>
+                                <span id="mapStatusBadge" class="px-2.5 py-0.5 text-[10px] font-bold uppercase rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                                    MAPEAMENTO ATIVO
+                                </span>
+                            </div>
+                            <p class="text-xs text-slate-500">Use a câmera do Roboldo para escanear o ambiente e construir o mapa de ocupação 2D</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button type="button" id="btnToggleMapCam" onclick="toggleCameraStream('mapping')" class="px-3.5 py-2 rounded-xl text-xs font-bold btn-blue-primary flex items-center gap-1.5">
+                                <i class="fa-solid fa-video"></i>
+                                <span id="btnToggleMapCamText">Ativar Câmera Real</span>
+                            </button>
+                            <button type="button" onclick="scanEnvironmentStep()" class="px-3.5 py-2 rounded-xl text-xs font-bold btn-blue-soft flex items-center gap-1.5">
+                                <i class="fa-solid fa-radar fa-compass"></i>
+                                <span>Escanear Setor</span>
+                            </button>
+                            <button type="button" onclick="resetOccupancyMap()" class="px-3 py-2 rounded-xl text-xs font-bold btn-blue-soft">
+                                Limpar Mapa
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Grid: Feed da Câmera de Mapeamento + Mapa Occupancy Grid 2D -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Feed da Câmera (Com Varredura Visual SLAM) -->
+                        <div class="bg-blue-50/50 border border-blue-100 rounded-2xl p-4 flex flex-col gap-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-extrabold text-blue-700 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-camera"></i> Câmera do Roboldo (Visual SLAM)
+                                </span>
+                                <span id="mapCamModeLabel" class="text-[10px] font-mono font-semibold text-blue-600 bg-white px-2 py-0.5 rounded-lg border border-blue-100">
+                                    Modo Simulação 3D
+                                </span>
+                            </div>
+
+                            <div class="relative w-full h-56 bg-gradient-to-b from-slate-900 to-slate-800 rounded-2xl overflow-hidden border border-blue-200 flex items-center justify-center">
+                                <video id="mapCameraVideo" autoplay playsinline muted class="hidden w-full h-full object-cover"></video>
+                                <canvas id="mapCameraOverlay" width="420" height="240" class="w-full h-full object-cover"></canvas>
+                                <div class="absolute bottom-2 left-2.5 right-2.5 flex items-center justify-between text-[10px] font-mono text-white bg-slate-900/75 backdrop-blur-sm px-2.5 py-1 rounded-xl">
+                                    <span id="slamKeypointsCount">Keypoints ORB: 148 pts</span>
+                                    <span id="slamDepthEst">Profundidade Média: 1.85 m</span>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-2 text-center">
+                                <button type="button" onclick="setMapClickMode('goal')" id="btnMapModeGoal" class="py-2 px-2 rounded-xl text-xs font-bold btn-blue-primary">
+                                    <i class="fa-solid fa-location-dot mr-1"></i>Marcar Destino
+                                </button>
+                                <button type="button" onclick="setMapClickMode('obstacle')" id="btnMapModeObs" class="py-2 px-2 rounded-xl text-xs font-bold btn-blue-soft">
+                                    <i class="fa-solid fa-cube mr-1"></i>Obstáculo
+                                </button>
+                                <button type="button" onclick="setMapClickMode('poi')" id="btnMapModePoi" class="py-2 px-2 rounded-xl text-xs font-bold btn-blue-soft">
+                                    <i class="fa-solid fa-bookmark mr-1"></i>Salvar POI
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Mapa 2D Interativo (Occupancy Grid + Path Planning) -->
+                        <div class="bg-blue-50/50 border border-blue-100 rounded-2xl p-4 flex flex-col gap-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-extrabold text-blue-700 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-map"></i> Mapa do Ambiente 2D (Occupancy Grid)
+                                </span>
+                                <span id="mapDistanceBadge" class="text-[10px] font-mono font-bold text-blue-700 bg-white px-2 py-0.5 rounded-lg border border-blue-100">
+                                    dx: 3.0m, dy: 2.0m (3.61m)
+                                </span>
+                            </div>
+
+                            <div class="relative w-full h-56 bg-white rounded-2xl overflow-hidden border border-blue-200 cursor-crosshair">
+                                <canvas id="occupancyGridCanvas" width="420" height="240" onclick="onOccupancyMapClick(event)" class="w-full h-full"></canvas>
+                            </div>
+
+                            <div class="flex items-center justify-between text-xs bg-white px-3 py-2 rounded-xl border border-blue-100">
+                                <div class="flex items-center gap-3 text-[11px] font-semibold text-slate-600">
+                                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block"></span> Roboldo</span>
+                                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-sky-400 inline-block"></span> Rota A*</span>
+                                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-slate-700 inline-block"></span> Obstáculo</span>
+                                </div>
+                                <button type="button" onclick="navigateRobotAlongPath()" class="px-3 py-1 rounded-lg text-xs font-bold btn-blue-primary">
+                                    Navegar &rarr;
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pontos de Interesse (POIs) do Laboratório / Ambiente -->
+                    <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-2">
+                        <span class="text-xs font-bold text-slate-700">Pontos de Interesse (POIs) Mapeados:</span>
+                        <div class="flex flex-wrap gap-2">
+                            <button type="button" onclick="goToPresetPoi('Bancada Principal', 2, 2)" class="px-3 py-1.5 rounded-xl text-xs font-bold btn-blue-soft">
+                                📍 Bancada Principal (2.0, 2.0)
+                            </button>
+                            <button type="button" onclick="goToPresetPoi('Entrada LAR/UERN', 9, 2)" class="px-3 py-1.5 rounded-xl text-xs font-bold btn-blue-soft">
+                                📍 Entrada LAR/UERN (9.0, 2.0)
+                            </button>
+                            <button type="button" onclick="goToPresetPoi('Palco Apresentação COIN', 10, 5)" class="px-3 py-1.5 rounded-xl text-xs font-bold btn-blue-soft">
+                                📍 Palco COIN (10.0, 5.0)
+                            </button>
+                            <button type="button" onclick="goToPresetPoi('Base Auto-Docking', 1, 6)" class="px-3 py-1.5 rounded-xl text-xs font-bold btn-blue-soft">
+                                ⚡ Base Auto-Docking (1.0, 6.0)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================================================================ -->
+            <!-- MÓDULO 6: VISÃO COMPUTACIONAL & AUTO-TRACKING PESCOÇO 2-DoF      -->
+            <!-- ================================================================ -->
+            <section id="mod-vision" class="module-view hidden flex-col gap-5">
+                <div class="google-card rounded-3xl p-6 flex flex-col gap-5">
+                    <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h2 class="font-extrabold text-base text-slate-900">Visão Computacional & Percepção IHR</h2>
+                                <span id="cvStatusBadge" class="px-2.5 py-0.5 text-[10px] font-bold uppercase rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                                    DETECÇÃO ATIVA (30 FPS)
+                                </span>
+                            </div>
+                            <p class="text-xs text-slate-500">Detecção facial, gestos e objetos com rastreamento automático pelo pescoço 2-DoF</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button type="button" id="btnToggleCvCam" onclick="toggleCameraStream('vision')" class="px-3.5 py-2 rounded-xl text-xs font-bold btn-blue-primary flex items-center gap-1.5">
+                                <i class="fa-solid fa-camera"></i>
+                                <span id="btnToggleCvCamText">Usar Webcam Real</span>
+                            </button>
+                            <label class="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 px-3 py-2 rounded-xl text-xs font-bold text-blue-700 cursor-pointer">
+                                <input type="checkbox" id="cvAutoTrackNeckToggle" checked onchange="toggleCvNeckTracking(this.checked)" class="rounded text-blue-600">
+                                <span>Seguir Alvo c/ Pescoço 2-DoF</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Seletor de Pipeline de Visão Computacional -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                        <button type="button" onclick="selectCvPipeline('face')" data-cv="face" class="cv-mode-btn p-3 rounded-2xl text-xs font-bold btn-blue-soft active-tile flex flex-col items-center gap-1">
+                            <i class="fa-regular fa-face-smile-beam text-base"></i>
+                            <span>Detecção Facial & Emoção</span>
+                        </button>
+                        <button type="button" onclick="selectCvPipeline('hands')" data-cv="hands" class="cv-mode-btn p-3 rounded-2xl text-xs font-bold btn-blue-soft flex flex-col items-center gap-1">
+                            <i class="fa-regular fa-hand-paper text-base"></i>
+                            <span>Gestos & Mãos (MediaPipe)</span>
+                        </button>
+                        <button type="button" onclick="selectCvPipeline('objects')" data-cv="objects" class="cv-mode-btn p-3 rounded-2xl text-xs font-bold btn-blue-soft flex flex-col items-center gap-1">
+                            <i class="fa-solid fa-cubes text-base"></i>
+                            <span>Objetos (YOLO / OpenCV)</span>
+                        </button>
+                        <button type="button" onclick="selectCvPipeline('aruco')" data-cv="aruco" class="cv-mode-btn p-3 rounded-2xl text-xs font-bold btn-blue-soft flex flex-col items-center gap-1">
+                            <i class="fa-solid fa-qrcode text-base"></i>
+                            <span>Marcadores ArUco / QR</span>
+                        </button>
+                    </div>
+
+                    <!-- Viewport de Visão Computacional + Painel de Detecções -->
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+                        <!-- Tela de Câmera com Bounding Boxes Interativas -->
+                        <div class="md:col-span-7 bg-blue-50/50 border border-blue-100 rounded-2xl p-4 flex flex-col gap-2.5">
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="font-extrabold text-blue-700">Feed de Visão Computacional (Clique p/ mover o alvo)</span>
+                                <span id="cvTargetCoordsBadge" class="font-mono text-[11px] text-blue-600 bg-white px-2 py-0.5 rounded-lg border border-blue-100">
+                                    Alvo: X=50% Y=48%
+                                </span>
+                            </div>
+
+                            <div class="relative w-full h-60 bg-slate-900 rounded-2xl overflow-hidden border border-blue-200 cursor-pointer">
+                                <video id="cvCameraVideo" autoplay playsinline muted class="hidden w-full h-full object-cover"></video>
+                                <canvas id="cvDetectionCanvas" width="460" height="260" onclick="onCvCanvasClick(event)" class="w-full h-full object-cover"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Telemetria de Detecção & Reação Automática do Roboldo -->
+                        <div class="md:col-span-5 bg-blue-50/50 border border-blue-100 rounded-2xl p-4 flex flex-col justify-between gap-3">
+                            <div class="flex flex-col gap-2.5">
+                                <span class="text-xs font-extrabold text-blue-700">Detecções em Tempo Real</span>
+
+                                <div class="bg-white p-3 rounded-xl border border-blue-100 flex items-center justify-between">
+                                    <div>
+                                        <span class="text-[10px] font-bold uppercase text-slate-400 block">Classe Principal</span>
+                                        <span id="cvDetectedClass" class="text-xs font-extrabold text-slate-800">Pessoa (Rosto Sorrindo)</span>
+                                    </div>
+                                    <span id="cvConfidenceBadge" class="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 font-mono text-xs font-bold">
+                                        98.4%
+                                    </span>
+                                </div>
+
+                                <div class="bg-white p-3 rounded-xl border border-blue-100 flex items-center justify-between">
+                                    <div>
+                                        <span class="text-[10px] font-bold uppercase text-slate-400 block">Tracking Pescoço 2-DoF</span>
+                                        <span id="cvNeckTrackOutput" class="text-xs font-mono font-bold text-blue-600">Yaw: 90° | Pitch: 95°</span>
+                                    </div>
+                                    <span class="text-[11px] font-semibold text-blue-600">Ativo</span>
+                                </div>
+
+                                <div class="bg-white p-3 rounded-xl border border-blue-100">
+                                    <span class="text-[10px] font-bold uppercase text-slate-400 block mb-1">Reação Social do Roboldo (IHR)</span>
+                                    <p id="cvSocialReactionText" class="text-xs text-slate-700 font-medium">
+                                        Espelhando sorriso ('h') e mantendo contato visual com o visitante.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <button type="button" onclick="triggerCvSocialReaction()" class="w-full py-2.5 px-3 rounded-xl text-xs font-bold btn-blue-primary flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                                <span>Reagir ao Alvo Detectado</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================================================================ -->
+            <!-- MÓDULO 7: MONTAGEM DE SCRIPTS & TIMELINE                         -->
             <!-- ================================================================ -->
             <section id="mod-sequencer" class="module-view hidden flex-col gap-5">
                 <div class="google-card rounded-3xl p-6 flex flex-col gap-4">
@@ -1166,37 +1415,49 @@
         const TOUR_STEPS = [
             {
                 module: 'overview',
-                tag: 'PASSO 1 DE 6 • INÍCIO & PARTES',
+                tag: 'PASSO 1 DE 8 • INÍCIO & PARTES',
                 title: 'Conheça as Partes do Roboldo',
                 desc: 'Use as Ações Rápidas para testar o robô inteiro ou clique em qualquer cartão para abrir o módulo correspondente.'
             },
             {
                 module: 'head',
-                tag: 'PASSO 2 DE 6 • CABEÇA & ROSTO DWIN',
-                title: 'Expressões Faciais, Orelhas e Pescoço',
-                desc: 'Mude a expressão do rosto DWIN com um clique ou arraste os sliders para girar as orelhas e o pescoço.'
+                tag: 'PASSO 2 DE 8 • CABEÇA & PESCOÇO 2-DoF',
+                title: 'Expressões Faciais, Orelhas e Pescoço 2-DoF',
+                desc: 'Mude a expressão do rosto DWIN ou ajuste as orelhas e os 2 eixos do pescoço (Yaw lados e Pitch cima/baixo).'
             },
             {
                 module: 'arms',
-                tag: 'PASSO 3 DE 6 • BRAÇOS ARTICULADOS',
+                tag: 'PASSO 3 DE 8 • BRAÇOS ARTICULADOS',
                 title: 'Coreografias e 6 Ângulos dos Braços',
                 desc: 'Escolha um gesto pronto (como Aceno ou Abraço) ou personalize os 6 ângulos dos ombros e cotovelos.'
             },
             {
                 module: 'voice',
-                tag: 'PASSO 4 DE 6 • VOZ DO ROBOLDO',
+                tag: 'PASSO 4 DE 8 • VOZ DO ROBOLDO',
                 title: 'Síntese de Voz em Português',
                 desc: 'Digite qualquer texto para o Roboldo falar com sincronia automática da boca.'
             },
             {
+                module: 'mapping',
+                tag: 'PASSO 5 DE 8 • MAPEAMENTO & CÂMERA (SLAM)',
+                title: 'Mapeamento 2D do Ambiente com Câmera',
+                desc: 'Use a câmera para mapear o ambiente, marcar obstáculos e navegar até Pontos de Interesse (POIs).'
+            },
+            {
+                module: 'vision',
+                tag: 'PASSO 6 DE 8 • VISÃO COMPUTACIONAL',
+                title: 'Detecção Facial, Gestos e Auto-Tracking',
+                desc: 'Detecte rostos, mãos e objetos e faça o pescoço 2-DoF acompanhar o alvo automaticamente.'
+            },
+            {
                 module: 'sequencer',
-                tag: 'PASSO 5 DE 6 • MONTAGEM DE SCRIPTS',
+                tag: 'PASSO 7 DE 8 • MONTAGEM DE SCRIPTS',
                 title: 'Crie Roteiros e Coreografias',
                 desc: 'Combine poses capturadas dos sliders, expressões e falas em uma sequência passo a passo.'
             },
             {
                 module: 'telemetry',
-                tag: 'PASSO 6 DE 6 • MONITOR SERIAL',
+                tag: 'PASSO 8 DE 8 • MONITOR SERIAL',
                 title: 'Comunicação USB com os 2 ESP32',
                 desc: 'Acompanhe os comandos enviados em tempo real para a Cabeça e para os Braços.'
             }
@@ -2273,11 +2534,395 @@
             }, 2500);
         }
 
+        // =========================================================================
+        // 10. MÓDULO DE MAPEAMENTO & CÂMERA (SLAM 2D) E VISÃO COMPUTACIONAL
+        // =========================================================================
+        let activeWebcamStream = null;
+        let mapClickMode = 'goal';
+        let robotMapCell = { x: 2, y: 5 };
+        let goalMapCell  = { x: 8, y: 2 };
+        let mapObstacles = { "5,4": true, "5,3": true, "6,5": true };
+        let mapPois = [
+            { name: "Bancada", x: 2, y: 2 },
+            { name: "Entrada", x: 9, y: 2 },
+            { name: "Palco COIN", x: 10, y: 5 }
+        ];
+        let slamScanTick = 0;
+
+        let currentCvPipeline = 'face';
+        let cvTargetPos = { x: 0.52, y: 0.46 };
+        let cvAutoTrackNeck = true;
+
+        async function toggleCameraStream(sourceModule) {
+            const mapVideo = document.getElementById('mapCameraVideo');
+            const cvVideo  = document.getElementById('cvCameraVideo');
+            const btnMapTxt = document.getElementById('btnToggleMapCamText');
+            const btnCvTxt  = document.getElementById('btnToggleCvCamText');
+
+            if (activeWebcamStream) {
+                activeWebcamStream.getTracks().forEach(t => t.stop());
+                activeWebcamStream = null;
+                mapVideo.classList.add('hidden');
+                cvVideo.classList.add('hidden');
+                btnMapTxt.textContent = "Ativar Câmera Real";
+                btnCvTxt.textContent  = "Usar Webcam Real";
+                document.getElementById('mapCamModeLabel').textContent = "Modo Simulação 3D";
+                showToast("Câmera encerrada. Voltando ao modo simulação.", "info");
+                return;
+            }
+
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                showToast("API de câmera não disponível neste navegador. Mantendo simulação visual.", "info");
+                return;
+            }
+
+            try {
+                activeWebcamStream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 360 } });
+                mapVideo.srcObject = activeWebcamStream;
+                cvVideo.srcObject  = activeWebcamStream;
+                btnMapTxt.textContent = "Desativar Câmera";
+                btnCvTxt.textContent  = "Desativar Webcam";
+                document.getElementById('mapCamModeLabel').textContent = "Câmera Ao Vivo";
+                showToast("Câmera conectada ao sistema de Mapeamento e Visão!", "success");
+            } catch (err) {
+                showToast("Sem webcam disponível. Usando simulação inteligente de câmera.", "info");
+            }
+        }
+
+        function setMapClickMode(mode) {
+            mapClickMode = mode;
+            document.getElementById('btnMapModeGoal').className = `py-2 px-2 rounded-xl text-xs font-bold ${mode === 'goal' ? 'btn-blue-primary' : 'btn-blue-soft'}`;
+            document.getElementById('btnMapModeObs').className  = `py-2 px-2 rounded-xl text-xs font-bold ${mode === 'obstacle' ? 'btn-blue-primary' : 'btn-blue-soft'}`;
+            document.getElementById('btnMapModePoi').className  = `py-2 px-2 rounded-xl text-xs font-bold ${mode === 'poi' ? 'btn-blue-primary' : 'btn-blue-soft'}`;
+        }
+
+        function onOccupancyMapClick(event) {
+            const canvas = document.getElementById('occupancyGridCanvas');
+            const rect = canvas.getBoundingClientRect();
+            const cols = 12, rows = 7;
+            const gx = Math.max(0, Math.min(cols - 1, Math.floor(((event.clientX - rect.left) / rect.width) * cols)));
+            const gy = Math.max(0, Math.min(rows - 1, Math.floor(((event.clientY - rect.top) / rect.height) * rows)));
+
+            if (mapClickMode === 'goal') {
+                goalMapCell = { x: gx, y: gy };
+                updateMapDistanceLabel();
+                showToast(`Novo destino marcado na célula (${gx}, ${gy})`, "info");
+            } else if (mapClickMode === 'obstacle') {
+                const key = `${gx},${gy}`;
+                if (mapObstacles[key]) delete mapObstacles[key];
+                else mapObstacles[key] = true;
+            } else if (mapClickMode === 'poi') {
+                mapPois.push({ name: `POI #${mapPois.length + 1}`, x: gx, y: gy });
+                goalMapCell = { x: gx, y: gy };
+                updateMapDistanceLabel();
+                showToast(`Ponto de interesse salvo em (${gx}, ${gy})`, "success");
+            }
+            drawOccupancyGrid();
+        }
+
+        function updateMapDistanceLabel() {
+            const dx = (goalMapCell.x - robotMapCell.x).toFixed(1);
+            const dy = (robotMapCell.y - goalMapCell.y).toFixed(1);
+            const dist = Math.hypot(goalMapCell.x - robotMapCell.x, goalMapCell.y - robotMapCell.y).toFixed(2);
+            document.getElementById('mapDistanceBadge').textContent = `dx: ${dx}m, dy: ${dy}m (${dist}m)`;
+        }
+
+        function goToPresetPoi(name, x, y) {
+            goalMapCell = { x, y };
+            updateMapDistanceLabel();
+            drawOccupancyGrid();
+            showToast(`Rota calculada para ${name} (${x}, ${y})`, "info");
+        }
+
+        function scanEnvironmentStep() {
+            slamScanTick += 5;
+            const kp = 135 + Math.floor(Math.random() * 45);
+            const dp = (1.4 + Math.random() * 1.1).toFixed(2);
+            document.getElementById('slamKeypointsCount').textContent = `Keypoints ORB: ${kp} pts`;
+            document.getElementById('slamDepthEst').textContent = `Profundidade Média: ${dp} m`;
+            drawOccupancyGrid();
+            showToast("Varredura visual SLAM concluída e mapa atualizado!", "success");
+        }
+
+        function resetOccupancyMap() {
+            mapObstacles = {};
+            robotMapCell = { x: 2, y: 5 };
+            goalMapCell  = { x: 8, y: 2 };
+            updateMapDistanceLabel();
+            drawOccupancyGrid();
+            showToast("Mapa de ocupação reiniciado.", "info");
+        }
+
+        function navigateRobotAlongPath() {
+            if (robotMapCell.x === goalMapCell.x && robotMapCell.y === goalMapCell.y) {
+                showToast("O Roboldo já está no destino selecionado!", "info");
+                return;
+            }
+            const stepTimer = setInterval(() => {
+                if (robotMapCell.x < goalMapCell.x) robotMapCell.x++;
+                else if (robotMapCell.x > goalMapCell.x) robotMapCell.x--;
+                else if (robotMapCell.y < goalMapCell.y) robotMapCell.y++;
+                else if (robotMapCell.y > goalMapCell.y) robotMapCell.y--;
+
+                updateMapDistanceLabel();
+                drawOccupancyGrid();
+
+                if (robotMapCell.x === goalMapCell.x && robotMapCell.y === goalMapCell.y) {
+                    clearInterval(stepTimer);
+                    showToast("Roboldo chegou ao destino mapeado!", "success");
+                }
+            }, 260);
+        }
+
+        function drawOccupancyGrid() {
+            const canvas = document.getElementById('occupancyGridCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const W = canvas.width, H = canvas.height;
+            const cols = 12, rows = 7;
+            const cw = W / cols, ch = H / rows;
+
+            ctx.clearRect(0, 0, W, H);
+            ctx.fillStyle = "#f8fafc";
+            ctx.fillRect(0, 0, W, H);
+
+            // Grid cells
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const key = `${c},${r}`;
+                    if (mapObstacles[key]) {
+                        ctx.fillStyle = "#334155";
+                        ctx.fillRect(c * cw + 2, r * ch + 2, cw - 4, ch - 4);
+                    } else {
+                        ctx.strokeStyle = "#e2e8f0";
+                        ctx.strokeRect(c * cw, r * ch, cw, ch);
+                    }
+                }
+            }
+
+            // Cone de visão da câmera do Roboldo
+            const rx = (robotMapCell.x + 0.5) * cw;
+            const ry = (robotMapCell.y + 0.5) * ch;
+            const gx = (goalMapCell.x + 0.5) * cw;
+            const gy = (goalMapCell.y + 0.5) * ch;
+
+            ctx.fillStyle = "rgba(37, 99, 235, 0.12)";
+            ctx.beginPath();
+            ctx.moveTo(rx, ry);
+            ctx.lineTo(gx + 25, gy - 25);
+            ctx.lineTo(gx - 25, gy + 25);
+            ctx.closePath();
+            ctx.fill();
+
+            // Linha de Rota Planejada
+            ctx.strokeStyle = "#38bdf8";
+            ctx.lineWidth = 3;
+            ctx.setLineDash([6, 4]);
+            ctx.beginPath();
+            ctx.moveTo(rx, ry);
+            ctx.lineTo(gx, ry);
+            ctx.lineTo(gx, gy);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // POIs
+            mapPois.forEach(p => {
+                const px = (p.x + 0.5) * cw;
+                const py = (p.y + 0.5) * ch;
+                ctx.fillStyle = "#dbeafe";
+                ctx.beginPath();
+                ctx.arc(px, py, 6, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = "#1d4ed8";
+                ctx.font = "bold 9px Inter, sans-serif";
+                ctx.fillText(p.name, px - 18, py - 9);
+            });
+
+            // Destino
+            ctx.fillStyle = "#0284c7";
+            ctx.beginPath();
+            ctx.arc(gx, gy, 8, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = "#ffffff";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Posição do Roboldo
+            ctx.fillStyle = "#1a73e8";
+            ctx.beginPath();
+            ctx.arc(rx, ry, 10, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = "#ffffff";
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+        }
+
+        function drawSlamCameraFeed() {
+            const canvas = document.getElementById('mapCameraOverlay');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const W = canvas.width, H = canvas.height;
+            const video = document.getElementById('mapCameraVideo');
+
+            ctx.clearRect(0, 0, W, H);
+            if (activeWebcamStream && video.readyState >= 2) {
+                ctx.drawImage(video, 0, 0, W, H);
+            } else {
+                // Ambiente 3D simulado em perspectiva (corredor do laboratório)
+                const grad = ctx.createLinearGradient(0, 0, 0, H);
+                grad.addColorStop(0, "#0f172a");
+                grad.addColorStop(1, "#1e3a8a");
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, W, H);
+
+                ctx.strokeStyle = "rgba(56, 189, 248, 0.25)";
+                ctx.lineWidth = 1;
+                for (let x = 0; x <= W; x += 35) {
+                    ctx.beginPath();
+                    ctx.moveTo(W / 2, H * 0.32);
+                    ctx.lineTo(x, H);
+                    ctx.stroke();
+                }
+                for (let y = H * 0.35; y < H; y += 22) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, y);
+                    ctx.lineTo(W, y);
+                    ctx.stroke();
+                }
+            }
+
+            // Pontos ORB SLAM simulados
+            slamScanTick++;
+            for (let i = 0; i < 28; i++) {
+                const px = (i * 53 + slamScanTick * 2) % (W - 30) + 15;
+                const py = (i * 37) % (H - 50) + 25;
+                ctx.fillStyle = "#38bdf8";
+                ctx.fillRect(px - 2, py - 2, 4, 4);
+                ctx.strokeStyle = "rgba(56, 189, 248, 0.5)";
+                ctx.strokeRect(px - 5, py - 5, 10, 10);
+            }
+        }
+
+        function selectCvPipeline(mode) {
+            currentCvPipeline = mode;
+            document.querySelectorAll('.cv-mode-btn').forEach(btn => {
+                const active = btn.dataset.cv === mode;
+                btn.className = `cv-mode-btn p-3 rounded-2xl text-xs font-bold btn-blue-soft flex flex-col items-center gap-1 ${active ? 'active-tile' : ''}`;
+            });
+
+            const meta = {
+                face:    { cls: "Pessoa (Rosto Sorrindo)", conf: "98.4%", react: "Espelhando sorriso ('h') e mantendo contato visual com o visitante." },
+                hands:   { cls: "Gesto: Mão Aberta (Aceno)", conf: "96.1%", react: "Gesto de saudação reconhecido! Pronto para responder com Aceno Direito ('ad')." },
+                objects: { cls: "Tablet Assistivo & Crachá UERN", conf: "94.7%", react: "Objeto educacional identificado na bancada." },
+                aruco:   { cls: "ArUco ID #04 (Estação LAR)", conf: "99.2%", react: "Marcador de localização alinhado para aproximação precisa." }
+            }[mode];
+
+            document.getElementById('cvDetectedClass').textContent = meta.cls;
+            document.getElementById('cvConfidenceBadge').textContent = meta.conf;
+            document.getElementById('cvSocialReactionText').textContent = meta.react;
+        }
+
+        function toggleCvNeckTracking(enabled) {
+            cvAutoTrackNeck = Boolean(enabled);
+            showToast(cvAutoTrackNeck ? "Auto-tracking do pescoço 2-DoF ativado!" : "Auto-tracking pausado.", "info");
+        }
+
+        function onCvCanvasClick(event) {
+            const canvas = document.getElementById('cvDetectionCanvas');
+            const rect = canvas.getBoundingClientRect();
+            cvTargetPos.x = Math.max(0.15, Math.min(0.85, (event.clientX - rect.left) / rect.width));
+            cvTargetPos.y = Math.max(0.18, Math.min(0.82, (event.clientY - rect.top) / rect.height));
+
+            const pctX = Math.round(cvTargetPos.x * 100);
+            const pctY = Math.round(cvTargetPos.y * 100);
+            document.getElementById('cvTargetCoordsBadge').textContent = `Alvo: X=${pctX}% Y=${pctY}%`;
+
+            if (cvAutoTrackNeck) {
+                const targetYaw   = Math.round(135 - cvTargetPos.x * 90);
+                const targetPitch = Math.round(125 - cvTargetPos.y * 70);
+                setHeadSlidersDOM(headState.earRightAngle, headState.earLeftAngle, targetYaw, targetPitch, headState.servoStepDelayMs);
+                updateInspectorAndVisuals();
+                document.getElementById('cvNeckTrackOutput').textContent = `Yaw: ${targetYaw}° | Pitch: ${targetPitch}°`;
+            }
+        }
+
+        function triggerCvSocialReaction() {
+            if (currentCvPipeline === 'face') {
+                triggerCombinedMacro('greet_right');
+            } else if (currentCvPipeline === 'hands') {
+                triggerCombinedMacro('surprised_wave2');
+            } else if (currentCvPipeline === 'objects') {
+                triggerCombinedMacro('handshake');
+            } else {
+                triggerCombinedMacro('warm_hug');
+            }
+        }
+
+        function drawCvDetectionViewport() {
+            const canvas = document.getElementById('cvDetectionCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const W = canvas.width, H = canvas.height;
+            const video = document.getElementById('cvCameraVideo');
+
+            ctx.clearRect(0, 0, W, H);
+            if (activeWebcamStream && video.readyState >= 2) {
+                ctx.drawImage(video, 0, 0, W, H);
+            } else {
+                const grad = ctx.createLinearGradient(0, 0, W, H);
+                grad.addColorStop(0, "#0f172a");
+                grad.addColorStop(1, "#1e293b");
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, W, H);
+            }
+
+            const cx = cvTargetPos.x * W;
+            const cy = cvTargetPos.y * H;
+            const bw = 120, bh = 110;
+
+            // Bounding Box Azul estilo Visão Computacional
+            ctx.strokeStyle = "#38bdf8";
+            ctx.lineWidth = 2.5;
+            ctx.strokeRect(cx - bw / 2, cy - bh / 2, bw, bh);
+
+            // Label da Bounding Box
+            ctx.fillStyle = "#1a73e8";
+            ctx.fillRect(cx - bw / 2, cy - bh / 2 - 22, 165, 22);
+            ctx.fillStyle = "#ffffff";
+            ctx.font = "bold 11px Inter, sans-serif";
+            const labelMap = {
+                face: "FACE: Visitante (98%)",
+                hands: "HAND: Aceno Detectado",
+                objects: "OBJ: Tablet Roboldo",
+                aruco: "ARUCO: ID #04 (LAR)"
+            };
+            ctx.fillText(labelMap[currentCvPipeline], cx - bw / 2 + 6, cy - bh / 2 - 7);
+
+            // Landmarks internos do alvo
+            ctx.fillStyle = "#38bdf8";
+            ctx.beginPath();
+            ctx.arc(cx - 22, cy - 12, 4, 0, Math.PI * 2);
+            ctx.arc(cx + 22, cy - 12, 4, 0, Math.PI * 2);
+            ctx.arc(cx, cy + 4, 3.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.strokeStyle = "#38bdf8";
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.arc(cx, cy + 16, 18, 0.15 * Math.PI, 0.85 * Math.PI);
+            ctx.stroke();
+        }
+
         window.onload = function () {
             selectHeadEmotion(3);
             triggerArmGesture(1, 'n');
             startTalkMouthLoop();
             loadPresetScript('coin_presentation');
+            drawOccupancyGrid();
+            setInterval(() => {
+                drawSlamCameraFeed();
+                drawCvDetectionViewport();
+            }, 120);
 
             if (currentOperatorName) applyOperatorNameUI(currentOperatorName);
             if (localStorage.getItem('roboldo_ide_onboarded') === 'true' && currentOperatorName) {
