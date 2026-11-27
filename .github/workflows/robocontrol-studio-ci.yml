@@ -1,0 +1,77 @@
+name: ⚙️ RoboControl Studio CI (Ambiente de Configuração)
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - ambiente-configuracao
+  pull_request:
+    branches:
+      - main
+      - master
+      - ambiente-configuracao
+  workflow_dispatch:
+
+jobs:
+  validate-studio:
+    name: 🧪 Validar Servidores (Python/Node) & Manifestos da Lojinha
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout do código
+        uses: actions/checkout@v4
+
+      - name: 🐍 Configurar Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 🟢 Configurar Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 🔎 Validar sintaxe Python (server.py)
+        run: python -m py_compile server.py
+
+      - name: 🔎 Validar sintaxe Node.js (server.mjs)
+        run: node --check server.mjs
+
+      - name: 📋 Validar JSONs de manifesto e catálogo da Lojinha
+        run: |
+          python -c "
+          import json, sys
+          files = ['roboldo-app.json', 'lojinha-catalog.json', 'package.json', 'pt_BR-faber-medium.onnx.json']
+          for f in files:
+              with open(f, 'r', encoding='utf-8') as fp:
+                  data = json.load(fp)
+              print(f'OK: {f} validado com sucesso.')
+          app = json.load(open('roboldo-app.json', encoding='utf-8'))
+          assert 'id' in app and 'version' in app and 'runtime' in app, 'Campos obrigatorios ausentes em roboldo-app.json'
+          "
+
+      - name: 🌐 Verificar integridade dos painéis HTML
+        run: |
+          test -s "file.html"
+          test -s "painel.html"
+          test -s "painel_de_controle_rob_social_usb(2).html"
+          echo "Paineis HTML verificados com sucesso."
+
+      - name: 📦 Empacotar Release do RoboControl Studio
+        uses: actions/upload-artifact@v4
+        with:
+          name: robocontrol-studio-bundle
+          path: |
+            server.py
+            server.mjs
+            package.json
+            requirements.txt
+            roboldo-app.json
+            lojinha-catalog.json
+            file.html
+            painel.html
+            painel_de_controle_rob_social_usb(2).html
+            pt_BR-faber-medium.onnx.json
+            FLUXO_DESENVOLVIMENTO.md
+            README.md
+          retention-days: 30

@@ -1,0 +1,10 @@
+{
+  "name": "roboldo-config",
+  "version": "3.0.0",
+  "description": "Ambiente de configuração pré-instalado do Roboldo (RoboControl Studio + Piper TTS Offline)",
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "dev": "py server.py"
+  }
+}

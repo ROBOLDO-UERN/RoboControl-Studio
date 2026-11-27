@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel de Voz - Roboldo 2.0 (Piper Offline)</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --bg: #0f172a;
+      --card: #1e293b;
+      --text: #f8fafc;
+    }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      background-color: var(--card);
+      padding: 28px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      max-width: 550px;
+      width: 100%;
+    }
+    h1 {
+      margin-top: 0;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #60a5fa;
+    }
+    textarea {
+      width: 100%;
+      height: 130px;
+      background: #0f172a;
+      color: #fff;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 1rem;
+      line-height: 1.4;
+      resize: vertical;
+      box-sizing: border-box;
+      margin-bottom: 16px;
+    }
+    .control-group {
+      margin-bottom: 16px;
+    }
+    label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+      color: #cbd5e1;
+    }
+    select, input[type="range"] {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 8px;
+      border-radius: 6px;
+      background: #0f172a;
+      color: #fff;
+      border: 1px solid #334155;
+    }
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    button {
+      flex: 1;
+      padding: 14px;
+      font-size: 1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.1s, opacity 0.2s;
+    }
+    button:active {
+      transform: scale(0.98);
+    }
+    .btn-speak {
+      background-color: #2563eb;
+      color: white;
+    }
+    .btn-stop {
+      background-color: #dc2626;
+      color: white;
+      flex: 0.4;
+    }
+    .status {
+      margin-top: 16px;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #38bdf8;
+      min-height: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>🤖 Roboldo 2.0 (Offline)</h1>
+  
+  <textarea id="texto">Olá, eu sou o Roboldo! Robô social da UERN! É um prazer estar com você aqui no COIN! Eu sou a versão 2.0. Meu irmão 1.0 e 1.2 também estão aqui presentes. Por ser o irmão mais novo, eu tenho braços, um rostinho dinâmico e posso ter acesso à câmera! Também tenho suporte pra tablet, onde podem ser alocados programas com jogos e pranchas assistivas. Quer saber mais sobre mim? Pergunta pra minha programadora, Artemísia! Bom evento!</textarea>
+
+  <div class="control-group">
+    <label for="vozes">Modelo de Voz Local:</label>
+    <select id="vozes">
+      <option value="pt-BR-FranciscaNeural">Faber (Neural Offline)</option>
+      <option value="pt-BR-AntonioNeural">Antônio (Neural Offline)</option>
+    </select>
+  </div>
+
+  <div class="control-group">
+    <label>Tom / Agudo (Pitch): <span id="pitch-val">1.0</span></label>
+    <input type="range" id="pitch" min="0.5" max="2.0" step="0.1" value="1.0">
+  </div>
+
+  <div class="control-group">
+    <label>Velocidade (Rate): <span id="rate-val">1.05</span></label>
+    <input type="range" id="rate" min="0.5" max="2.0" step="0.05" value="1.05">
+  </div>
+
+  <div class="control-group">
+    <label>Volume: <span id="vol-val">1.0</span></label>
+    <input type="range" id="volume" min="0.1" max="1.0" step="0.1" value="1.0">
+  </div>
+
+  <div class="btn-group">
+    <button class="btn-speak" id="btnFalar">🔊 Apresentar Roboldo</button>
+    <button class="btn-stop" id="btnParar">⏹ Parar</button>
+  </div>
+
+  <div class="status" id="status">Pronto para falar offline.</div>
+</div>
+
+<script>
+  const selectVozes = document.getElementById('vozes');
+  const txtArea = document.getElementById('texto');
+  const pitchInput = document.getElementById('pitch');
+  const rateInput = document.getElementById('rate');
+  const volInput = document.getElementById('volume');
+  const statusDiv = document.getElementById('status');
+  
+  let audioAtual = null;
+  let requisicaoAtual = null;
+  let urlAudioAtual = null;
+
+  function pararFala() {
+    if (requisicaoAtual) {
+      requisicaoAtual.abort();
+      requisicaoAtual = null;
+    }
+    if (audioAtual) {
+      audioAtual.pause();
+      audioAtual.currentTime = 0;
+      audioAtual = null;
+    }
+    if (urlAudioAtual) {
+      URL.revokeObjectURL(urlAudioAtual);
+      urlAudioAtual = null;
+    }
+  }
+
+  pitchInput.addEventListener('input', () => document.getElementById('pitch-val').textContent = pitchInput.value);
+  rateInput.addEventListener('input', () => document.getElementById('rate-val').textContent = rateInput.value);
+  volInput.addEventListener('input', () => document.getElementById('vol-val').textContent = volInput.value);
+
+  document.getElementById('btnFalar').addEventListener('click', async () => {
+    pararFala();
+    const controller = new AbortController();
+    requisicaoAtual = controller;
+    statusDiv.textContent = 'Gerando voz local (Piper)...';
+
+    try {
+      const resposta = await fetch('/api/synthesize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text: txtArea.value,
+          voice: selectVozes.value,
+          rate: Number(rateInput.value)
+        }),
+        signal: controller.signal
+      });
+
+      if (!resposta.ok) {
+        const erro = await resposta.json();
+        throw new Error(erro.error || 'Não foi possível gerar a voz local.');
+      }
+
+      urlAudioAtual = URL.createObjectURL(await resposta.blob());
+      audioAtual = new Audio(urlAudioAtual);
+      
+      // Configurações aplicadas direto no player de áudio do navegador
+      audioAtual.volume = Number(volInput.value);
+      audioAtual.preservesPitch = false; // Permite alterar o tom junto com a velocidade se desejar voz mais robótica/fina
+      audioAtual.playbackRate = Number(pitchInput.value);
+
+      audioAtual.onended = () => {
+        statusDiv.textContent = '✅ Apresentação concluída!';
+        pararFala();
+      };
+      audioAtual.onerror = () => {
+        statusDiv.textContent = '❌ Erro ao reproduzir o áudio WAV.';
+        pararFala();
+      };
+
+      await audioAtual.play();
+      statusDiv.textContent = '🗣️ Roboldo está falando (Offline)...';
+    } catch (erro) {
+      if (erro.name !== 'AbortError') {
+        statusDiv.textContent = `❌ ${erro.message}`;
+      }
+    } finally {
+      if (requisicaoAtual === controller) {
+        requisicaoAtual = null;
+      }
+    }
+  });
+
+  document.getElementById('btnParar').addEventListener('click', () => {
+    pararFala();
+    statusDiv.textContent = "⏹ Fala interrompida.";
+  });
+</script>
+
+</body>
+</html>

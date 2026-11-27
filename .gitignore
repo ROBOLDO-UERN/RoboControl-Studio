@@ -1,0 +1,20 @@
+# Ambiente local e segredos
+.env
+.env.*
+
+# Modelos e binários pesados (devem ser baixados/mantidos localmente)
+*.onnx
+*.zip
+piper/
+
+# Python / Node
+__pycache__/
+*.pyc
+.venv/
+venv/
+node_modules/
+
+# Arquivos locais não relacionados ao app de configuração
+init.sql
+tarefa2.sql
+docker-compose.yml

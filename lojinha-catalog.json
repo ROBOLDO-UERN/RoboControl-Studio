@@ -1,0 +1,26 @@
+{
+  "storeName": "Lojinha do Roboldo",
+  "schemaVersion": "1.0.0",
+  "repository": "https://github.com/Misians/Roboldo-Game-Perguntas-e-Respostas",
+  "apps": [
+    {
+      "id": "roboldo-config",
+      "name": "Ambiente de Configuração do Roboldo",
+      "category": "system",
+      "branch": "ambiente-configuracao",
+      "preinstalled": true,
+      "installable": false,
+      "manifest": "roboldo-app.json",
+      "summary": "Painel pré-instalado para controle Dual USB Serial, voz Piper offline e calibração de movimentos."
+    },
+    {
+      "id": "roboldo-perguntas-e-respostas",
+      "name": "Roboldo Educa — Perguntas e Respostas",
+      "category": "education",
+      "branch": "master",
+      "preinstalled": false,
+      "installable": true,
+      "summary": "Jogo interativo de perguntas e respostas (Flutter + Web) com telemetria UDP para o Roboldo, disponível para instalação na Lojinha."
+    }
+  ]
+}

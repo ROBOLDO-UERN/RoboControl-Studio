@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "roboldo-config",
+  "name": "Ambiente de Configuração do Roboldo",
+  "shortName": "RoboControl Studio",
+  "version": "3.0.0",
+  "description": "Painel pré-instalado de configuração, calibração Dual-ESP (Cabeça + Braços), síntese de voz offline (Piper TTS) e sequenciador de coreografias do Roboldo.",
+  "category": "system",
+  "author": "LAR / UERN",
+  "repository": {
+    "url": "https://github.com/ROBOLDO-UERN/RoboControl-Studio",
+    "branch": "main"
+  },
+  "store": {
+    "listed": true,
+    "preinstalled": true,
+    "installable": false,
+    "removable": false
+  },
+  "runtime": {
+    "type": "web-local",
+    "port": 3000,
+    "entry": "/painel",
+    "voicePanel": "/file.html",
+    "startCommand": "py server.py",
+    "altStartCommand": "node server.mjs",
+    "dependenciesFile": "requirements.txt",
+    "requiredModels": [
+      "pt_BR-faber-medium.onnx",
+      "pt_BR-faber-medium.onnx.json"
+    ]
+  },
+  "capabilities": [
+    "web-serial",
+    "dual-esp",
+    "piper-tts-offline",
+    "dwin-lipsync",
+    "choreography-sequencer"
+  ]
+}

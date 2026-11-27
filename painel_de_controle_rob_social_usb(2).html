@@ -1,0 +1,2699 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RoboControl Studio | Dual USB Serial (Cabeça + Braços)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        slate: {
+                            850: '#151e2e',
+                            900: '#0f172a',
+                            950: '#080d1a',
+                        },
+                        cyber: {
+                            blue: '#38bdf8',
+                            purple: '#a855f7',
+                            emerald: '#10b981',
+                            amber: '#f59e0b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Scrollbars & Range Inputs */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            background: transparent;
+            width: 100%;
+            min-width: 0;
+            display: block;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 6px;
+            cursor: pointer;
+            background: #1e293b;
+            border-radius: 999px;
+            border: 1px solid #334155;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            height: 18px;
+            width: 18px;
+            border-radius: 50%;
+            background: #38bdf8;
+            cursor: pointer;
+            -webkit-appearance: none;
+            margin-top: -7px;
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+            transition: transform 0.15s ease, background-color 0.15s ease;
+        }
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+            background: #7dd3fc;
+        }
+        input[type=range]:disabled::-webkit-slider-thumb {
+            background: #475569;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        /* Robot Face Glow & Animations */
+        .robot-screen-glow {
+            box-shadow: inset 0 0 30px rgba(56, 189, 248, 0.15), 0 0 25px rgba(56, 189, 248, 0.1);
+        }
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.85; }
+            50% { opacity: 1; filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.8)); }
+        }
+        .eye-glow {
+            animation: pulse-glow 3s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col selection:bg-sky-500 selection:text-white">
+
+    <!-- Notificação Toast Flutuante -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- Header / Gerenciador Dual USB (ESP Cabeça + ESP Braços) -->
+    <header class="bg-slate-900/95 backdrop-blur-md border-b border-slate-800 lg:sticky lg:top-0 z-40 px-4 lg:px-6 py-2.5">
+        <div class="max-w-[1650px] mx-auto flex flex-col gap-2.5">
+            <!-- Linha Superior: Logo, Modo de Protocolo e Controles Gerais -->
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 to-purple-600 flex items-center justify-center shadow-lg shadow-sky-500/20">
+                        <i class="fa-solid fa-robot text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h1 class="font-bold text-lg tracking-tight text-white">RoboControl <span class="text-sky-400 font-mono text-sm">Dual-ESP v3.0</span></h1>
+                            <span class="px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider bg-sky-500/10 text-sky-300 border border-sky-500/20 rounded-full">
+                                2x Web Serial Independentes
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-400">ESP1: Cabeça (DWIN HMI + 3 Servos) • ESP2: Braços 3-DoF (LEDC 14-Bits + Keyframes)</p>
+                    </div>
+                </div>
+
+                <!-- Controles Globais de Protocolo e Auto-Envio -->
+                <div class="flex flex-wrap items-center gap-2.5">
+                    <!-- Seletor de Protocolo Serial -->
+                    <div class="flex items-center bg-slate-950 border border-slate-700/80 rounded-xl p-1 text-xs">
+                        <button type="button" id="protoNativeBtn" onclick="setProtocolMode('NATIVE')" class="px-3 py-1.5 rounded-lg font-semibold transition bg-sky-500 text-white shadow">
+                            <i class="fa-solid fa-bolt mr-1"></i>Protocolo Nativo (Strings C++)
+                        </button>
+                        <button type="button" id="protoJsonBtn" onclick="setProtocolMode('JSON')" class="px-3 py-1.5 rounded-lg font-medium text-slate-400 hover:text-slate-200 transition">
+                            <i class="fa-solid fa-code mr-1"></i>Pacotes JSON (Structs)
+                        </button>
+                    </div>
+
+                    <!-- Toggle Envio Automático (Live Stream) -->
+                    <label class="flex items-center gap-2 bg-slate-850 border border-slate-800 px-3 py-2 rounded-xl cursor-pointer select-none hover:border-slate-700 transition" title="Transmite automaticamente ao alterar qualquer botão ou slider">
+                        <input type="checkbox" id="autoSendToggle" checked class="sr-only peer">
+                        <div class="w-8 h-4 bg-slate-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-3 after:w-3 after:transition-all relative peer-checked:bg-emerald-500"></div>
+                        <span class="text-xs font-medium text-slate-300">Auto-Envio (Live)</span>
+                    </label>
+
+                    <!-- Botão Ver Firmwares C++ -->
+                    <button onclick="openCppModal()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 transition">
+                        <i class="fa-solid fa-microchip"></i>
+                        <span>Server Piper (.py) & Firmwares C++</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Linha Inferior: 2 Cartões Independentes de Conexão USB -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+                <!-- PORTA USB 1: ESP CABEÇA -->
+                <div class="bg-slate-950/90 border border-sky-500/30 rounded-xl px-3.5 py-2.5 flex flex-wrap items-center justify-between gap-2.5 shadow-inner min-w-0">
+                    <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                        <div class="w-8 h-8 rounded-lg bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-sky-400">
+                            <i class="fa-solid fa-face-smile"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-bold text-white uppercase tracking-wide">USB 1 • ESP Cabeça</span>
+                                <span id="headConnBadge" class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                                    <span id="headConnDot" class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                                    <span id="headConnText">Simulação</span>
+                                </span>
+                            </div>
+                            <p class="text-[11px] text-slate-400 font-mono">DWIN UART1 + Servos (GPIO 0, 1, 3) • Comandos: <code class="text-sky-300">'n','a'..'u','1'..'3','RAW:'</code></p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <div class="flex items-center bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs">
+                            <span class="text-slate-400 mr-1 text-[11px]">Baud:</span>
+                            <select id="headBaudSelect" class="bg-transparent text-sky-300 font-mono text-xs focus:outline-none cursor-pointer">
+                                <option value="9600" selected class="bg-slate-900">9600 (Padrão)</option>
+                                <option value="57600" class="bg-slate-900">57600</option>
+                                <option value="115200" class="bg-slate-900">115200</option>
+                            </select>
+                        </div>
+                        <button id="btnConnectHead" onclick="toggleSerialPort('head')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-500/40 transition">
+                            <i class="fa-brands fa-usb"></i>
+                            <span id="btnConnectHeadText">Conectar Cabeça</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- PORTA USB 2: ESP BRAÇOS -->
+                <div class="bg-slate-950/90 border border-purple-500/30 rounded-xl px-3.5 py-2.5 flex flex-wrap items-center justify-between gap-2.5 shadow-inner min-w-0">
+                    <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                        <div class="w-8 h-8 rounded-lg bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-400">
+                            <i class="fa-solid fa-hands-asl-interpreting"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-bold text-white uppercase tracking-wide">USB 2 • ESP Braços (3-DoF)</span>
+                                <span id="armsConnBadge" class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                                    <span id="armsConnDot" class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                                    <span id="armsConnText">Simulação</span>
+                                </span>
+                            </div>
+                            <p class="text-[11px] text-slate-400 font-mono">LEDC 14-Bits (Dir: 3,1,0 | Esq: 6,5,7) • Comandos: <code class="text-purple-300">'ad','ae','a2','ab','mc','am','d','n'</code> ou 6 ângulos</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <div class="flex items-center bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs">
+                            <span class="text-slate-400 mr-1 text-[11px]">Baud:</span>
+                            <select id="armsBaudSelect" class="bg-transparent text-purple-300 font-mono text-xs focus:outline-none cursor-pointer">
+                                <option value="9600" class="bg-slate-900">9600</option>
+                                <option value="57600" class="bg-slate-900">57600</option>
+                                <option value="115200" selected class="bg-slate-900">115200 (Padrão)</option>
+                            </select>
+                        </div>
+                        <button id="btnConnectArms" onclick="toggleSerialPort('arms')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/40 transition">
+                            <i class="fa-brands fa-usb"></i>
+                            <span id="btnConnectArmsText">Conectar Braços</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Barra de Macros Combinadas (Disparo Simultâneo USB Cabeça + USB Braços) -->
+    <div class="bg-slate-900/60 border-b border-slate-800/80 px-4 lg:px-6 py-2.5">
+        <div class="max-w-[1650px] mx-auto flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 mr-1 flex items-center gap-1.5">
+                    <i class="fa-solid fa-wand-magic-sparkles text-sky-400"></i> Macros Sincronizadas (Cabeça + Braços):
+                </span>
+                <button onclick="triggerCombinedMacro('neutral')" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-house-user text-slate-400"></i> Neutro Total (<code class="text-sky-400">n</code> + <code class="text-purple-400">n</code>)
+                </button>
+                <button onclick="triggerCombinedMacro('greet_right')" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5">
+                    <span>👋😄</span> Olá Feliz (<code class="text-sky-400">h</code> + <code class="text-purple-400">ad</code>)
+                </button>
+                <button onclick="triggerCombinedMacro('warm_hug')" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5">
+                    <span>🤗❤️</span> Abraço Acolhedor (<code class="text-sky-400">h</code> + <code class="text-purple-400">ab</code>)
+                </button>
+                <button onclick="triggerCombinedMacro('handshake')" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5">
+                    <span>🤝🗣️</span> Cumprimento Formal (<code class="text-sky-400">1</code> + <code class="text-purple-400">am</code>)
+                </button>
+                <button onclick="triggerCombinedMacro('angry_hips')" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5">
+                    <span>😠</span> Bravo na Cintura (<code class="text-sky-400">a</code> + <code class="text-purple-400">mc</code>)
+                </button>
+                <button onclick="triggerCombinedMacro('surprised_wave2')" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5">
+                    <span>😲🙌</span> Surpreso / Aceno Duplo (<code class="text-sky-400">u</code> + <code class="text-purple-400">a2</code>)
+                </button>
+                <button onclick="triggerCombinedMacro('party_dance')" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-gradient-to-r from-sky-500/20 to-purple-500/20 hover:from-sky-500/30 hover:to-purple-500/30 text-white border border-purple-500/40 transition flex items-center gap-1.5">
+                    <span>🕺🎶</span> Modo Festa / Dança (<code class="text-sky-400">h</code> + <code class="text-purple-400">d</code>)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conteúdo Principal: Grid de 12 Colunas -->
+    <main class="flex-1 max-w-[1650px] w-full mx-auto p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- COLUNA 1: ESP CABEÇA (HeadCommandPacket + DWIN + 3 Servos + TTS) - 4 cols -->
+        <section class="lg:col-span-4 min-w-0 flex flex-col gap-5">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col gap-4">
+                <!-- Cabeçalho do Card Cabeça -->
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
+                            <i class="fa-solid fa-face-smile-beam"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-semibold text-sm text-white">ESP 1: Cabeça & Expressão DWIN</h2>
+                            <p class="text-[11px] font-mono text-slate-400">Comando Atual: <code id="headActiveCmdBadge" class="text-sky-400 font-bold">"h\n"</code></p>
+                        </div>
+                    </div>
+                    <button onclick="sendHeadCommandNow('MANUAL')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-sky-500 hover:bg-sky-400 text-white shadow shadow-sky-500/20 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-paper-plane"></i> Enviar Cabeça
+                    </button>
+                </div>
+
+                <!-- 1. FaceMode (mode) -->
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider">Modo Facial (<code class="text-sky-400">FaceMode</code>)</label>
+                        <span id="modeEnumBadge" class="text-[11px] font-mono text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded">MODE_EMOTION (1)</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button type="button" onclick="selectHeadMode(0)" data-mode="0" class="mode-btn flex flex-col items-center justify-center p-2.5 rounded-xl border text-xs font-medium transition">
+                            <i class="fa-solid fa-meh text-base mb-1"></i>
+                            <span>Neutro (Idle)</span>
+                            <code class="text-[10px] font-mono text-sky-300 mt-0.5">cmd: 'n'</code>
+                        </button>
+                        <button type="button" onclick="selectHeadMode(1)" data-mode="1" class="mode-btn flex flex-col items-center justify-center p-2.5 rounded-xl border text-xs font-medium transition">
+                            <i class="fa-solid fa-masks-theater text-base mb-1"></i>
+                            <span>Emoção</span>
+                            <code class="text-[10px] font-mono text-sky-300 mt-0.5">cmd: 'a'..'u'</code>
+                        </button>
+                        <button type="button" onclick="selectHeadMode(2)" data-mode="2" class="mode-btn flex flex-col items-center justify-center p-2.5 rounded-xl border text-xs font-medium transition">
+                            <i class="fa-solid fa-comment-dots text-base mb-1"></i>
+                            <span>Falando</span>
+                            <code class="text-[10px] font-mono text-sky-300 mt-0.5">cmd: '1'..'3'</code>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. Catálogo de Emoções DWIN (catalogoEmocoes[6]) -->
+                <div id="emotionSection" class="transition-opacity duration-200">
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider">Catálogo DWIN (<code class="text-sky-400">EmotionIndex</code>)</label>
+                        <span id="emotionDwinInfo" class="text-[10px] font-mono text-purple-300 bg-purple-500/10 px-2 py-0.5 rounded border border-purple-500/20">Pág 12→13→14 (VP 0x10C0)</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button type="button" onclick="selectHeadEmotion(0)" data-emo="0" class="emo-btn flex flex-col items-center p-2 rounded-xl border text-xs transition">
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-base">😠</span>
+                                <span class="font-semibold">Angry</span>
+                            </div>
+                            <span class="text-[10px] font-mono text-slate-400 mt-0.5">cmd: <strong class="text-sky-300">'a'</strong> • 40°,40°,90°</span>
+                        </button>
+                        <button type="button" onclick="selectHeadEmotion(1)" data-emo="1" class="emo-btn flex flex-col items-center p-2 rounded-xl border text-xs transition">
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-base">😕</span>
+                                <span class="font-semibold">Confused</span>
+                            </div>
+                            <span class="text-[10px] font-mono text-slate-400 mt-0.5">cmd: <strong class="text-sky-300">'c'</strong> • 135°,55°,110°</span>
+                        </button>
+                        <button type="button" onclick="selectHeadEmotion(2)" data-emo="2" class="emo-btn flex flex-col items-center p-2 rounded-xl border text-xs transition">
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-base">😨</span>
+                                <span class="font-semibold">Fear</span>
+                            </div>
+                            <span class="text-[10px] font-mono text-slate-400 mt-0.5">cmd: <strong class="text-sky-300">'f'</strong> • 30°,30°,75°</span>
+                        </button>
+                        <button type="button" onclick="selectHeadEmotion(3)" data-emo="3" class="emo-btn flex flex-col items-center p-2 rounded-xl border text-xs transition">
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-base">😄</span>
+                                <span class="font-semibold">Happy</span>
+                            </div>
+                            <span class="text-[10px] font-mono text-slate-400 mt-0.5">cmd: <strong class="text-sky-300">'h'</strong> • 130°,130°,90°</span>
+                        </button>
+                        <button type="button" onclick="selectHeadEmotion(4)" data-emo="4" class="emo-btn flex flex-col items-center p-2 rounded-xl border text-xs transition">
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-base">😢</span>
+                                <span class="font-semibold">Sad</span>
+                            </div>
+                            <span class="text-[10px] font-mono text-slate-400 mt-0.5">cmd: <strong class="text-sky-300">'s'</strong> • 25°,25°,70°</span>
+                        </button>
+                        <button type="button" onclick="selectHeadEmotion(5)" data-emo="5" class="emo-btn flex flex-col items-center p-2 rounded-xl border text-xs transition">
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-base">😲</span>
+                                <span class="font-semibold">Surprised</span>
+                            </div>
+                            <span class="text-[10px] font-mono text-slate-400 mt-0.5">cmd: <strong class="text-sky-300">'u'</strong> • 160°,160°,90°</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 3. Estilo de Fala DWIN (configFala[3]) -->
+                <div id="talkStyleSection" class="transition-opacity duration-200">
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider">Páginas de Fala DWIN (<code class="text-sky-400">TalkStyle</code>)</label>
+                        <span id="talkEnumBadge" class="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">Pág DWIN 21</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button type="button" onclick="selectHeadTalkStyle(0)" data-talk="0" class="talk-btn flex flex-col items-center p-2 rounded-xl border text-xs transition">
+                            <span class="font-semibold">Sílabas</span>
+                            <span class="text-[10px] font-mono text-emerald-300 mt-0.5">cmd: '1' (Pág 21)</span>
+                        </button>
+                        <button type="button" onclick="selectHeadTalkStyle(1)" data-talk="1" class="talk-btn flex flex-col items-center p-2 rounded-xl border text-xs transition">
+                            <span class="font-semibold">Animado</span>
+                            <span class="text-[10px] font-mono text-emerald-300 mt-0.5">cmd: '2' (Pág 22)</span>
+                        </button>
+                        <button type="button" onclick="selectHeadTalkStyle(2)" data-talk="2" class="talk-btn flex flex-col items-center p-2 rounded-xl border text-xs transition">
+                            <span class="font-semibold">Rápido</span>
+                            <span class="text-[10px] font-mono text-emerald-300 mt-0.5">cmd: '3' (Pág 23)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <hr class="border-slate-800">
+
+                <!-- 4. Controle Direto dos 3 Servos da Cabeça (RAW:earR,earL,neck,speed) -->
+                <div class="flex flex-col gap-3">
+                    <div class="flex items-center justify-between bg-slate-950 p-3 rounded-xl border border-slate-800">
+                        <div>
+                            <span class="text-xs font-semibold text-white block">Controle Manual de Servos (<code class="text-sky-400">RAW:r,l,n,s</code>)</span>
+                            <span class="text-[11px] text-slate-400" id="overrideStatusDesc">Desativado: usando HeadPosePreset da emoção</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="sendHeadRawServosOnly()" class="px-2.5 py-1 rounded-lg text-[11px] font-mono bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 border border-sky-500/30 transition" title="Envia imediatamente RAW:earR,earL,neck,speed">
+                                Enviar RAW
+                            </button>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="overrideServosToggle" onchange="toggleHeadServoOverride(this.checked)" class="sr-only peer">
+                                <div class="w-9 h-5 bg-slate-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-sky-500"></div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="headServoSlidersContainer" class="flex flex-col gap-2.5">
+                        <!-- Orelha Direita (GPIO 0, Limite 10..170) -->
+                        <div class="bg-slate-950/60 p-2.5 rounded-xl border border-slate-800/80">
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="text-xs font-medium text-slate-300">
+                                    Orelha Direita <span class="text-[10px] font-mono text-slate-500">(GPIO 0 • 10°..170°)</span>
+                                </label>
+                                <span id="lbl_earRightAngle" class="font-mono text-xs text-sky-400 font-bold">130°</span>
+                            </div>
+                            <input type="range" id="rng_earRightAngle" min="10" max="170" value="130" oninput="onHeadServoSliderChange('earRightAngle', this.value)">
+                        </div>
+
+                        <!-- Orelha Esquerda (GPIO 1, Invert=true no ESP, Limite 10..170) -->
+                        <div class="bg-slate-950/60 p-2.5 rounded-xl border border-slate-800/80">
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="text-xs font-medium text-slate-300">
+                                    Orelha Esquerda <span class="text-[10px] font-mono text-slate-500">(GPIO 1 inv • 10°..170°)</span>
+                                </label>
+                                <span id="lbl_earLeftAngle" class="font-mono text-xs text-sky-400 font-bold">130°</span>
+                            </div>
+                            <input type="range" id="rng_earLeftAngle" min="10" max="170" value="130" oninput="onHeadServoSliderChange('earLeftAngle', this.value)">
+                        </div>
+
+                        <!-- Pescoço (GPIO 3, Limite Seguro 45..135) -->
+                        <div class="bg-slate-950/60 p-2.5 rounded-xl border border-slate-800/80">
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="text-xs font-medium text-slate-300">
+                                    Pescoço MG995 <span class="text-[10px] font-mono text-amber-400/80">(GPIO 3 • Seguro 45°..135°)</span>
+                                </label>
+                                <span id="lbl_neckAngle" class="font-mono text-xs text-sky-400 font-bold">90°</span>
+                            </div>
+                            <input type="range" id="rng_neckAngle" min="45" max="135" value="90" oninput="onHeadServoSliderChange('neckAngle', this.value)">
+                        </div>
+
+                        <!-- Velocidade (stepDelayMs: 2..50 ms/grau) -->
+                        <div class="bg-slate-950/60 p-2.5 rounded-xl border border-slate-800/80">
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="text-xs font-medium text-slate-300">
+                                    Velocidade (<code class="text-[10px] text-slate-400">stepDelayMs</code>)
+                                </label>
+                                <span id="lbl_servoStepDelayMs" class="font-mono text-xs text-amber-400 font-bold">10 ms/°</span>
+                            </div>
+                            <input type="range" id="rng_servoStepDelayMs" min="2" max="50" value="10" oninput="onHeadServoSliderChange('servoStepDelayMs', this.value)">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card PIPER OFFLINE TTS: Painel de Voz - Roboldo 2.0 (Piper Offline + Auto Lip-Sync DWIN) -->
+            <div class="bg-slate-900 border border-blue-500/30 rounded-2xl p-4 shadow-xl flex flex-col gap-3">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+                    <div class="flex items-center gap-2">
+                        <div class="w-7 h-7 rounded-lg bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400">
+                            <i class="fa-solid fa-waveform-lines"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-xs text-blue-400 uppercase tracking-wider">🤖 Painel de Voz - Roboldo 2.0 (Piper Offline)</h3>
+                            <p class="text-[10px] text-slate-400">Sincronia automática DWIN (<code class="text-sky-300">'1'/'2'/'3'</code> ao falar &rarr; pose final ao concluir)</p>
+                        </div>
+                    </div>
+                    <span id="ttsStatusBadge" class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-sky-400 border border-slate-700">Pronto offline</span>
+                </div>
+
+                <!-- Texto de Apresentação do Roboldo 2.0 -->
+                <div>
+                    <label class="text-[11px] font-medium text-slate-300 mb-1 flex justify-between">
+                        <span>Texto da Fala (Piper WAV):</span>
+                        <button type="button" onclick="resetRoboldoDefaultText()" class="text-[10px] text-sky-400 hover:underline">Restaurar texto COIN</button>
+                    </label>
+                    <textarea id="texto" rows="4" class="w-full bg-slate-950 border border-slate-700/80 rounded-xl p-2.5 text-xs text-white leading-relaxed focus:outline-none focus:border-blue-500 resize-y">Olá, eu sou o Roboldo! Robô social da UERN! É um prazer estar com você aqui no COIN! Eu sou a versão 2.0. Meu irmão 1.0 e 1.2 também estão aqui presentes. Por ser o irmão mais novo, eu tenho braços, um rostinho dinâmico e posso ter acesso à câmera! Também tenho suporte pra tablet, onde podem ser alocados programas com jogos e pranchas assistivas. Quer saber mais sobre mim? Pergunta pra minha programadora, Artemísia! Bom evento!</textarea>
+                </div>
+
+                <!-- Modelo de Voz Local & Endpoint -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div>
+                        <label for="vozes" class="text-[11px] text-slate-300 block mb-1">Modelo de Voz Local:</label>
+                        <select id="vozes" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500">
+                            <option value="pt-BR-FranciscaNeural">Faber (Neural Offline)</option>
+                            <option value="pt-BR-AntonioNeural">Antônio (Neural Offline)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="piperEndpoint" class="text-[11px] text-slate-300 block mb-1">Rota Piper Server:</label>
+                        <input type="text" id="piperEndpoint" value="/api/synthesize" placeholder="http://127.0.0.1:3000/api/synthesize" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs font-mono text-sky-300 focus:outline-none focus:border-blue-500">
+                    </div>
+                </div>
+
+                <!-- Sliders de Áudio: Pitch, Rate e Volume -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-slate-950/70 p-3 rounded-xl border border-slate-800/80">
+                    <div>
+                        <label class="text-[10px] text-slate-300 flex justify-between mb-1">
+                            <span>Tom (Pitch):</span>
+                            <span id="pitch-val" class="font-mono text-sky-400 font-bold">1.0</span>
+                        </label>
+                        <input type="range" id="pitch" min="0.5" max="2.0" step="0.1" value="1.0" oninput="document.getElementById('pitch-val').textContent = this.value">
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-slate-300 flex justify-between mb-1">
+                            <span>Veloc. (Rate):</span>
+                            <span id="rate-val" class="font-mono text-sky-400 font-bold">1.05</span>
+                        </label>
+                        <input type="range" id="rate" min="0.5" max="2.0" step="0.05" value="1.05" oninput="document.getElementById('rate-val').textContent = this.value">
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-slate-300 flex justify-between mb-1">
+                            <span>Volume:</span>
+                            <span id="vol-val" class="font-mono text-sky-400 font-bold">1.0</span>
+                        </label>
+                        <input type="range" id="volume" min="0.1" max="1.0" step="0.1" value="1.0" oninput="document.getElementById('vol-val').textContent = this.value">
+                    </div>
+                </div>
+
+                <!-- Opções de Sincronia com ESP Cabeça e Braços -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-[11px] bg-slate-950/50 p-2.5 rounded-xl border border-slate-800/60">
+                    <div>
+                        <label class="text-[10px] text-slate-400 block mb-0.5">Boca DWIN ao Falar:</label>
+                        <select id="piperTalkStyleSelect" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-emerald-300 font-mono">
+                            <option value="1">cmd '1' (Sílabas - Pág 21)</option>
+                            <option value="2" selected>cmd '2' (Animado - Pág 22)</option>
+                            <option value="3">cmd '3' (Rápido - Pág 23)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-slate-400 block mb-0.5">Ao Terminar a Fala:</label>
+                        <select id="piperEndHeadSelect" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-sky-300 font-mono">
+                            <option value="h" selected>Voltar p/ Happy ('h')</option>
+                            <option value="n">Voltar p/ Neutro ('n')</option>
+                        </select>
+                    </div>
+                    <label class="flex items-center gap-1.5 text-slate-300 cursor-pointer col-span-2 pt-0.5">
+                        <input type="checkbox" id="piperFallbackBrowserToggle" checked class="rounded bg-slate-900 border-slate-700 text-blue-500">
+                        <span class="text-[11px]">Usar fallback de voz do navegador se o servidor Python (`127.0.0.1:3000`) estiver offline</span>
+                    </label>
+                </div>
+
+                <!-- Botões Apresentar Roboldo / Parar -->
+                <div class="flex gap-2">
+                    <button type="button" id="btnFalar" onclick="falarComPiperOffline()" class="flex-1 py-2.5 px-3 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-600/20 transition flex items-center justify-center gap-1.5">
+                        <span>🔊 Apresentar Roboldo</span>
+                    </button>
+                    <button type="button" id="btnParar" onclick="pararFalaPiper(true)" class="px-4 py-2.5 rounded-xl text-xs font-bold bg-red-600 hover:bg-red-500 text-white transition flex items-center justify-center gap-1">
+                        <span>⏹ Parar</span>
+                    </button>
+                </div>
+
+                <div id="status" class="text-center text-[11px] font-mono text-sky-400 min-h-[18px]">Pronto para falar offline.</div>
+            </div>
+        </section>
+
+        <!-- COLUNA 2: SIMULADOR CINEMÁTICO + ESP BRAÇOS (Coreografias & 6 Juntas LEDC) - 5 cols -->
+        <section class="lg:col-span-5 min-w-0 flex flex-col gap-5">
+
+            <!-- Card: Simulador Visual em Tempo Real (Reproduz Keyframes e DWIN) -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl flex flex-col items-center relative overflow-hidden">
+                <div class="w-full flex items-center justify-between mb-2 z-10">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                        <i class="fa-solid fa-eye text-sky-400"></i> Simulador Cinético (DWIN + Keyframes LEDC)
+                    </span>
+                    <span id="simStatusLabel" class="text-[11px] font-mono text-emerald-400 bg-slate-950/90 px-2.5 py-0.5 rounded-full border border-slate-800">
+                        ARM_IDLE • FLOW_MAINTAIN_EMOTION
+                    </span>
+                </div>
+
+                <div class="w-full h-56 bg-slate-950 rounded-xl border border-slate-800/90 flex items-center justify-center relative overflow-hidden">
+                    <div class="absolute inset-0 opacity-15" style="background-image: radial-gradient(#38bdf8 1px, transparent 1px); background-size: 16px 16px;"></div>
+
+                    <svg id="robotSvg" viewBox="0 0 400 230" class="w-full h-full max-w-[420px]">
+                        <defs>
+                            <linearGradient id="bodyGrad" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#1e293b"/>
+                                <stop offset="100%" stop-color="#0f172a"/>
+                            </linearGradient>
+                            <linearGradient id="armGrad" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0%" stop-color="#334155"/>
+                                <stop offset="100%" stop-color="#1e293b"/>
+                            </linearGradient>
+                        </defs>
+
+                        <!-- Torso -->
+                        <rect x="145" y="135" width="110" height="80" rx="18" fill="url(#bodyGrad)" stroke="#475569" stroke-width="2"/>
+                        <circle cx="200" cy="170" r="14" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5" opacity="0.8"/>
+                        <circle cx="200" cy="170" r="6" fill="#38bdf8" class="eye-glow"/>
+
+                        <!-- Pescoço -->
+                        <rect id="svgNeck" x="186" y="115" width="28" height="24" rx="4" fill="#334155" stroke="#475569" stroke-width="1.5"/>
+
+                        <!-- BRAÇO DIREITO (GPIO 3, 1, 0) -->
+                        <g id="svgRightArmGroup" transform="translate(145, 150)">
+                            <circle cx="0" cy="0" r="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+                            <g id="svgRightUpperArm" transform="rotate(0)">
+                                <rect x="-45" y="-6" width="45" height="12" rx="6" fill="url(#armGrad)" stroke="#64748b" stroke-width="1.5"/>
+                                <g id="svgRightForearm" transform="translate(-42, 0) rotate(0)">
+                                    <circle cx="0" cy="0" r="6" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5"/>
+                                    <rect x="-38" y="-5" width="38" height="10" rx="5" fill="#334155" stroke="#94a3b8" stroke-width="1.5"/>
+                                    <circle cx="-40" cy="0" r="6" fill="#38bdf8"/>
+                                </g>
+                            </g>
+                        </g>
+
+                        <!-- BRAÇO ESQUERDO (GPIO 6, 5, 7) -->
+                        <g id="svgLeftArmGroup" transform="translate(255, 150)">
+                            <circle cx="0" cy="0" r="10" fill="#1e293b" stroke="#a855f7" stroke-width="2"/>
+                            <g id="svgLeftUpperArm" transform="rotate(0)">
+                                <rect x="0" y="-6" width="45" height="12" rx="6" fill="url(#armGrad)" stroke="#64748b" stroke-width="1.5"/>
+                                <g id="svgLeftForearm" transform="translate(42, 0) rotate(0)">
+                                    <circle cx="0" cy="0" r="6" fill="#0f172a" stroke="#a855f7" stroke-width="1.5"/>
+                                    <rect x="0" y="-5" width="38" height="10" rx="5" fill="#334155" stroke="#94a3b8" stroke-width="1.5"/>
+                                    <circle cx="40" cy="0" r="6" fill="#a855f7"/>
+                                </g>
+                            </g>
+                        </g>
+
+                        <!-- CABEÇA DWIN -->
+                        <g id="svgHeadGroup" transform="translate(200, 75)">
+                            <!-- Orelha Direita (GPIO 0) -->
+                            <g id="svgEarRight" transform="translate(-62, 0) rotate(0)">
+                                <rect x="-12" y="-22" width="12" height="36" rx="6" fill="#334155" stroke="#38bdf8" stroke-width="2"/>
+                                <circle cx="-6" cy="-14" r="2.5" fill="#38bdf8"/>
+                            </g>
+                            <!-- Orelha Esquerda (GPIO 1) -->
+                            <g id="svgEarLeft" transform="translate(62, 0) rotate(0)">
+                                <rect x="0" y="-22" width="12" height="36" rx="6" fill="#334155" stroke="#38bdf8" stroke-width="2"/>
+                                <circle cx="6" cy="-14" r="2.5" fill="#38bdf8"/>
+                            </g>
+                            <!-- Capacete & Tela DWIN -->
+                            <rect x="-60" y="-45" width="120" height="86" rx="24" fill="url(#bodyGrad)" stroke="#64748b" stroke-width="2.5"/>
+                            <rect x="-48" y="-34" width="96" height="64" rx="16" fill="#050811" stroke="#1e293b" stroke-width="2"/>
+                            <!-- Sobrancelhas -->
+                            <line id="svgBrowLeft" x1="-34" y1="-20" x2="-14" y2="-20" stroke="#38bdf8" stroke-width="3.5" stroke-linecap="round"/>
+                            <line id="svgBrowRight" x1="14" y1="-20" x2="34" y2="-20" stroke="#38bdf8" stroke-width="3.5" stroke-linecap="round"/>
+                            <!-- Olhos -->
+                            <ellipse id="svgEyeLeft" cx="-24" cy="-6" rx="9" ry="10" fill="#38bdf8" class="eye-glow"/>
+                            <ellipse id="svgEyeRight" cx="24" cy="-6" rx="9" ry="10" fill="#38bdf8" class="eye-glow"/>
+                            <!-- Boca -->
+                            <path id="svgMouth" d="M -18 14 Q 0 24 18 14" stroke="#38bdf8" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+                        </g>
+                    </svg>
+
+                    <div class="absolute bottom-2 left-3 text-[10px] font-mono text-sky-400 bg-slate-900/80 px-2 py-0.5 rounded border border-slate-800">
+                        Dir (P:3 R:1 C:0)
+                    </div>
+                    <div id="keyframeProgressBadge" class=" hidden absolute bottom-2 px-2.5 py-0.5 rounded-full text-[10px] font-mono bg-purple-500/20 text-purple-300 border border-purple-500/40">
+                        Coreografia em execução...
+                    </div>
+                    <div class="absolute bottom-2 right-3 text-[10px] font-mono text-purple-400 bg-slate-900/80 px-2 py-0.5 rounded border border-slate-800">
+                        Esq (P:6 R:5 C:7)
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card: ESP 2 - Controlador de Braços (Coreografias Keyframe + 6 Ângulos Custom) -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex-1 flex flex-col gap-4">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+                            <i class="fa-solid fa-hand-fist"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-semibold text-sm text-white">ESP 2: Braços 3-DoF (LEDC 14-Bits)</h2>
+                            <p class="text-[11px] font-mono text-slate-400">Comando Atual: <code id="armsActiveCmdBadge" class="text-purple-400 font-bold">"n\n"</code></p>
+                        </div>
+                    </div>
+                    <button onclick="sendArmsCustomPoseNow('MANUAL')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-purple-600 hover:bg-purple-500 text-white shadow shadow-purple-500/20 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-sliders"></i> Enviar 6 Ângulos
+                    </button>
+                </div>
+
+                <!-- 1. Grade de Coreografias Calibradas (GestureID) -->
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider">Coreografias de Hardware (<code class="text-purple-400">enum GestureID</code>)</label>
+                        <span id="gestureEnumBadge" class="text-[10px] font-mono text-purple-300 bg-purple-500/10 px-2 py-0.5 rounded">GESTURE_NEUTRAL (1)</span>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        <button type="button" onclick="triggerArmGesture(1, 'n')" data-gest="1" class="gest-btn flex flex-col items-center p-2 rounded-xl border text-xs transition">
+                            <span class="text-base">🧍</span>
+                            <span class="font-semibold mt-0.5">Neutro</span>
+                            <code class="text-[10px] font-mono text-purple-300">'n' (90° fixo)</code>
+                        </button>
+                        <button type="button" onclick="triggerArmGesture(2, 'ad')" data-gest="2" class="gest-btn flex flex-col items-center p-2 rounded-xl border text-xs transition">
+                            <span class="text-base">👋</span>
+                            <span class="font-semibold mt-0.5">Aceno Dir.</span>
+                            <code class="text-[10px] font-mono text-purple-300">'ad' (8 passos)</code>
+                        </button>
+                        <button type="button" onclick="triggerArmGesture(3, 'ae')" data-gest="3" class="gest-btn flex flex-col items-center p-2 rounded-xl border text-xs transition">
+                            <span class="text-base">🤚</span>
+                            <span class="font-semibold mt-0.5">Aceno Esq.</span>
+                            <code class="text-[10px] font-mono text-purple-300">'ae' (8 passos)</code>
+                        </button>
+                        <button type="button" onclick="triggerArmGesture(4, 'a2')" data-gest="4" class="gest-btn flex flex-col items-center p-2 rounded-xl border text-xs transition">
+                            <span class="text-base">🙌</span>
+                            <span class="font-semibold mt-0.5">Aceno Duplo</span>
+                            <code class="text-[10px] font-mono text-purple-300">'a2' (8 passos)</code>
+                        </button>
+                        <button type="button" onclick="triggerArmGesture(5, 'ab')" data-gest="5" class="gest-btn flex flex-col items-center p-2 rounded-xl border text-xs transition">
+                            <span class="text-base">🤗</span>
+                            <span class="font-semibold mt-0.5">Abraço</span>
+                            <code class="text-[10px] font-mono text-purple-300">'ab' (5 passos)</code>
+                        </button>
+                        <button type="button" onclick="triggerArmGesture(6, 'mc')" data-gest="6" class="gest-btn flex flex-col items-center p-2 rounded-xl border text-xs transition">
+                            <span class="text-base">🦸</span>
+                            <span class="font-semibold mt-0.5">Na Cintura</span>
+                            <code class="text-[10px] font-mono text-purple-300">'mc' (Pose)</code>
+                        </button>
+                        <button type="button" onclick="triggerArmGesture(7, 'am')" data-gest="7" class="gest-btn flex flex-col items-center p-2 rounded-xl border text-xs transition">
+                            <span class="text-base">🤝</span>
+                            <span class="font-semibold mt-0.5">Aperto Mão</span>
+                            <code class="text-[10px] font-mono text-purple-300">'am' (8 passos)</code>
+                        </button>
+                        <button type="button" onclick="triggerArmGesture(8, 'd')" data-gest="8" class="gest-btn flex flex-col items-center p-2 rounded-xl border text-xs transition">
+                            <span class="text-base">🕺</span>
+                            <span class="font-semibold mt-0.5">Dancinha</span>
+                            <code class="text-[10px] font-mono text-purple-300">'d' (25 passos)</code>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. Pose Customizada de 6 Coordenadas (PitchD,RollD,CotD,PitchE,RollE,CotE) -->
+                <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-300">
+                        Pose Customizada (<code class="text-purple-400">P_D,R_D,C_D,P_E,R_E,C_E</code>)
+                    </span>
+                    <label class="flex items-center gap-1.5 text-xs text-slate-300 cursor-pointer select-none">
+                        <input type="checkbox" id="mirrorArmsCheckbox" class="rounded bg-slate-900 border-slate-600 text-purple-500">
+                        <span>Espelhar Braços (Inverso Simétrico)</span>
+                    </label>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                    <!-- BRAÇO DIREITO (GPIO 3, 1, 0) -->
+                    <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-3 flex flex-col gap-2.5">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-1.5">
+                            <span class="font-semibold text-xs text-sky-400">Braço Direito (right)</span>
+                            <span class="text-[10px] font-mono text-slate-500">GPIOs: P=3, R=1, C=0</span>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-slate-300">Pitch Direito (<code class="text-[10px] text-slate-500">P_D</code>)</span>
+                                <span class="font-mono text-sky-400 font-bold" id="lbl_right_pitch">90°</span>
+                            </div>
+                            <input type="range" id="rng_right_pitch" min="0" max="180" value="90" oninput="onArmCustomSliderChange('right', 'pitch', this.value)">
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-slate-300">Roll Direito (<code class="text-[10px] text-slate-500">R_D</code>)</span>
+                                <span class="font-mono text-sky-400 font-bold" id="lbl_right_roll">90°</span>
+                            </div>
+                            <input type="range" id="rng_right_roll" min="0" max="180" value="90" oninput="onArmCustomSliderChange('right', 'roll', this.value)">
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-slate-300">Cotovelo Direito (<code class="text-[10px] text-slate-500">C_D</code>)</span>
+                                <span class="font-mono text-sky-400 font-bold" id="lbl_right_elbow">90°</span>
+                            </div>
+                            <input type="range" id="rng_right_elbow" min="0" max="180" value="90" oninput="onArmCustomSliderChange('right', 'elbow', this.value)">
+                        </div>
+                    </div>
+
+                    <!-- BRAÇO ESQUERDO (GPIO 6, 5, 7) -->
+                    <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-3 flex flex-col gap-2.5">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-1.5">
+                            <span class="font-semibold text-xs text-purple-400">Braço Esquerdo (left)</span>
+                            <span class="text-[10px] font-mono text-slate-500">GPIOs: P=6, R=5, C=7</span>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-slate-300">Pitch Esquerdo (<code class="text-[10px] text-slate-500">P_E</code>)</span>
+                                <span class="font-mono text-purple-400 font-bold" id="lbl_left_pitch">90°</span>
+                            </div>
+                            <input type="range" id="rng_left_pitch" min="0" max="180" value="90" oninput="onArmCustomSliderChange('left', 'pitch', this.value)">
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-slate-300">Roll Esquerdo (<code class="text-[10px] text-slate-500">R_E</code>)</span>
+                                <span class="font-mono text-purple-400 font-bold" id="lbl_left_roll">90°</span>
+                            </div>
+                            <input type="range" id="rng_left_roll" min="0" max="180" value="90" oninput="onArmCustomSliderChange('left', 'roll', this.value)">
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-slate-300">Cotovelo Esquerdo (<code class="text-[10px] text-slate-500">C_E</code>)</span>
+                                <span class="font-mono text-purple-400 font-bold" id="lbl_left_elbow">90°</span>
+                            </div>
+                            <input type="range" id="rng_left_elbow" min="0" max="180" value="90" oninput="onArmCustomSliderChange('left', 'elbow', this.value)">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- COLUNA 3: INSPETOR DE PROTOCOLOS (STRINGS NATIVAS + STRUCTS) & TERMINAL DUAL USB - 3 cols -->
+        <section class="lg:col-span-3 min-w-0 flex flex-col gap-5">
+
+            <!-- Card: Inspetor de Pacotes Independentes (ESP Cabeça & ESP Braços) -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl flex flex-col gap-3">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-satellite-dish text-emerald-400 text-sm"></i>
+                        <h2 class="font-semibold text-xs uppercase tracking-wider text-slate-200">Inspetor de Payload Dual</h2>
+                    </div>
+                    <button onclick="copyInspectorPayloads()" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs border border-slate-700 transition">
+                        <i class="fa-regular fa-copy mr-1"></i>Copiar
+                    </button>
+                </div>
+
+                <!-- Payload USB 1: Cabeça -->
+                <div class="bg-slate-950 border border-sky-500/20 rounded-xl p-2.5 flex flex-col gap-1">
+                    <div class="flex justify-between items-center">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-sky-400">USB 1 • Payload Cabeça</span>
+                        <span id="headProtoTag" class="text-[10px] font-mono text-slate-400">String Nativa</span>
+                    </div>
+                    <pre id="headPayloadPreview" class="text-xs font-mono text-sky-300 overflow-x-auto select-all py-1"></pre>
+                </div>
+
+                <!-- Payload USB 2: Braços -->
+                <div class="bg-slate-950 border border-purple-500/20 rounded-xl p-2.5 flex flex-col gap-1">
+                    <div class="flex justify-between items-center">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-purple-400">USB 2 • Payload Braços</span>
+                        <span id="armsProtoTag" class="text-[10px] font-mono text-slate-400">String Nativa</span>
+                    </div>
+                    <pre id="armsPayloadPreview" class="text-xs font-mono text-purple-300 overflow-x-auto select-all py-1"></pre>
+                </div>
+
+                <!-- Struct JSON Equivalente Completa -->
+                <div>
+                    <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 block mb-1">Estado das Structs C++ (JSON):</span>
+                    <pre id="jsonPreviewBox" class="bg-slate-950 border border-slate-800/90 rounded-xl p-2.5 text-[10px] font-mono text-emerald-300 overflow-x-auto max-h-44 leading-relaxed select-all"></pre>
+                </div>
+            </div>
+
+            <!-- Card: Monitor Serial Dual USB (TX / RX de ambos os ESPs) -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl flex-1 flex flex-col gap-3 min-h-[290px]">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-terminal text-sky-400 text-sm"></i>
+                        <h2 class="font-semibold text-xs uppercase tracking-wider text-slate-200">Monitor Serial Dual</h2>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span id="txHeadBadge" class="text-[10px] font-mono bg-sky-500/10 text-sky-400 px-1.5 py-0.5 rounded border border-sky-500/20">H:0</span>
+                        <span id="txArmsBadge" class="text-[10px] font-mono bg-purple-500/10 text-purple-400 px-1.5 py-0.5 rounded border border-purple-500/20">A:0</span>
+                        <button onclick="clearSerialLog()" class="text-xs text-slate-400 hover:text-rose-400 transition px-1" title="Limpar Log">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Lista de Logs -->
+                <div id="serialMonitorLog" class="flex-1 bg-slate-950 border border-slate-800/90 rounded-xl p-2.5 font-mono text-[11px] overflow-y-auto max-h-72 flex flex-col gap-1.5">
+                    <div class="text-slate-500 italic">Pronto. Conecte o ESP da Cabeça (9600) e o ESP dos Braços (115200) ou teste no modo simulação.</div>
+                </div>
+
+                <!-- Envio de Comando Manual Direcionado -->
+                <div class="flex flex-col gap-1.5">
+                    <div class="flex flex-wrap sm:flex-nowrap gap-1.5">
+                        <select id="manualTargetSelect" class="bg-slate-950 border border-slate-800 rounded-lg px-2 py-1.5 text-xs font-mono text-slate-300 focus:outline-none shrink-0">
+                            <option value="head">USB 1 (Cabeça)</option>
+                            <option value="arms">USB 2 (Braços)</option>
+                        </select>
+                        <input type="text" id="customSerialInput" placeholder="Ex: RAW:130,130,90,10 ou ad" onkeydown="if(event.key==='Enter') sendCustomRawSerial()" class="flex-1 min-w-0 bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-sky-500">
+                        <button onclick="sendCustomRawSerial()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-medium border border-slate-700 transition shrink-0">
+                            Enviar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- SEÇÃO FULL-WIDTH (12 COLUNAS): SEQUENCIADOR DE SCRIPTS, POSES CUSTOMIZADAS & COREOGRAFIAS TIMED -->
+        <section class="lg:col-span-12 min-w-0 bg-slate-900 border border-emerald-500/30 rounded-2xl p-5 shadow-2xl flex flex-col gap-4 mt-1">
+            <!-- Cabeçalho do Sequenciador -->
+            <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-3.5">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-sky-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20">
+                        <i class="fa-solid fa-film text-lg"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h2 class="font-bold text-base text-white">Sequenciador de Scripts & Coreografias no Timing Certo</h2>
+                            <span id="scriptRunnerBadge" class="px-2.5 py-0.5 text-[10px] font-mono uppercase rounded-full bg-slate-800 text-slate-400 border border-slate-700">
+                                PARADO
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-400">
+                            Crie combinações inéditas de expressões DWIN, orelhas/pescoço (<code class="text-sky-300">RAW:r,l,n,s</code>), poses de braços de 6 ângulos (<code class="text-purple-300">P_D,R_D,C_D,P_E,R_E,C_E</code>) e falas do Piper no tempo exato em milissegundos.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Seletor de Scripts Prontos & Botões Principais de Execução -->
+                <div class="flex flex-wrap items-center gap-2">
+                    <select id="presetScriptSelect" onchange="loadPresetScript(this.value)" class="max-w-full min-w-0 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 font-medium focus:outline-none focus:border-emerald-500">
+                        <option value="coin_presentation">🎤 1. Apresentação Oficial COIN (Roteiro Completo + Voz + Gestos)</option>
+                        <option value="custom_choreo">🦾 2. Coreografia Customizada (Ângulos de Braço & Cabeça Não Definidos no ESP)</option>
+                        <option value="empathy_hug">🤗 3. Reação Empática (Surpresa &rarr; Sorriso &rarr; Fala &rarr; Abraço)</option>
+                    </select>
+
+                    <button type="button" id="btnPlayScript" onclick="playCurrentScript()" class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/20 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-play"></i> Executar Script
+                    </button>
+
+                    <button type="button" id="btnStopScript" onclick="stopCurrentScript()" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/30 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-stop"></i> Parar Script
+                    </button>
+
+                    <label class="flex items-center gap-1.5 bg-slate-950 border border-slate-800 px-3 py-2 rounded-xl text-xs text-slate-300 cursor-pointer select-none">
+                        <input type="checkbox" id="loopScriptCheckbox" class="rounded bg-slate-900 border-slate-700 text-emerald-500">
+                        <span>Loop Contínuo</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Barra de Ferramentas de Edição de Passos + Captura de Sliders -->
+            <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-950/80 border border-slate-800/90 rounded-xl p-3">
+                <div class="flex flex-wrap items-center gap-2">
+                    <button type="button" onclick="addEmptyScriptStep()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-500/30 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-plus"></i> Novo Passo
+                    </button>
+                    <button type="button" onclick="captureCurrentSlidersToStep()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/40 transition flex items-center gap-1.5" title="Lê a posição atual dos sliders de Orelhas, Pescoço e dos 6 Servos dos Braços e adiciona como um passo customizado na timeline">
+                        <i class="fa-solid fa-camera"></i> 📸 Capturar Pose Atual dos Sliders p/ Script
+                    </button>
+                    <button type="button" onclick="toggleRawScriptEditor()" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-file-code text-amber-400"></i> Editor de Script Texto / JSON
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-3 text-xs font-mono text-slate-400">
+                    <span id="scriptProgressText">Passos: 0 | Tempo estimado: 0.0s</span>
+                </div>
+            </div>
+
+            <!-- Editor de Script em Texto / JSON (Oculto por padrão, expansível) -->
+            <div id="rawScriptEditorPanel" class="hidden bg-slate-950 border border-amber-500/30 rounded-xl p-4 flex-col gap-3">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h4 class="text-xs font-bold text-amber-300 uppercase tracking-wider">Editor Rápido de Script (JSON ou Linha-por-Linha)</h4>
+                        <p class="text-[11px] text-slate-400">Edite ou cole seu script completo abaixo e clique em "Aplicar na Timeline".</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button type="button" onclick="applyRawScriptJson()" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition">
+                            Aplicar na Timeline
+                        </button>
+                        <button type="button" onclick="exportScriptJsonFile()" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+                            <i class="fa-solid fa-download mr-1"></i>Baixar .json
+                        </button>
+                    </div>
+                </div>
+                <textarea id="rawScriptTextarea" rows="8" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 font-mono text-xs text-emerald-300 focus:outline-none focus:border-amber-400"></textarea>
+            </div>
+
+            <!-- Tabela / Timeline Interativa dos Passos do Script -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-slate-800 text-[11px] font-semibold uppercase tracking-wider text-slate-400 bg-slate-950/60">
+                            <th class="py-2.5 px-3 w-12">#</th>
+                            <th class="py-2.5 px-3 min-w-[160px]">Descrição do Passo</th>
+                            <th class="py-2.5 px-3 min-w-[190px]">Comando USB 1 (Cabeça)</th>
+                            <th class="py-2.5 px-3 min-w-[210px]">Comando USB 2 (Braços / 6 Ângulos)</th>
+                            <th class="py-2.5 px-3 min-w-[260px]">Fala Sincronizada (Piper Offline)</th>
+                            <th class="py-2.5 px-3 w-32">Timing (ms)</th>
+                            <th class="py-2.5 px-3 w-32 text-right">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="scriptStepsTableBody" class="divide-y divide-slate-800/70 text-xs">
+                        <!-- Renderizado dinamicamente via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- MODAL: RESUMO DE PROTOCOLOS DOS 2 ESPs + SERVIDOR PYTHON PIPER -->
+    <div id="cppModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-4xl w-full max-h-[88vh] flex flex-col shadow-2xl overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-950/50">
+                <div class="flex items-center gap-2.5">
+                    <i class="fa-solid fa-microchip text-indigo-400 text-lg"></i>
+                    <div>
+                        <h3 class="font-bold text-base text-white">Servidor Python Piper (server.py) & Protocolos dos 2 ESP32</h3>
+                        <p class="text-xs text-slate-400">Servidor HTTP local com CORS habilitado + mapeamento de comandos nativos</p>
+                    </div>
+                </div>
+                <button onclick="closeCppModal()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="p-5 overflow-y-auto font-mono text-xs bg-slate-950 text-slate-200 leading-relaxed select-all">
+<pre id="cppCodeContent" class="whitespace-pre-wrap"><span class="text-amber-400"># ============================================================================
+# ARQUIVO: server.py (Servidor Piper Offline com CORS p/ Painel Roboldo 2.0)
+# Salve este HTML como "file.html" ou "index.html" na mesma pasta do modelo .onnx
+# ============================================================================</span>
+import io
+import json
+import wave
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
+
+from piper import PiperVoice
+from piper.config import SynthesisConfig
+
+ROOT = Path(__file__).resolve().parent
+MODEL_PATH = ROOT / "pt_BR-faber-medium.onnx"
+VOICE = PiperVoice.load(str(MODEL_PATH))
+VOICE_NOISE_SCALE = 0.667 * (0.8 + (1.2 - 1.0) * 0.35)
+VOICE_NOISE_W_SCALE = 0.8 * (0.8 + (1.2 - 1.0) * 0.45)
+
+class TTSHandler(BaseHTTPRequestHandler):
+    def log_message(self, format, *args):
+        return
+
+    def send_cors_headers(self):
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+
+    def do_OPTIONS(self):
+        self.send_response(204)
+        self.send_cors_headers()
+        self.end_headers()
+
+    def send_json(self, status, payload):
+        body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
+        self.send_response(status)
+        self.send_cors_headers()
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def do_GET(self):
+        if self.path in {"/", "/file.html", "/index.html"}:
+            target_file = ROOT / ("file.html" if (ROOT / "file.html").exists() else "index.html")
+            html = target_file.read_bytes()
+            self.send_response(200)
+            self.send_cors_headers()
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Length", str(len(html)))
+            self.end_headers()
+            self.wfile.write(html)
+            return
+        self.send_json(404, {"error": "Página não encontrada."})
+
+    def do_POST(self):
+        if self.path != "/api/synthesize":
+            self.send_json(404, {"error": "Rota não encontrada."})
+            return
+
+        content_length = int(self.headers.get("Content-Length", "0"))
+        raw_body = self.rfile.read(content_length) if content_length > 0 else b"{}"
+        try:
+            payload = json.loads(raw_body.decode("utf-8"))
+        except Exception:
+            self.send_json(400, {"error": "JSON inválido."})
+            return
+
+        text = str(payload.get("text", "")).strip()
+        if not text:
+            self.send_json(400, {"error": "Informe um texto para sintetizar."})
+            return
+
+        rate = float(payload.get("rate", 1.05))
+        volume = max(0.1, min(1.0, float(payload.get("volume", 1.0))))
+        syn_config = SynthesisConfig(
+            length_scale=1.0 / rate,
+            noise_scale=VOICE_NOISE_SCALE,
+            noise_w_scale=VOICE_NOISE_W_SCALE,
+            volume=volume,
+        )
+
+        buffer = io.BytesIO()
+        with wave.open(buffer, "wb") as wav_file:
+            VOICE.synthesize_wav(text, wav_file, syn_config=syn_config)
+
+        audio = buffer.getvalue()
+        self.send_response(200)
+        self.send_cors_headers()
+        self.send_header("Content-Type", "audio/wav")
+        self.send_header("Content-Length", str(len(audio)))
+        self.send_header("Cache-Control", "no-store")
+        self.end_headers()
+        self.wfile.write(audio)
+
+if __name__ == "__main__":
+    server = ThreadingHTTPServer(("127.0.0.1", 3000), TTSHandler)
+    print("Roboldo 2.0 (Piper + Dual USB Studio) em http://127.0.0.1:3000")
+    server.serve_forever()
+
+<span class="text-sky-400">// ============================================================================
+// ESP 1: CONTROLADOR DA CABEÇA (ESP32-C3 SuperMini • Serial 9600 bps)
+// ============================================================================</span>
+  • "n\n" -> MODE_NEUTRAL_IDLE  | "a\n" -> Angry | "c\n" -> Confused | "f\n" -> Fear
+  • "h\n" -> Happy              | "s\n" -> Sad   | "u\n" -> Surprised
+  • "1\n" -> TALK_SYLLABLES     | "2\n" -> TALK_ANIMATED | "3\n" -> TALK_FAST
+  • "RAW:earR,earL,neck,speed\n" -> Controle direto dos 3 servos (Ex: "RAW:140,40,105,10\n")
+
+<span class="text-purple-400">// ============================================================================
+// ESP 2: CONTROLADOR DOS 2 BRAÇOS 3-DoF (LEDC 14-Bits • Serial 115200 bps)
+// ============================================================================</span>
+  • "n\n", "ad\n", "ae\n", "a2\n", "ab\n", "mc\n", "am\n", "d\n"
+  • "PitchD,RollD,CotD,PitchE,RollE,CotE\n" -> Qualquer pose inédita enviada pelo Sequenciador Web!</pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT: GERENCIADOR DUAL WEB SERIAL, PROTOCOLOS NATIVOS & SIMULADOR KEYFRAMES -->
+    <script>
+        // =========================================================================
+        // 1. ESTADO DAS DUAS ESTRUTURAS (HeadCommandPacket & ArmCommandPacket)
+        // =========================================================================
+        let protocolMode = 'NATIVE'; // 'NATIVE' (Strings que os ESPs já leem) ou 'JSON'
+
+        const headState = {
+            mode: 1,               // 0: MODE_NEUTRAL_IDLE, 1: MODE_EMOTION, 2: MODE_TALKING
+            emotion: 3,            // 0: Angry, 1: Confused, 2: Fear, 3: Happy, 4: Sad, 5: Surprised
+            talkStyle: 0,          // 0: Syllables, 1: Animated, 2: Fast
+            overrideServos: false, // false = preset da emoção | true = envia RAW:r,l,n,s
+            earRightAngle: 130,    // 10..170 (GPIO 0)
+            earLeftAngle: 130,     // 10..170 (GPIO 1)
+            neckAngle: 90,         // 45..135 (GPIO 3)
+            servoStepDelayMs: 10   // 2..50 ms/grau
+        };
+
+        const armState = {
+            gesture: 1,            // GestureID (1..9)
+            gestureCmdStr: 'n',    // 'n', 'ad', 'ae', 'a2', 'ab', 'mc', 'am', 'd'
+            customPose: {
+                right: { pitch: 90, roll: 90, elbow: 90 },
+                left:  { pitch: 90, roll: 90, elbow: 90 }
+            },
+            speedMsPerStep: 15
+        };
+
+        // Catálogo Fiel ao Firmware do ESP32 da Cabeça (catalogoEmocoes[6])
+        const HEAD_EMOTION_CATALOG = {
+            0: { name: "Angry",     cmd: "a", earR: 40,  earL: 40,  neck: 90,  speed: 8,  dwin: "Pág 3→4→5 (VP 0x1030)" },
+            1: { name: "Confused",  cmd: "c", earR: 135, earL: 55,  neck: 110, speed: 15, dwin: "Pág 6→7→8 (VP 0x1060)" },
+            2: { name: "Fear",      cmd: "f", earR: 30,  earL: 30,  neck: 75,  speed: 5,  dwin: "Pág 9→10→11 (VP 0x1090)" },
+            3: { name: "Happy",     cmd: "h", earR: 130, earL: 130, neck: 90,  speed: 10, dwin: "Pág 12→13→14 (VP 0x10C0)" },
+            4: { name: "Sad",       cmd: "s", earR: 25,  earL: 25,  neck: 70,  speed: 30, dwin: "Pág 15→16→17 (VP 0x10F0)" },
+            5: { name: "Surprised", cmd: "u", earR: 160, earL: 160, neck: 90,  speed: 4,  dwin: "Pág 18→19→20 (VP 0x1120)" }
+        };
+
+        const HEAD_NEUTRAL_PRESET = { earR: 90,  earL: 90,  neck: 90, speed: 20 };
+        const HEAD_TALK_PRESET    = { earR: 105, earL: 105, neck: 90, speed: 15 };
+
+        // Tabelas de Coreografias Fiéis ao Firmware do ESP32 dos Braços
+        const POSE_NEUTRA  = { right: { pitch: 90, roll: 90,  elbow: 90  }, left: { pitch: 90,  roll: 90, elbow: 90 } };
+        const POSE_CINTURA = { right: { pitch: 0,  roll: 150, elbow: 130 }, left: { pitch: 180, roll: 40, elbow: 30 } };
+
+        const ARM_SEQUENCES = {
+            'ad': {
+                name: "Aceno Direito (SEQ_ACENO_DIR)", enumName: "GESTURE_WAVE_RIGHT (2)",
+                steps: [
+                    { r: [12, 110, 115], l: [-1, -1, -1], delay: 12, dwell: 100 },
+                    { r: [90, 110, 145], l: [-1, -1, -1], delay: 10, dwell: 120 },
+                    { r: [90, 110, 115], l: [-1, -1, -1], delay: 10, dwell: 120 },
+                    { r: [90, 110, 145], l: [-1, -1, -1], delay: 10, dwell: 120 },
+                    { r: [90, 110, 115], l: [-1, -1, -1], delay: 10, dwell: 120 },
+                    { r: [90, 90, 90],   l: [-1, -1, -1], delay: 15, dwell: 0 }
+                ]
+            },
+            'ae': {
+                name: "Aceno Esquerdo (SEQ_ACENO_ESQ)", enumName: "GESTURE_WAVE_LEFT (3)",
+                steps: [
+                    { r: [-1, -1, -1], l: [90, 90, 75], delay: 12, dwell: 100 },
+                    { r: [-1, -1, -1], l: [90, 90, 25], delay: 10, dwell: 120 },
+                    { r: [-1, -1, -1], l: [90, 90, 75], delay: 10, dwell: 120 },
+                    { r: [-1, -1, -1], l: [90, 90, 25], delay: 10, dwell: 120 },
+                    { r: [-1, -1, -1], l: [90, 90, 75], delay: 10, dwell: 120 },
+                    { r: [-1, -1, -1], l: [90, 90, 90], delay: 15, dwell: 0 }
+                ]
+            },
+            'a2': {
+                name: "Aceno Duplo (SEQ_ACENO_AMBOS)", enumName: "GESTURE_WAVE_BOTH (4)",
+                steps: [
+                    { r: [160, 155, 90],  l: [20, 40, 90], delay: 12, dwell: 100 },
+                    { r: [160, 155, 100], l: [20, 40, 70], delay: 10, dwell: 120 },
+                    { r: [160, 155, 90],  l: [20, 40, 90], delay: 10, dwell: 120 },
+                    { r: [160, 155, 100], l: [20, 40, 70], delay: 10, dwell: 120 },
+                    { r: [90, 90, 90],    l: [90, 90, 90], delay: 15, dwell: 0 }
+                ]
+            },
+            'ab': {
+                name: "Abraço Acolhedor (SEQ_ABRACO)", enumName: "GESTURE_HUG (5)",
+                steps: [
+                    { r: [80, 90, 90],   l: [100, 90, 90], delay: 10, dwell: 150 },
+                    { r: [80, 170, 150], l: [100, 10, 30], delay: 10, dwell: 350 },
+                    { r: [80, 170, 160], l: [100, 10, 20], delay: 10, dwell: 600 },
+                    { r: [80, 170, 150], l: [100, 10, 30], delay: 10, dwell: 200 },
+                    { r: [90, 90, 90],   l: [90, 90, 90],  delay: 15, dwell: 0 }
+                ]
+            },
+            'am': {
+                name: "Aperto de Mão (SEQ_APERTO_MAO)", enumName: "GESTURE_HANDSHAKE (7)",
+                steps: [
+                    { r: [80, 160, 90], l: [-1, -1, -1], delay: 10, dwell: 400 },
+                    { r: [70, 160, 90], l: [-1, -1, -1], delay: 8,  dwell: 120 },
+                    { r: [90, 160, 90], l: [-1, -1, -1], delay: 8,  dwell: 120 },
+                    { r: [70, 160, 90], l: [-1, -1, -1], delay: 8,  dwell: 120 },
+                    { r: [90, 90, 90],  l: [-1, -1, -1], delay: 12, dwell: 0 }
+                ]
+            },
+            'd': {
+                name: "Coreografia Dancinha (SEQ_DANCINHA)", enumName: "GESTURE_DANCE (8)",
+                steps: [
+                    { r: [0, 150, 130],   l: [180, 40, 30], delay: 10, dwell: 150 },
+                    { r: [20, 130, 100],  l: [160, 60, 60], delay: 8,  dwell: 120 },
+                    { r: [160, 110, 140], l: [160, 70, 90], delay: 7,  dwell: 150 },
+                    { r: [20, 110, 90],   l: [20, 70, 40],  delay: 7,  dwell: 150 },
+                    { r: [80, 165, 150],  l: [100, 70, 75], delay: 7,  dwell: 140 },
+                    { r: [80, 110, 105],  l: [100, 15, 30], delay: 7,  dwell: 140 },
+                    { r: [160, 155, 135], l: [20, 40, 120], delay: 7,  dwell: 140 },
+                    { r: [160, 155, 60],  l: [20, 40, 45],  delay: 7,  dwell: 140 },
+                    { r: [90, 90, 90],    l: [90, 90, 90],  delay: 12, dwell: 0 }
+                ]
+            }
+        };
+
+        // =========================================================================
+        // 2. GERENCIADOR DE 2 CONEXÕES USB INDEPENDENTES (Web Serial API)
+        // =========================================================================
+        const usbConnections = {
+            head: { port: null, reader: null, connected: false, txCount: 0, label: "HEAD USB" },
+            arms: { port: null, reader: null, connected: false, txCount: 0, label: "ARMS USB" }
+        };
+
+        let headDebounceTimer = null;
+        let armsDebounceTimer = null;
+        let simSeqTimer = null;
+        let talkMouthTimer = null;
+
+        // Variáveis do Painel de Voz Piper Offline
+        let audioAtual = null;
+        let requisicaoAtual = null;
+        let urlAudioAtual = null;
+
+        // Variáveis do Sequenciador de Scripts Timed
+        let scriptSteps = [];
+        let isScriptRunning = false;
+        let activeScriptStepIndex = -1;
+        let scriptAbortFlag = false;
+        let scriptTimeoutHandle = null;
+
+        const DEFAULT_COIN_TEXT = "Olá, eu sou o Roboldo! Robô social da UERN! É um prazer estar com você aqui no COIN! Eu sou a versão 2.0. Meu irmão 1.0 e 1.2 também estão aqui presentes. Por ser o irmão mais novo, eu tenho braços, um rostinho dinâmico e posso ter acesso à câmera! Também tenho suporte pra tablet, onde podem ser alocados programas com jogos e pranchas assistivas. Quer saber mais sobre mim? Pergunta pra minha programadora, Artemísia! Bom evento!";
+
+        // Roteiros Pré-Configurados (Scripts que combinam Cabeça + Braços 6-DoF + Piper TTS)
+        const PRESET_SCRIPTS = {
+            coin_presentation: [
+                {
+                    label: "1. Saudação Inicial + Aceno Direito",
+                    headCmd: "h",
+                    armCmd: "ad",
+                    speakText: "Olá, eu sou o Roboldo! Robô social da UERN! É um prazer estar com você aqui no COIN!",
+                    talkStyle: "2",
+                    waitForSpeech: true,
+                    delayMs: 600
+                },
+                {
+                    label: "2. Apresentar Irmãos (Olhar p/ Lado + Pose Aberta Custom)",
+                    headCmd: "RAW:135,135,112,12",
+                    armCmd: "60,135,110,120,45,70",
+                    speakText: "Eu sou a versão 2.0. Meu irmão 1.0 e 1.2 também estão aqui presentes.",
+                    talkStyle: "1",
+                    waitForSpeech: true,
+                    delayMs: 500
+                },
+                {
+                    label: "3. Mostrar Braços e Rosto Dinâmico (Pose Músculo Custom)",
+                    headCmd: "u",
+                    armCmd: "150,160,145,30,25,35",
+                    speakText: "Por ser o irmão mais novo, eu tenho braços, um rostinho dinâmico e posso ter acesso à câmera!",
+                    talkStyle: "2",
+                    waitForSpeech: true,
+                    delayMs: 500
+                },
+                {
+                    label: "4. Apontar para o Suporte de Tablet no Peito (Pose Custom)",
+                    headCmd: "RAW:120,120,90,12",
+                    armCmd: "75,155,145,105,25,35",
+                    speakText: "Também tenho suporte pra tablet, onde podem ser alocados programas com jogos e pranchas assistivas.",
+                    talkStyle: "1",
+                    waitForSpeech: true,
+                    delayMs: 500
+                },
+                {
+                    label: "5. Homenagem à Programadora Artemísia + Abraço",
+                    headCmd: "h",
+                    armCmd: "ab",
+                    speakText: "Quer saber mais sobre mim? Pergunta pra minha programadora, Artemísia! Bom evento!",
+                    talkStyle: "2",
+                    waitForSpeech: true,
+                    delayMs: 800
+                },
+                {
+                    label: "6. Retorno Suave ao Neutro",
+                    headCmd: "n",
+                    armCmd: "n",
+                    speakText: "",
+                    talkStyle: "1",
+                    waitForSpeech: false,
+                    delayMs: 1000
+                }
+            ],
+            custom_choreo: [
+                {
+                    label: "Passo 1: Preparar Atenção (Orelhas Alerta + Braços Cruzados)",
+                    headCmd: "RAW:155,155,90,8",
+                    armCmd: "75,165,155,105,15,25",
+                    speakText: "Iniciando demonstração de movimentos customizados gerados pelo navegador!",
+                    talkStyle: "2",
+                    waitForSpeech: true,
+                    delayMs: 400
+                },
+                {
+                    label: "Passo 2: Asa Direita Alta / Esquerda Baixa + Olhar Direita",
+                    headCmd: "RAW:160,40,65,10",
+                    armCmd: "165,160,130,20,80,90",
+                    speakText: "",
+                    talkStyle: "1",
+                    waitForSpeech: false,
+                    delayMs: 1100
+                },
+                {
+                    label: "Passo 3: Inversão Assimétrica + Olhar Esquerda",
+                    headCmd: "RAW:40,160,115,10",
+                    armCmd: "20,100,90,160,20,50",
+                    speakText: "",
+                    talkStyle: "1",
+                    waitForSpeech: false,
+                    delayMs: 1100
+                },
+                {
+                    label: "Passo 4: Pose de Vitória no Alto + Rosto Feliz",
+                    headCmd: "h",
+                    armCmd: "170,165,120,10,20,60",
+                    speakText: "Viu só? Qualquer ângulo pode ser coreografado sem regravar o ESP32!",
+                    talkStyle: "2",
+                    waitForSpeech: true,
+                    delayMs: 900
+                },
+                {
+                    label: "Passo 5: Finalizar em Neutro",
+                    headCmd: "n",
+                    armCmd: "90,90,90,90,90,90",
+                    speakText: "",
+                    talkStyle: "1",
+                    waitForSpeech: false,
+                    delayMs: 800
+                }
+            ],
+            empathy_hug: [
+                {
+                    label: "1. Expressão Surpresa + Braços Abertos",
+                    headCmd: "u",
+                    armCmd: "130,145,70,50,35,110",
+                    speakText: "Uau! Que alegria encontrar você por aqui!",
+                    talkStyle: "2",
+                    waitForSpeech: true,
+                    delayMs: 400
+                },
+                {
+                    label: "2. Sorriso Feliz + Coreografia de Abraço",
+                    headCmd: "h",
+                    armCmd: "ab",
+                    speakText: "Vem cá me dar um abraço de robô!",
+                    talkStyle: "2",
+                    waitForSpeech: true,
+                    delayMs: 1200
+                },
+                {
+                    label: "3. Despedida com Aceno Duplo",
+                    headCmd: "h",
+                    armCmd: "a2",
+                    speakText: "",
+                    talkStyle: "1",
+                    waitForSpeech: false,
+                    delayMs: 1800
+                }
+            ]
+        };
+
+        function setProtocolMode(mode) {
+            protocolMode = mode;
+            const btnNative = document.getElementById('protoNativeBtn');
+            const btnJson   = document.getElementById('protoJsonBtn');
+
+            if (mode === 'NATIVE') {
+                btnNative.className = "px-3 py-1.5 rounded-lg font-semibold transition bg-sky-500 text-white shadow";
+                btnJson.className   = "px-3 py-1.5 rounded-lg font-medium text-slate-400 hover:text-slate-200 transition";
+                document.getElementById('headProtoTag').textContent = "String Nativa C++";
+                document.getElementById('armsProtoTag').textContent = "String Nativa C++";
+                showToast("Modo Protocolo Nativo ativado (Compatível direto com seus 2 ESPs)", "info");
+            } else {
+                btnJson.className   = "px-3 py-1.5 rounded-lg font-semibold transition bg-emerald-500 text-white shadow";
+                btnNative.className = "px-3 py-1.5 rounded-lg font-medium text-slate-400 hover:text-slate-200 transition";
+                document.getElementById('headProtoTag').textContent = "HeadCommandPacket JSON";
+                document.getElementById('armsProtoTag').textContent = "ArmCommandPacket JSON";
+                showToast("Modo Pacotes JSON ativado", "info");
+            }
+            updateInspectorAndVisuals();
+        }
+
+        async function toggleSerialPort(target) {
+            if (!('serial' in navigator)) {
+                showToast("Web Serial API não suportada neste navegador. Use Chrome ou Edge.", "error");
+                return;
+            }
+            if (usbConnections[target].connected) {
+                await disconnectEspPort(target);
+            } else {
+                await connectEspPort(target);
+            }
+        }
+
+        async function connectEspPort(target) {
+            const conn = usbConnections[target];
+            const baudSelectId = (target === 'head') ? 'headBaudSelect' : 'armsBaudSelect';
+            const baudRate = parseInt(document.getElementById(baudSelectId).value, 10);
+
+            try {
+                conn.port = await navigator.serial.requestPort();
+                await conn.port.open({ baudRate });
+                conn.connected = true;
+
+                updateUsbHeaderUI(target, true, baudRate);
+                appendDualSerialLog(target, "sys", `Porta conectada @ ${baudRate} bps`);
+                showToast(`${conn.label} conectado (${baudRate} bps)`, "success");
+
+                readEspSerialLoop(target);
+            } catch (err) {
+                if (err.name !== 'NotFoundError') {
+                    showToast(`Erro ao conectar ${conn.label}: ${err.message}`, "error");
+                    appendDualSerialLog(target, "err", err.message);
+                }
+            }
+        }
+
+        async function disconnectEspPort(target) {
+            const conn = usbConnections[target];
+            conn.connected = false;
+            try {
+                if (conn.reader) {
+                    await conn.reader.cancel();
+                    conn.reader = null;
+                }
+                if (conn.port) {
+                    await conn.port.close();
+                    conn.port = null;
+                }
+            } catch (e) {}
+
+            updateUsbHeaderUI(target, false);
+            appendDualSerialLog(target, "sys", "Porta USB desconectada.");
+            showToast(`${conn.label} desconectado`, "info");
+        }
+
+        async function readEspSerialLoop(target) {
+            const conn = usbConnections[target];
+            const decoder = new TextDecoder();
+            let buffer = "";
+
+            while (conn.port && conn.port.readable && conn.connected) {
+                try {
+                    conn.reader = conn.port.readable.getReader();
+                    while (true) {
+                        const { value, done } = await conn.reader.read();
+                        if (done) break;
+                        if (value) {
+                            buffer += decoder.decode(value, { stream: true });
+                            const lines = buffer.split(/\r?\n/);
+                            buffer = lines.pop();
+                            for (const line of lines) {
+                                if (line.trim().length > 0) {
+                                    appendDualSerialLog(target, "rx", line.trim());
+                                }
+                            }
+                        }
+                    }
+                } catch (err) {
+                    if (conn.connected) {
+                        appendDualSerialLog(target, "err", `RX interrompido: ${err.message}`);
+                    }
+                } finally {
+                    if (conn.reader) {
+                        conn.reader.releaseLock();
+                        conn.reader = null;
+                    }
+                }
+            }
+        }
+
+        async function writeToEspSerial(target, payloadString) {
+            const conn = usbConnections[target];
+            const cleanLine = payloadString.endsWith('\n') ? payloadString : (payloadString + '\n');
+
+            if (conn.connected && conn.port && conn.port.writable) {
+                try {
+                    const writer = conn.port.writable.getWriter();
+                    await writer.write(new TextEncoder().encode(cleanLine));
+                    writer.releaseLock();
+
+                    conn.txCount++;
+                    updateTxCounters();
+                    appendDualSerialLog(target, "tx", cleanLine.trim());
+                } catch (err) {
+                    appendDualSerialLog(target, "err", `Falha TX: ${err.message}`);
+                }
+            } else {
+                // Simulação
+                conn.txCount++;
+                updateTxCounters();
+                appendDualSerialLog(target, "sim-tx", cleanLine.trim());
+            }
+        }
+
+        function updateUsbHeaderUI(target, isConnected, baud = 9600) {
+            const isHead = (target === 'head');
+            const badge  = document.getElementById(isHead ? 'headConnBadge' : 'armsConnBadge');
+            const dot    = document.getElementById(isHead ? 'headConnDot' : 'armsConnDot');
+            const text   = document.getElementById(isHead ? 'headConnText' : 'armsConnText');
+            const btn    = document.getElementById(isHead ? 'btnConnectHead' : 'btnConnectArms');
+            const btnTxt = document.getElementById(isHead ? 'btnConnectHeadText' : 'btnConnectArmsText');
+
+            if (isConnected) {
+                badge.className = "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono bg-emerald-500/15 text-emerald-300 border border-emerald-500/30";
+                dot.className   = "w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping";
+                text.textContent = `Online (${baud})`;
+                btnTxt.textContent = "Desconectar";
+                btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/30 transition";
+            } else {
+                badge.className = "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono bg-amber-500/10 text-amber-400 border border-amber-500/20";
+                dot.className   = "w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse";
+                text.textContent = "Simulação";
+                btnTxt.textContent = isHead ? "Conectar Cabeça" : "Conectar Braços";
+                btn.className = isHead
+                    ? "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-500/40 transition"
+                    : "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/40 transition";
+            }
+        }
+
+        function updateTxCounters() {
+            document.getElementById('txHeadBadge').textContent = `H:${usbConnections.head.txCount}`;
+            document.getElementById('txArmsBadge').textContent = `A:${usbConnections.arms.txCount}`;
+        }
+
+        // =========================================================================
+        // 3. LÓGICA DO ESP 1: CABEÇA (DWIN + 3 SERVOS)
+        // =========================================================================
+        function buildHeadNativeStrings() {
+            const cmds = [];
+            if (headState.mode === 0) {
+                cmds.push("n");
+            } else if (headState.mode === 1) {
+                const emo = HEAD_EMOTION_CATALOG[headState.emotion] || HEAD_EMOTION_CATALOG[3];
+                cmds.push(emo.cmd);
+            } else if (headState.mode === 2) {
+                cmds.push(String(headState.talkStyle + 1)); // '1', '2' ou '3'
+            }
+
+            if (headState.overrideServos) {
+                cmds.push(`RAW:${headState.earRightAngle},${headState.earLeftAngle},${headState.neckAngle},${headState.servoStepDelayMs}`);
+            }
+            return cmds;
+        }
+
+        function selectHeadMode(modeVal) {
+            headState.mode = Number(modeVal);
+            const modeNames = { 0: "MODE_NEUTRAL_IDLE (0)", 1: "MODE_EMOTION (1)", 2: "MODE_TALKING (2)" };
+            document.getElementById('modeEnumBadge').textContent = modeNames[modeVal];
+
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                const active = Number(btn.dataset.mode) === modeVal;
+                btn.className = `mode-btn flex flex-col items-center justify-center p-2.5 rounded-xl border text-xs font-medium transition ${
+                    active
+                        ? 'bg-sky-500/20 border-sky-400 text-white shadow-lg shadow-sky-500/10'
+                        : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200'
+                }`;
+            });
+
+            document.getElementById('emotionSection').style.opacity = (modeVal === 1) ? '1' : '0.45';
+            document.getElementById('talkStyleSection').style.opacity = (modeVal === 2) ? '1' : '0.45';
+
+            if (!headState.overrideServos) {
+                applyHeadFirmwareDefaultPose();
+            }
+            updateInspectorAndVisuals();
+            if (document.getElementById('autoSendToggle').checked) {
+                sendHeadCommandNow('AUTO');
+            }
+        }
+
+        function selectHeadEmotion(emoIdx) {
+            headState.emotion = Number(emoIdx);
+            const info = HEAD_EMOTION_CATALOG[emoIdx];
+            document.getElementById('emotionDwinInfo').textContent = info.dwin;
+
+            document.querySelectorAll('.emo-btn').forEach(btn => {
+                const active = Number(btn.dataset.emo) === emoIdx;
+                btn.className = `emo-btn flex flex-col items-center p-2 rounded-xl border text-xs transition ${
+                    active
+                        ? 'bg-sky-500/20 border-sky-400 text-white shadow-lg shadow-sky-500/10'
+                        : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200'
+                }`;
+            });
+
+            if (headState.mode !== 1) {
+                selectHeadMode(1);
+                return;
+            }
+
+            if (!headState.overrideServos) {
+                applyHeadFirmwareDefaultPose();
+            }
+            updateInspectorAndVisuals();
+            if (document.getElementById('autoSendToggle').checked) {
+                sendHeadCommandNow('AUTO');
+            }
+        }
+
+        function selectHeadTalkStyle(talkIdx) {
+            headState.talkStyle = Number(talkIdx);
+            document.getElementById('talkEnumBadge').textContent = `Pág DWIN ${21 + talkIdx} (cmd '${talkIdx + 1}')`;
+
+            document.querySelectorAll('.talk-btn').forEach(btn => {
+                const active = Number(btn.dataset.talk) === talkIdx;
+                btn.className = `talk-btn flex flex-col items-center p-2 rounded-xl border text-xs transition ${
+                    active
+                        ? 'bg-emerald-500/20 border-emerald-400 text-white shadow-lg shadow-emerald-500/10'
+                        : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200'
+                }`;
+            });
+
+            if (headState.mode !== 2) {
+                selectHeadMode(2);
+                return;
+            }
+
+            if (!headState.overrideServos) {
+                applyHeadFirmwareDefaultPose();
+            }
+            updateInspectorAndVisuals();
+            if (document.getElementById('autoSendToggle').checked) {
+                sendHeadCommandNow('AUTO');
+            }
+        }
+
+        function applyHeadFirmwareDefaultPose() {
+            let p = HEAD_NEUTRAL_PRESET;
+            if (headState.mode === 1) {
+                p = HEAD_EMOTION_CATALOG[headState.emotion] || HEAD_NEUTRAL_PRESET;
+            } else if (headState.mode === 2) {
+                p = HEAD_TALK_PRESET;
+            }
+            setHeadSlidersDOM(p.earR, p.earL, p.neck, p.speed);
+        }
+
+        function setHeadSlidersDOM(r, l, n, s) {
+            headState.earRightAngle    = r;
+            headState.earLeftAngle     = l;
+            headState.neckAngle        = n;
+            headState.servoStepDelayMs = s;
+
+            document.getElementById('rng_earRightAngle').value = r;
+            document.getElementById('lbl_earRightAngle').textContent = `${r}°`;
+            document.getElementById('rng_earLeftAngle').value = l;
+            document.getElementById('lbl_earLeftAngle').textContent = `${l}°`;
+            document.getElementById('rng_neckAngle').value = n;
+            document.getElementById('lbl_neckAngle').textContent = `${n}°`;
+            document.getElementById('rng_servoStepDelayMs').value = s;
+            document.getElementById('lbl_servoStepDelayMs').textContent = `${s} ms/°`;
+        }
+
+        function toggleHeadServoOverride(enabled) {
+            headState.overrideServos = Boolean(enabled);
+            const desc = document.getElementById('overrideStatusDesc');
+            if (enabled) {
+                desc.textContent = "Ativo: enviando RAW:earR,earL,neck,speed";
+                desc.className = "text-[11px] text-sky-400 font-mono";
+            } else {
+                desc.textContent = "Desativado: usando HeadPosePreset da emoção";
+                desc.className = "text-[11px] text-slate-400";
+                applyHeadFirmwareDefaultPose();
+            }
+            updateInspectorAndVisuals();
+        }
+
+        function onHeadServoSliderChange(field, rawValue) {
+            const val = parseInt(rawValue, 10);
+            headState[field] = val;
+
+            if (field === 'servoStepDelayMs') {
+                document.getElementById('lbl_servoStepDelayMs').textContent = `${val} ms/°`;
+            } else {
+                document.getElementById(`lbl_${field}`).textContent = `${val}°`;
+            }
+
+            if (!headState.overrideServos) {
+                headState.overrideServos = true;
+                document.getElementById('overrideServosToggle').checked = true;
+                toggleHeadServoOverride(true);
+            }
+
+            updateInspectorAndVisuals();
+
+            if (document.getElementById('autoSendToggle').checked) {
+                clearTimeout(headDebounceTimer);
+                headDebounceTimer = setTimeout(() => {
+                    sendHeadRawServosOnly();
+                }, 70);
+            }
+        }
+
+        async function sendHeadRawServosOnly() {
+            if (protocolMode === 'NATIVE') {
+                const rawCmd = `RAW:${headState.earRightAngle},${headState.earLeftAngle},${headState.neckAngle},${headState.servoStepDelayMs}`;
+                await writeToEspSerial('head', rawCmd);
+            } else {
+                await writeToEspSerial('head', JSON.stringify(headState));
+            }
+        }
+
+        async function sendHeadCommandNow(source = 'MANUAL') {
+            if (protocolMode === 'NATIVE') {
+                const cmds = buildHeadNativeStrings();
+                for (const c of cmds) {
+                    await writeToEspSerial('head', c);
+                }
+            } else {
+                await writeToEspSerial('head', JSON.stringify(headState));
+            }
+            if (source === 'MANUAL') {
+                showToast("Comando enviado para USB 1 (ESP Cabeça)", "success");
+            }
+        }
+
+        // =========================================================================
+        // 4. LÓGICA DO ESP 2: BRAÇOS 3-DoF (COREOGRAFIAS + 6 ÂNGULOS)
+        // =========================================================================
+        function triggerArmGesture(gestureEnumId, cmdShort) {
+            armState.gesture = gestureEnumId;
+            armState.gestureCmdStr = cmdShort;
+
+            document.querySelectorAll('.gest-btn').forEach(btn => {
+                const active = Number(btn.dataset.gest) === gestureEnumId;
+                btn.className = `gest-btn flex flex-col items-center p-2 rounded-xl border text-xs transition ${
+                    active
+                        ? 'bg-purple-500/20 border-purple-400 text-white shadow-lg shadow-purple-500/10'
+                        : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200'
+                }`;
+            });
+
+            // Simula visualmente a pose ou a sequência de Keyframes no SVG
+            if (cmdShort === 'n') {
+                stopKeyframeSimulation();
+                setCustomArmSliders(POSE_NEUTRA.right, POSE_NEUTRA.left);
+                document.getElementById('gestureEnumBadge').textContent = "GESTURE_NEUTRAL (1)";
+            } else if (cmdShort === 'mc') {
+                stopKeyframeSimulation();
+                setCustomArmSliders(POSE_CINTURA.right, POSE_CINTURA.left);
+                document.getElementById('gestureEnumBadge').textContent = "GESTURE_HANDS_ON_HIPS (6)";
+            } else if (ARM_SEQUENCES[cmdShort]) {
+                const seqInfo = ARM_SEQUENCES[cmdShort];
+                document.getElementById('gestureEnumBadge').textContent = seqInfo.enumName;
+                playKeyframeSimulationOnSvg(seqInfo);
+            }
+
+            updateInspectorAndVisuals();
+
+            if (document.getElementById('autoSendToggle').checked) {
+                if (protocolMode === 'NATIVE') {
+                    writeToEspSerial('arms', cmdShort);
+                } else {
+                    writeToEspSerial('arms', JSON.stringify(armState));
+                }
+            }
+        }
+
+        function setCustomArmSliders(rightObj, leftObj) {
+            ['pitch', 'roll', 'elbow'].forEach(axis => {
+                if (rightObj[axis] >= 0) {
+                    armState.customPose.right[axis] = rightObj[axis];
+                    document.getElementById(`rng_right_${axis}`).value = rightObj[axis];
+                    document.getElementById(`lbl_right_${axis}`).textContent = `${rightObj[axis]}°`;
+                }
+                if (leftObj[axis] >= 0) {
+                    armState.customPose.left[axis] = leftObj[axis];
+                    document.getElementById(`rng_left_${axis}`).value = leftObj[axis];
+                    document.getElementById(`lbl_left_${axis}`).textContent = `${leftObj[axis]}°`;
+                }
+            });
+        }
+
+        function onArmCustomSliderChange(side, axis, rawValue) {
+            stopKeyframeSimulation();
+            const val = parseInt(rawValue, 10);
+            armState.gesture = 9; // GESTURE_CUSTOM_POSE
+            const r = armState.customPose.right;
+            const l = armState.customPose.left;
+
+            armState.customPose[side][axis] = val;
+            document.getElementById(`lbl_${side}_${axis}`).textContent = `${val}°`;
+
+            // Espelhamento cinemático inverso (como no POSE_CINTURA do firmware: Dir=0,150,130 | Esq=180,40,30)
+            if (document.getElementById('mirrorArmsCheckbox').checked) {
+                const otherSide = (side === 'right') ? 'left' : 'right';
+                const mirroredVal = 180 - val;
+                armState.customPose[otherSide][axis] = mirroredVal;
+                document.getElementById(`rng_${otherSide}_${axis}`).value = mirroredVal;
+                document.getElementById(`lbl_${otherSide}_${axis}`).textContent = `${mirroredVal}°`;
+            }
+
+            armState.gestureCmdStr = `${r.pitch},${r.roll},${r.elbow},${l.pitch},${l.roll},${l.elbow}`;
+            document.getElementById('gestureEnumBadge').textContent = "GESTURE_CUSTOM_POSE (9)";
+
+            document.querySelectorAll('.gest-btn').forEach(btn => {
+                btn.className = "gest-btn flex flex-col items-center p-2 rounded-xl border text-xs transition bg-slate-950/60 border-slate-800 text-slate-400 hover:border-slate-700";
+            });
+
+            updateInspectorAndVisuals();
+
+            if (document.getElementById('autoSendToggle').checked) {
+                clearTimeout(armsDebounceTimer);
+                armsDebounceTimer = setTimeout(() => {
+                    sendArmsCustomPoseNow('AUTO');
+                }, 70);
+            }
+        }
+
+        async function sendArmsCustomPoseNow(source = 'MANUAL') {
+            const r = armState.customPose.right;
+            const l = armState.customPose.left;
+            const csvCmd = `${r.pitch},${r.roll},${r.elbow},${l.pitch},${l.roll},${l.elbow}`;
+            armState.gesture = 9;
+            armState.gestureCmdStr = csvCmd;
+
+            if (protocolMode === 'NATIVE') {
+                await writeToEspSerial('arms', csvCmd);
+            } else {
+                await writeToEspSerial('arms', JSON.stringify(armState));
+            }
+            updateInspectorAndVisuals();
+
+            if (source === 'MANUAL') {
+                showToast("6 ângulos enviados para USB 2 (ESP Braços)", "success");
+            }
+        }
+
+        // =========================================================================
+        // 5. MACROS COMBINADAS (DISPARO SIMULTÂNEO USB 1 CABEÇA + USB 2 BRAÇOS)
+        // =========================================================================
+        async function triggerCombinedMacro(macroKey) {
+            if (macroKey === 'neutral') {
+                headState.overrideServos = false;
+                document.getElementById('overrideServosToggle').checked = false;
+                selectHeadMode(0);
+                triggerArmGesture(1, 'n');
+                showToast("Macro: Robô em Posição Neutra Total", "info");
+            } else if (macroKey === 'greet_right') {
+                selectHeadEmotion(3); // Happy ('h')
+                triggerArmGesture(2, 'ad'); // Aceno Direito ('ad')
+                showToast("Macro: Olá Feliz ('h' na Cabeça + 'ad' nos Braços)", "success");
+            } else if (macroKey === 'warm_hug') {
+                selectHeadEmotion(3); // Happy ('h')
+                triggerArmGesture(5, 'ab'); // Abraço ('ab')
+                showToast("Macro: Abraço Acolhedor ('h' + 'ab')", "success");
+            } else if (macroKey === 'handshake') {
+                selectHeadTalkStyle(0); // Fala Sílabas ('1')
+                triggerArmGesture(7, 'am'); // Aperto de Mão ('am')
+                showToast("Macro: Cumprimento Formal ('1' + 'am')", "success");
+            } else if (macroKey === 'angry_hips') {
+                selectHeadEmotion(0); // Angry ('a')
+                triggerArmGesture(6, 'mc'); // Mãos na cintura ('mc')
+                showToast("Macro: Bravo com Mãos na Cintura ('a' + 'mc')", "info");
+            } else if (macroKey === 'surprised_wave2') {
+                selectHeadEmotion(5); // Surprised ('u')
+                triggerArmGesture(4, 'a2'); // Aceno Duplo ('a2')
+                showToast("Macro: Surpreso + Aceno Duplo ('u' + 'a2')", "success");
+            } else if (macroKey === 'party_dance') {
+                selectHeadEmotion(3); // Happy ('h')
+                triggerArmGesture(8, 'd'); // Dancinha ('d')
+                showToast("Macro: Modo Festa / Dancinha ('h' + 'd')", "success");
+            }
+
+            // Caso o Auto-Envio esteja desligado, ainda assim envia na Macro
+            if (!document.getElementById('autoSendToggle').checked) {
+                await sendHeadCommandNow('MACRO');
+                await writeToEspSerial('arms', armState.gestureCmdStr);
+            }
+        }
+
+        // =========================================================================
+        // 6. SIMULADOR VISUAL 2D (KEYFRAMES DOS BRAÇOS + EXPRESSÕES DWIN)
+        // =========================================================================
+        function stopKeyframeSimulation() {
+            if (simSeqTimer) {
+                clearTimeout(simSeqTimer);
+                simSeqTimer = null;
+            }
+            document.getElementById('keyframeProgressBadge').classList.add('hidden');
+        }
+
+        function playKeyframeSimulationOnSvg(seqInfo) {
+            stopKeyframeSimulation();
+            const badge = document.getElementById('keyframeProgressBadge');
+            badge.classList.remove('hidden');
+
+            let stepIdx = 0;
+            function runNextStep() {
+                if (stepIdx >= seqInfo.steps.length) {
+                    badge.classList.add('hidden');
+                    document.getElementById('simStatusLabel').textContent = "ARM_IDLE • Coreografia Concluída";
+                    return;
+                }
+                const st = seqInfo.steps[stepIdx];
+                badge.textContent = `${seqInfo.name} (${stepIdx + 1}/${seqInfo.steps.length})`;
+                document.getElementById('simStatusLabel').textContent = `ARM_INTERPOLATING • Passo ${stepIdx + 1}/${seqInfo.steps.length}`;
+
+                const rPose = {
+                    pitch: st.r[0] >= 0 ? st.r[0] : armState.customPose.right.pitch,
+                    roll:  st.r[1] >= 0 ? st.r[1] : armState.customPose.right.roll,
+                    elbow: st.r[2] >= 0 ? st.r[2] : armState.customPose.right.elbow
+                };
+                const lPose = {
+                    pitch: st.l[0] >= 0 ? st.l[0] : armState.customPose.left.pitch,
+                    roll:  st.l[1] >= 0 ? st.l[1] : armState.customPose.left.roll,
+                    elbow: st.l[2] >= 0 ? st.l[2] : armState.customPose.left.elbow
+                };
+
+                setCustomArmSliders(rPose, lPose);
+                updateRobotSvgVisuals();
+
+                stepIdx++;
+                const waitMs = Math.max(260, (st.dwell || 150) + (st.delay * 18));
+                simSeqTimer = setTimeout(runNextStep, waitMs);
+            }
+            runNextStep();
+        }
+
+        function updateRobotSvgVisuals() {
+            // 1. Cabeça & Pescoço (Limites 45..135)
+            const neckOffset = ((headState.neckAngle - 90) / 45) * 18;
+            const neckTilt   = ((headState.neckAngle - 90) / 45) * 7;
+            document.getElementById('svgHeadGroup').setAttribute('transform', `translate(${200 + neckOffset}, 75) rotate(${neckTilt})`);
+
+            // 2. Orelhas (10..170)
+            const earRRot = ((headState.earRightAngle - 90) / 80) * -38;
+            const earLRot = ((headState.earLeftAngle - 90) / 80) * 38;
+            document.getElementById('svgEarRight').setAttribute('transform', `translate(-62, 0) rotate(${earRRot})`);
+            document.getElementById('svgEarLeft').setAttribute('transform', `translate(62, 0) rotate(${earLRot})`);
+
+            // 3. Expressão Facial DWIN
+            const browL = document.getElementById('svgBrowLeft');
+            const browR = document.getElementById('svgBrowRight');
+            const eyeL  = document.getElementById('svgEyeLeft');
+            const eyeR  = document.getElementById('svgEyeRight');
+            const mouth = document.getElementById('svgMouth');
+
+            eyeL.setAttribute('rx', 9); eyeL.setAttribute('ry', 10);
+            eyeR.setAttribute('rx', 9); eyeR.setAttribute('ry', 10);
+
+            if (headState.mode === 0) {
+                browL.setAttribute('y1', -20); browL.setAttribute('y2', -20);
+                browR.setAttribute('y1', -20); browR.setAttribute('y2', -20);
+                mouth.setAttribute('d', 'M -14 15 Q 0 15 14 15');
+            } else if (headState.mode === 1) {
+                const e = headState.emotion;
+                if (e === 0) { // Angry
+                    browL.setAttribute('y1', -23); browL.setAttribute('y2', -15);
+                    browR.setAttribute('y1', -15); browR.setAttribute('y2', -23);
+                    eyeL.setAttribute('ry', 7); eyeR.setAttribute('ry', 7);
+                    mouth.setAttribute('d', 'M -16 18 Q 0 10 16 18');
+                } else if (e === 1) { // Confused
+                    browL.setAttribute('y1', -25); browL.setAttribute('y2', -22);
+                    browR.setAttribute('y1', -16); browR.setAttribute('y2', -20);
+                    mouth.setAttribute('d', 'M -15 16 Q -5 11 5 17 T 16 14');
+                } else if (e === 2) { // Fear
+                    browL.setAttribute('y1', -16); browL.setAttribute('y2', -24);
+                    browR.setAttribute('y1', -24); browR.setAttribute('y2', -16);
+                    eyeL.setAttribute('rx', 11); eyeL.setAttribute('ry', 12);
+                    eyeR.setAttribute('rx', 11); eyeR.setAttribute('ry', 12);
+                    mouth.setAttribute('d', 'M -12 18 Q 0 8 12 18');
+                } else if (e === 3) { // Happy
+                    browL.setAttribute('y1', -22); browL.setAttribute('y2', -24);
+                    browR.setAttribute('y1', -24); browR.setAttribute('y2', -22);
+                    mouth.setAttribute('d', 'M -18 12 Q 0 26 18 12');
+                } else if (e === 4) { // Sad
+                    browL.setAttribute('y1', -15); browL.setAttribute('y2', -22);
+                    browR.setAttribute('y1', -22); browR.setAttribute('y2', -15);
+                    eyeL.setAttribute('ry', 6); eyeR.setAttribute('ry', 6);
+                    mouth.setAttribute('d', 'M -16 20 Q 0 10 16 20');
+                } else if (e === 5) { // Surprised
+                    browL.setAttribute('y1', -26); browL.setAttribute('y2', -26);
+                    browR.setAttribute('y1', -26); browR.setAttribute('y2', -26);
+                    eyeL.setAttribute('rx', 11); eyeL.setAttribute('ry', 13);
+                    eyeR.setAttribute('rx', 11); eyeR.setAttribute('ry', 13);
+                    mouth.setAttribute('d', 'M -8 15 A 8 8 0 1 0 8 15 A 8 8 0 1 0 -8 15');
+                }
+            }
+
+            // 4. Braços 3-DoF
+            const r = armState.customPose.right;
+            const l = armState.customPose.left;
+            const rShoulderAngle = ((r.pitch - 90) * 0.55) + ((r.roll - 90) * 0.45);
+            const rElbowAngle    = (r.elbow - 90) * 0.85;
+            document.getElementById('svgRightUpperArm').setAttribute('transform', `rotate(${rShoulderAngle})`);
+            document.getElementById('svgRightForearm').setAttribute('transform', `translate(-42, 0) rotate(${rElbowAngle})`);
+
+            const lShoulderAngle = -(((90 - l.pitch) * 0.55) + ((90 - l.roll) * 0.45));
+            const lElbowAngle    = -((90 - l.elbow) * 0.85);
+            document.getElementById('svgLeftUpperArm').setAttribute('transform', `rotate(${lShoulderAngle})`);
+            document.getElementById('svgLeftForearm').setAttribute('transform', `translate(42, 0) rotate(${lElbowAngle})`);
+        }
+
+        function updateInspectorAndVisuals() {
+            updateRobotSvgVisuals();
+
+            const headCmds = buildHeadNativeStrings();
+            const headNativeDisplay = headCmds.map(c => `"${c}\\n"`).join(' + ');
+            const armsNativeDisplay = `"${armState.gestureCmdStr}\\n"`;
+
+            document.getElementById('headActiveCmdBadge').textContent = headNativeDisplay;
+            document.getElementById('armsActiveCmdBadge').textContent = armsNativeDisplay;
+
+            if (protocolMode === 'NATIVE') {
+                document.getElementById('headPayloadPreview').textContent = headCmds.join('\n');
+                document.getElementById('armsPayloadPreview').textContent = armState.gestureCmdStr;
+            } else {
+                document.getElementById('headPayloadPreview').textContent = JSON.stringify(headState);
+                document.getElementById('armsPayloadPreview').textContent = JSON.stringify(armState);
+            }
+
+            document.getElementById('jsonPreviewBox').textContent = JSON.stringify({
+                headEsp: headState,
+                armsEsp: armState
+            }, null, 2);
+        }
+
+        // Animação da boca quando em MODE_TALKING
+        function startTalkMouthLoop() {
+            let open = false;
+            talkMouthTimer = setInterval(() => {
+                if (headState.mode !== 2) return;
+                open = !open;
+                const mouth = document.getElementById('svgMouth');
+                if (open) {
+                    const depth = headState.talkStyle === 1 ? 28 : 21;
+                    mouth.setAttribute('d', `M -16 12 Q 0 ${depth} 16 12 Q 0 6 -16 12`);
+                } else {
+                    mouth.setAttribute('d', 'M -14 15 Q 0 17 14 15');
+                }
+            }, 150);
+        }
+
+        // =========================================================================
+        // 7. PAINEL DE VOZ PIPER OFFLINE INTEGRADO (COM LIP-SYNC DWIN AUTOMÁTICO)
+        // =========================================================================
+        function resetRoboldoDefaultText() {
+            document.getElementById('texto').value = DEFAULT_COIN_TEXT;
+            showToast("Texto oficial de apresentação no COIN restaurado!", "info");
+        }
+
+        function pararFalaPiper(restorePose = false) {
+            if (requisicaoAtual) {
+                requisicaoAtual.abort();
+                requisicaoAtual = null;
+            }
+            if (audioAtual) {
+                audioAtual.pause();
+                audioAtual.currentTime = 0;
+                audioAtual = null;
+            }
+            if (urlAudioAtual) {
+                URL.revokeObjectURL(urlAudioAtual);
+                urlAudioAtual = null;
+            }
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+
+            if (restorePose) {
+                const endCmd = document.getElementById('piperEndHeadSelect').value || 'n';
+                applyHeadCommandFromString(endCmd);
+                document.getElementById('status').textContent = "⏹ Fala interrompida.";
+                document.getElementById('ttsStatusBadge').textContent = "Parado";
+                document.getElementById('ttsStatusBadge').className = "text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700";
+            }
+        }
+
+        // Executa a síntese Piper Offline (retorna uma Promise que resolve quando o áudio termina de tocar)
+        async function sintetizarEFalarTexto(textoParaFalar, talkStyleCmd = null, endHeadCmd = null) {
+            const textClean = (textoParaFalar || "").trim();
+            if (!textClean) return;
+
+            pararFalaPiper(false);
+
+            const selectVozes = document.getElementById('vozes');
+            const pitchInput  = document.getElementById('pitch');
+            const rateInput   = document.getElementById('rate');
+            const volInput    = document.getElementById('volume');
+            const statusDiv   = document.getElementById('status');
+            const badge       = document.getElementById('ttsStatusBadge');
+            const endpoint    = document.getElementById('piperEndpoint').value.trim() || '/api/synthesize';
+
+            const chosenTalkCmd = talkStyleCmd || document.getElementById('piperTalkStyleSelect').value || '2';
+            const chosenEndCmd  = endHeadCmd  || document.getElementById('piperEndHeadSelect').value  || 'h';
+
+            const controller = new AbortController();
+            requisicaoAtual = controller;
+
+            statusDiv.textContent = 'Gerando voz local (Piper)...';
+            badge.textContent = 'Sintetizando WAV...';
+            badge.className = "text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30";
+
+            try {
+                const resposta = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        text: textClean,
+                        voice: selectVozes.value,
+                        rate: Number(rateInput.value),
+                        volume: Number(volInput.value)
+                    }),
+                    signal: controller.signal
+                });
+
+                if (!resposta.ok) {
+                    let msgErro = 'Não foi possível gerar a voz local.';
+                    try {
+                        const erroJson = await resposta.json();
+                        if (erroJson.error) msgErro = erroJson.error;
+                    } catch (e) {}
+                    throw new Error(msgErro);
+                }
+
+                const blob = await resposta.blob();
+                urlAudioAtual = URL.createObjectURL(blob);
+                audioAtual = new Audio(urlAudioAtual);
+
+                // Configurações aplicadas direto no player de áudio conforme seu script original
+                audioAtual.volume = Number(volInput.value);
+                audioAtual.preservesPitch = false;
+                audioAtual.playbackRate = Number(pitchInput.value);
+
+                return await new Promise((resolve) => {
+                    audioAtual.onplay = () => {
+                        statusDiv.textContent = '🗣️ Roboldo está falando (Offline)...';
+                        badge.textContent = `Falando (cmd '${chosenTalkCmd}')`;
+                        badge.className = "text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+                        // Aciona a página de fala correspondente no DWIN do ESP Cabeça
+                        applyHeadCommandFromString(chosenTalkCmd);
+                    };
+
+                    audioAtual.onended = () => {
+                        statusDiv.textContent = '✅ Apresentação concluída!';
+                        badge.textContent = 'Concluído';
+                        badge.className = "text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-sky-400 border border-slate-700";
+                        pararFalaPiper(false);
+                        applyHeadCommandFromString(chosenEndCmd);
+                        resolve();
+                    };
+
+                    audioAtual.onerror = () => {
+                        statusDiv.textContent = '❌ Erro ao reproduzir o áudio WAV.';
+                        pararFalaPiper(false);
+                        applyHeadCommandFromString(chosenEndCmd);
+                        resolve();
+                    };
+
+                    audioAtual.play().catch((playErr) => {
+                        statusDiv.textContent = `❌ Erro no play(): ${playErr.message}`;
+                        applyHeadCommandFromString(chosenEndCmd);
+                        resolve();
+                    });
+                });
+
+            } catch (erro) {
+                if (erro.name === 'AbortError') return;
+
+                // Se o servidor Piper local não estiver acessível e o fallback estiver ativo, usa Web Speech p/ não travar a apresentação/script
+                const useFallback = document.getElementById('piperFallbackBrowserToggle').checked;
+                if (useFallback && ('speechSynthesis' in window)) {
+                    statusDiv.textContent = `⚠️ Piper offline (${erro.message}). Usando voz fallback do navegador...`;
+                    badge.textContent = `Falando (Fallback cmd '${chosenTalkCmd}')`;
+                    badge.className = "text-[10px] font-mono px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30";
+
+                    return await new Promise((resolve) => {
+                        window.speechSynthesis.cancel();
+                        const utter = new SpeechSynthesisUtterance(textClean);
+                        utter.lang = 'pt-BR';
+                        utter.rate = Number(rateInput.value);
+                        utter.pitch = Number(pitchInput.value);
+                        utter.volume = Number(volInput.value);
+
+                        utter.onstart = () => {
+                            applyHeadCommandFromString(chosenTalkCmd);
+                        };
+                        utter.onend = () => {
+                            statusDiv.textContent = '✅ Fala concluída (Fallback)!';
+                            badge.textContent = 'Pronto';
+                            applyHeadCommandFromString(chosenEndCmd);
+                            resolve();
+                        };
+                        utter.onerror = () => {
+                            applyHeadCommandFromString(chosenEndCmd);
+                            resolve();
+                        };
+                        window.speechSynthesis.speak(utter);
+                    });
+                } else {
+                    statusDiv.textContent = `❌ ${erro.message}`;
+                    badge.textContent = 'Erro Piper';
+                    badge.className = "text-[10px] font-mono px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30";
+                }
+            } finally {
+                if (requisicaoAtual === controller) {
+                    requisicaoAtual = null;
+                }
+            }
+        }
+
+        async function falarComPiperOffline() {
+            const txtArea = document.getElementById('texto');
+            await sintetizarEFalarTexto(txtArea.value);
+        }
+
+        // =========================================================================
+        // 8. SEQUENCIADOR DE SCRIPTS & MOTOR DE COREOGRAFIAS TIMED
+        // =========================================================================
+        // Interpreta qualquer string de comando da Cabeça ('n', 'a'..'u', '1'..'3' ou 'RAW:r,l,n,s')
+        async function applyHeadCommandFromString(cmdStr) {
+            const clean = (cmdStr || "").trim();
+            if (!clean) return;
+
+            if (clean.toUpperCase().startsWith("RAW:")) {
+                const parts = clean.substring(4).split(',').map(x => parseInt(x.trim(), 10));
+                if (parts.length >= 4 && !parts.some(isNaN)) {
+                    headState.overrideServos = true;
+                    document.getElementById('overrideServosToggle').checked = true;
+                    setHeadSlidersDOM(parts[0], parts[1], parts[2], parts[3]);
+                    updateInspectorAndVisuals();
+                    await writeToEspSerial('head', `RAW:${parts[0]},${parts[1]},${parts[2]},${parts[3]}`);
+                }
+                return;
+            }
+
+            const c = clean.charAt(0).toLowerCase();
+            const emoMap = { 'a': 0, 'c': 1, 'f': 2, 'h': 3, 's': 4, 'u': 5 };
+
+            if (c === 'n') {
+                headState.overrideServos = false;
+                document.getElementById('overrideServosToggle').checked = false;
+                selectHeadMode(0);
+                if (!document.getElementById('autoSendToggle').checked) await writeToEspSerial('head', 'n');
+            } else if (emoMap[c] !== undefined) {
+                headState.overrideServos = false;
+                document.getElementById('overrideServosToggle').checked = false;
+                selectHeadEmotion(emoMap[c]);
+                if (!document.getElementById('autoSendToggle').checked) await writeToEspSerial('head', c);
+            } else if (c === '1' || c === '2' || c === '3') {
+                selectHeadTalkStyle(parseInt(c, 10) - 1);
+                if (!document.getElementById('autoSendToggle').checked) await writeToEspSerial('head', c);
+            } else {
+                await writeToEspSerial('head', clean);
+            }
+        }
+
+        // Interpreta qualquer comando de Braço ('n', 'ad', 'ae', 'a2', 'ab', 'mc', 'am', 'd' ou 'P_D,R_D,C_D,P_E,R_E,C_E')
+        async function applyArmCommandFromString(cmdStr) {
+            const clean = (cmdStr || "").trim();
+            if (!clean) return;
+
+            const gestureEnumMap = { 'n': 1, 'ad': 2, 'ae': 3, 'a2': 4, 'ab': 5, 'mc': 6, 'am': 7, 'd': 8 };
+            const lower = clean.toLowerCase();
+
+            if (gestureEnumMap[lower] !== undefined) {
+                triggerArmGesture(gestureEnumMap[lower], lower);
+                if (!document.getElementById('autoSendToggle').checked) {
+                    await writeToEspSerial('arms', lower);
+                }
+                return;
+            }
+
+            // Verifica se são 6 coordenadas separadas por vírgula: PitchD,RollD,CotD,PitchE,RollE,CotE
+            const parts = clean.split(',').map(x => parseInt(x.trim(), 10));
+            if (parts.length === 6 && !parts.some(isNaN)) {
+                stopKeyframeSimulation();
+                armState.gesture = 9;
+                const csv = parts.map(v => Math.max(0, Math.min(180, v))).join(',');
+                armState.gestureCmdStr = csv;
+
+                setCustomArmSliders(
+                    { pitch: parts[0], roll: parts[1], elbow: parts[2] },
+                    { pitch: parts[3], roll: parts[4], elbow: parts[5] }
+                );
+                document.getElementById('gestureEnumBadge').textContent = "GESTURE_CUSTOM_POSE (9)";
+                updateInspectorAndVisuals();
+                await writeToEspSerial('arms', csv);
+            } else {
+                await writeToEspSerial('arms', clean);
+            }
+        }
+
+        function loadPresetScript(presetKey) {
+            if (isScriptRunning) stopCurrentScript();
+            const template = PRESET_SCRIPTS[presetKey] || PRESET_SCRIPTS.coin_presentation;
+            scriptSteps = JSON.parse(JSON.stringify(template));
+            renderScriptStepsTable();
+            syncRawScriptTextarea();
+            showToast(`Script "${presetKey}" carregado na Timeline!`, "info");
+        }
+
+        function renderScriptStepsTable() {
+            const tbody = document.getElementById('scriptStepsTableBody');
+            tbody.innerHTML = '';
+
+            let totalMs = 0;
+            scriptSteps.forEach((step, idx) => {
+                totalMs += Number(step.delayMs || 0) + (step.speakText ? 2800 : 0);
+                const isCurrent = (isScriptRunning && activeScriptStepIndex === idx);
+
+                const tr = document.createElement('tr');
+                tr.className = isCurrent
+                    ? "bg-emerald-500/15 border-l-4 border-l-emerald-400 transition-colors"
+                    : "hover:bg-slate-950/40 transition-colors";
+
+                tr.innerHTML = `
+                    <td class="py-2.5 px-3 font-mono font-bold ${isCurrent ? 'text-emerald-400' : 'text-slate-400'}">
+                        ${isCurrent ? '<i class="fa-solid fa-play mr-1 animate-pulse"></i>' : ''}${idx + 1}
+                    </td>
+                    <td class="py-2.5 px-3">
+                        <input type="text" value="${escapeHtml(step.label || '')}"
+                            oninput="updateScriptStepField(${idx}, 'label', this.value)"
+                            placeholder="Descrição do passo..."
+                            class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-emerald-500">
+                    </td>
+                    <td class="py-2.5 px-3">
+                        <div class="flex gap-1">
+                            <input type="text" value="${escapeHtml(step.headCmd || '')}"
+                                oninput="updateScriptStepField(${idx}, 'headCmd', this.value)"
+                                placeholder="Ex: h, u, n ou RAW:130,130,90,10"
+                                class="w-full bg-slate-950 border border-sky-500/30 rounded-lg px-2.5 py-1.5 text-xs font-mono text-sky-300 focus:outline-none focus:border-sky-400">
+                        </div>
+                    </td>
+                    <td class="py-2.5 px-3">
+                        <input type="text" value="${escapeHtml(step.armCmd || '')}"
+                            oninput="updateScriptStepField(${idx}, 'armCmd', this.value)"
+                            placeholder="Ex: ad, ab ou 90,110,145,90,90,90"
+                            class="w-full bg-slate-950 border border-purple-500/30 rounded-lg px-2.5 py-1.5 text-xs font-mono text-purple-300 focus:outline-none focus:border-purple-400">
+                    </td>
+                    <td class="py-2.5 px-3">
+                        <div class="flex flex-col gap-1">
+                            <input type="text" value="${escapeHtml(step.speakText || '')}"
+                                oninput="updateScriptStepField(${idx}, 'speakText', this.value)"
+                                placeholder="(Opcional) Fala Piper neste passo..."
+                                class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-blue-500">
+                            <div class="flex items-center justify-between text-[10px] text-slate-400">
+                                <label class="flex items-center gap-1 cursor-pointer">
+                                    <input type="checkbox" ${step.waitForSpeech ? 'checked' : ''}
+                                        onchange="updateScriptStepField(${idx}, 'waitForSpeech', this.checked)"
+                                        class="rounded bg-slate-900 border-slate-700 text-emerald-500">
+                                    <span>Aguardar fim da fala</span>
+                                </label>
+                                <select onchange="updateScriptStepField(${idx}, 'talkStyle', this.value)"
+                                    class="bg-slate-900 border border-slate-800 rounded px-1.5 py-0.5 font-mono text-[10px] text-emerald-400">
+                                    <option value="1" ${step.talkStyle === '1' ? 'selected' : ''}>Boca '1' (Sílabas)</option>
+                                    <option value="2" ${step.talkStyle === '2' ? 'selected' : ''}>Boca '2' (Animado)</option>
+                                    <option value="3" ${step.talkStyle === '3' ? 'selected' : ''}>Boca '3' (Rápido)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="py-2.5 px-3">
+                        <div class="flex items-center gap-1">
+                            <input type="number" min="50" max="60000" step="50" value="${Number(step.delayMs || 500)}"
+                                oninput="updateScriptStepField(${idx}, 'delayMs', Number(this.value))"
+                                class="w-20 bg-slate-950 border border-slate-800 rounded-lg px-2 py-1.5 text-xs font-mono text-amber-300 focus:outline-none focus:border-amber-400">
+                            <span class="text-[10px] font-mono text-slate-500">ms</span>
+                        </div>
+                    </td>
+                    <td class="py-2.5 px-3 text-right">
+                        <div class="inline-flex items-center gap-1">
+                            <button type="button" onclick="runSingleScriptStep(${idx})" title="Testar apenas este passo agora"
+                                class="p-1.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 transition">
+                                <i class="fa-solid fa-bolt"></i>
+                            </button>
+                            <button type="button" onclick="moveScriptStep(${idx}, -1)" title="Subir passo"
+                                class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">
+                                <i class="fa-solid fa-arrow-up"></i>
+                            </button>
+                            <button type="button" onclick="moveScriptStep(${idx}, 1)" title="Descer passo"
+                                class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">
+                                <i class="fa-solid fa-arrow-down"></i>
+                            </button>
+                            <button type="button" onclick="removeScriptStep(${idx})" title="Remover passo"
+                                class="p-1.5 rounded-lg bg-rose-500/15 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 transition">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('scriptProgressText').textContent =
+                `Passos: ${scriptSteps.length} | Tempo estimado: ${(totalMs / 1000).toFixed(1)}s`;
+        }
+
+        function updateScriptStepField(index, field, value) {
+            if (!scriptSteps[index]) return;
+            scriptSteps[index][field] = value;
+            syncRawScriptTextarea();
+        }
+
+        function addEmptyScriptStep() {
+            scriptSteps.push({
+                label: `Passo ${scriptSteps.length + 1}`,
+                headCmd: "h",
+                armCmd: "90,90,90,90,90,90",
+                speakText: "",
+                talkStyle: "2",
+                waitForSpeech: true,
+                delayMs: 800
+            });
+            renderScriptStepsTable();
+            syncRawScriptTextarea();
+        }
+
+        // Lê exatamente os ângulos atuais dos sliders da Cabeça e dos 6 Servos dos Braços e cria um passo customizado
+        function captureCurrentSlidersToStep() {
+            const r = armState.customPose.right;
+            const l = armState.customPose.left;
+            const customHeadRaw = `RAW:${headState.earRightAngle},${headState.earLeftAngle},${headState.neckAngle},${headState.servoStepDelayMs}`;
+            const customArmsCsv = `${r.pitch},${r.roll},${r.elbow},${l.pitch},${l.roll},${l.elbow}`;
+
+            scriptSteps.push({
+                label: `Pose Capturada #${scriptSteps.length + 1}`,
+                headCmd: customHeadRaw,
+                armCmd: customArmsCsv,
+                speakText: "",
+                talkStyle: "2",
+                waitForSpeech: false,
+                delayMs: 1000
+            });
+
+            renderScriptStepsTable();
+            syncRawScriptTextarea();
+            showToast(`Pose capturada! Cabeça(${customHeadRaw}) & Braços(${customArmsCsv})`, "success");
+        }
+
+        function moveScriptStep(index, direction) {
+            const target = index + direction;
+            if (target < 0 || target >= scriptSteps.length) return;
+            const temp = scriptSteps[index];
+            scriptSteps[index] = scriptSteps[target];
+            scriptSteps[target] = temp;
+            renderScriptStepsTable();
+            syncRawScriptTextarea();
+        }
+
+        function removeScriptStep(index) {
+            scriptSteps.splice(index, 1);
+            renderScriptStepsTable();
+            syncRawScriptTextarea();
+        }
+
+        async function runSingleScriptStep(index) {
+            const st = scriptSteps[index];
+            if (!st) return;
+            showToast(`Executando passo #${index + 1}: ${st.label}`, "info");
+
+            if (st.headCmd) await applyHeadCommandFromString(st.headCmd);
+            if (st.armCmd)  await applyArmCommandFromString(st.armCmd);
+
+            if (st.speakText && st.speakText.trim().length > 0) {
+                const postHead = (st.headCmd && !st.headCmd.startsWith('RAW:')) ? st.headCmd : 'h';
+                await sintetizarEFalarTexto(st.speakText, st.talkStyle || '2', postHead);
+            }
+        }
+
+        async function playCurrentScript() {
+            if (scriptSteps.length === 0) {
+                showToast("Adicione pelo menos 1 passo ao script!", "error");
+                return;
+            }
+            if (isScriptRunning) {
+                stopCurrentScript();
+            }
+
+            isScriptRunning = true;
+            scriptAbortFlag = false;
+
+            const badge = document.getElementById('scriptRunnerBadge');
+            badge.textContent = "EXECUTANDO SCRIPT...";
+            badge.className = "px-2.5 py-0.5 text-[10px] font-mono uppercase rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 animate-pulse";
+
+            do {
+                for (let i = 0; i < scriptSteps.length; i++) {
+                    if (scriptAbortFlag) break;
+
+                    activeScriptStepIndex = i;
+                    renderScriptStepsTable();
+
+                    const step = scriptSteps[i];
+                    appendDualSerialLog('head', 'sys', `[Script #${i + 1}] ${step.label}`);
+
+                    // 1. Dispara Comando da Cabeça (se definido)
+                    if (step.headCmd && step.headCmd.trim().length > 0) {
+                        await applyHeadCommandFromString(step.headCmd.trim());
+                    }
+
+                    // 2. Dispara Comando dos Braços (Gesto ou 6 Coordenadas inéditas)
+                    if (step.armCmd && step.armCmd.trim().length > 0) {
+                        await applyArmCommandFromString(step.armCmd.trim());
+                    }
+
+                    // 3. Se houver Fala Piper no passo, executa com sincronia labial DWIN
+                    if (step.speakText && step.speakText.trim().length > 0) {
+                        const returnEmotion = (step.headCmd && !step.headCmd.startsWith('RAW:')) ? step.headCmd : 'h';
+                        const speechPromise = sintetizarEFalarTexto(step.speakText, step.talkStyle || '2', returnEmotion);
+                        if (step.waitForSpeech) {
+                            await speechPromise;
+                        }
+                    }
+
+                    if (scriptAbortFlag) break;
+
+                    // 4. Aguarda o Timing exato (delayMs) antes do próximo passo
+                    const waitTime = Math.max(50, Number(step.delayMs || 500));
+                    await new Promise((resolve) => {
+                        scriptTimeoutHandle = setTimeout(resolve, waitTime);
+                    });
+                }
+            } while (!scriptAbortFlag && document.getElementById('loopScriptCheckbox').checked);
+
+            finishScriptState();
+        }
+
+        function stopCurrentScript() {
+            scriptAbortFlag = true;
+            if (scriptTimeoutHandle) {
+                clearTimeout(scriptTimeoutHandle);
+                scriptTimeoutHandle = null;
+            }
+            pararFalaPiper(true);
+            finishScriptState();
+            showToast("Execução do script interrompida.", "info");
+        }
+
+        function finishScriptState() {
+            isScriptRunning = false;
+            activeScriptStepIndex = -1;
+            renderScriptStepsTable();
+            const badge = document.getElementById('scriptRunnerBadge');
+            badge.textContent = "PARADO";
+            badge.className = "px-2.5 py-0.5 text-[10px] font-mono uppercase rounded-full bg-slate-800 text-slate-400 border border-slate-700";
+        }
+
+        function toggleRawScriptEditor() {
+            const panel = document.getElementById('rawScriptEditorPanel');
+            if (panel.classList.contains('hidden')) {
+                syncRawScriptTextarea();
+                panel.classList.remove('hidden');
+                panel.classList.add('flex');
+            } else {
+                panel.classList.add('hidden');
+                panel.classList.remove('flex');
+            }
+        }
+
+        function syncRawScriptTextarea() {
+            const ta = document.getElementById('rawScriptTextarea');
+            if (ta) ta.value = JSON.stringify(scriptSteps, null, 2);
+        }
+
+        function applyRawScriptJson() {
+            const ta = document.getElementById('rawScriptTextarea');
+            try {
+                const parsed = JSON.parse(ta.value);
+                if (!Array.isArray(parsed)) throw new Error("O JSON deve ser uma lista (Array) de passos.");
+                scriptSteps = parsed;
+                renderScriptStepsTable();
+                showToast("Script JSON aplicado com sucesso na Timeline!", "success");
+            } catch (err) {
+                showToast(`Erro no JSON: ${err.message}`, "error");
+            }
+        }
+
+        function exportScriptJsonFile() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(scriptSteps, null, 2));
+            const a = document.createElement('a');
+            a.setAttribute("href", dataStr);
+            a.setAttribute("download", "roteiro_roboldo_2_0.json");
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        }
+
+        // =========================================================================
+        // 9. TERMINAL SERIAL DUAL, LOGS & UTILITÁRIOS
+        // =========================================================================
+        function appendDualSerialLog(target, dir, message) {
+            const logBox = document.getElementById('serialMonitorLog');
+            if (logBox.querySelector('.italic')) logBox.innerHTML = '';
+
+            const now = new Date().toLocaleTimeString('pt-BR', { hour12: false });
+            const row = document.createElement('div');
+            row.className = "border-b border-slate-900 pb-1 break-all flex items-start gap-1.5";
+
+            const targetBadge = (target === 'head')
+                ? `<span class="px-1.5 py-0.2 rounded bg-sky-500/15 text-sky-400 border border-sky-500/30 text-[10px] font-bold shrink-0">HEAD</span>`
+                : `<span class="px-1.5 py-0.2 rounded bg-purple-500/15 text-purple-400 border border-purple-500/30 text-[10px] font-bold shrink-0">ARMS</span>`;
+
+            let dirHtml = '';
+            if (dir === 'tx') dirHtml = `<span class="text-emerald-400 font-semibold shrink-0">TX&rarr;</span>`;
+            else if (dir === 'sim-tx') dirHtml = `<span class="text-amber-400 font-semibold shrink-0">SIM&rarr;</span>`;
+            else if (dir === 'rx') dirHtml = `<span class="text-sky-300 font-semibold shrink-0">RX&larr;</span>`;
+            else if (dir === 'err') dirHtml = `<span class="text-rose-400 font-semibold shrink-0">ERR!</span>`;
+            else dirHtml = `<span class="text-slate-400 font-semibold shrink-0">SYS#</span>`;
+
+            row.innerHTML = `<span class="text-slate-500 shrink-0">[${now}]</span> ${targetBadge} ${dirHtml} <span class="text-slate-200">${escapeHtml(message)}</span>`;
+            logBox.appendChild(row);
+
+            while (logBox.children.length > 80) logBox.removeChild(logBox.firstChild);
+            logBox.scrollTop = logBox.scrollHeight;
+        }
+
+        async function sendCustomRawSerial() {
+            const target = document.getElementById('manualTargetSelect').value;
+            const input  = document.getElementById('customSerialInput');
+            const cmd    = input.value.trim();
+            if (!cmd) return;
+            await writeToEspSerial(target, cmd);
+            input.value = '';
+        }
+
+        function clearSerialLog() {
+            document.getElementById('serialMonitorLog').innerHTML = '<div class="text-slate-500 italic">Log limpo.</div>';
+        }
+
+        function copyInspectorPayloads() {
+            const text = document.getElementById('jsonPreviewBox').textContent;
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            showToast("Estado copiado para a área de transferência!", "success");
+        }
+
+        function escapeHtml(str) {
+            return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        function openCppModal() {
+            const modal = document.getElementById('cppModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeCppModal() {
+            const modal = document.getElementById('cppModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function showToast(msg, type = "info") {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            const colors = {
+                success: "bg-emerald-950/95 border-emerald-500/40 text-emerald-200",
+                error:   "bg-rose-950/95 border-rose-500/40 text-rose-200",
+                info:    "bg-slate-900/95 border-sky-500/40 text-sky-200"
+            };
+            toast.className = `px-4 py-2.5 rounded-xl border shadow-xl text-xs font-medium flex items-center gap-2 transition-all duration-300 ${colors[type] || colors.info}`;
+            toast.innerHTML = `<i class="fa-solid fa-circle-info"></i> <span>${msg}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 2800);
+        }
+
+        window.onload = function () {
+            selectHeadEmotion(3); // Inicia em Happy ('h')
+            triggerArmGesture(1, 'n'); // Braços em Neutro ('n')
+            startTalkMouthLoop();
+            loadPresetScript('coin_presentation'); // Carrega o roteiro oficial do COIN na Timeline
+        };
+    </script>
+</body>
+</html>
