@@ -252,6 +252,134 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
+
+        /* =====================================================================
+           SISTEMA DE ACESSIBILIDADE UNIVERSAL (WCAG / INCLUSÃO / ROBOLDO)
+           ===================================================================== */
+        /* 1. Alto Contraste (Dark High-Contrast) */
+        html.a11y-high-contrast body {
+            background: #000000 !important;
+            background-image: none !important;
+            color: #FFFFFF !important;
+        }
+        html.a11y-high-contrast .glass-shell,
+        html.a11y-high-contrast .glass-card,
+        html.a11y-high-contrast .glass-subpanel,
+        html.a11y-high-contrast .bg-white,
+        html.a11y-high-contrast [class*="bg-white/"],
+        html.a11y-high-contrast [class*="bg-[#F2FFF6]"],
+        html.a11y-high-contrast [class*="from-[#F2FFF6]"] {
+            background: #050a0e !important;
+            background-image: none !important;
+            border-color: #00FFFF !important;
+            color: #FFFFFF !important;
+            box-shadow: none !important;
+        }
+        html.a11y-high-contrast h1,
+        html.a11y-high-contrast h2,
+        html.a11y-high-contrast h3,
+        html.a11y-high-contrast h4,
+        html.a11y-high-contrast p,
+        html.a11y-high-contrast span,
+        html.a11y-high-contrast label,
+        html.a11y-high-contrast strong,
+        html.a11y-high-contrast td,
+        html.a11y-high-contrast th,
+        html.a11y-high-contrast pre {
+            color: #FFFFFF !important;
+        }
+        html.a11y-high-contrast .btn-cyan-primary,
+        html.a11y-high-contrast .btn-glass-soft.active-tile,
+        html.a11y-high-contrast .nav-pill-btn.nav-active {
+            background: #FFFF00 !important;
+            color: #000000 !important;
+            border: 2px solid #FFFFFF !important;
+        }
+        html.a11y-high-contrast .btn-cyan-primary *,
+        html.a11y-high-contrast .btn-glass-soft.active-tile *,
+        html.a11y-high-contrast .nav-pill-btn.nav-active * {
+            color: #000000 !important;
+        }
+        html.a11y-high-contrast .btn-glass-soft,
+        html.a11y-high-contrast .glass-input,
+        html.a11y-high-contrast .badge-mint {
+            background: #000000 !important;
+            color: #FFFF00 !important;
+            border: 1.5px solid #FFFF00 !important;
+        }
+
+        /* 2. Fonte Amigável para Dislexia / Leitura Fácil */
+        html.a11y-dyslexic,
+        html.a11y-dyslexic body,
+        html.a11y-dyslexic button,
+        html.a11y-dyslexic input,
+        html.a11y-dyslexic select,
+        html.a11y-dyslexic textarea {
+            font-family: 'Comic Sans MS', 'Trebuchet MS', 'Verdana', sans-serif !important;
+            letter-spacing: 0.045em !important;
+            word-spacing: 0.1em !important;
+            line-height: 1.65 !important;
+        }
+
+        /* 3. Reduzir Animações e Movimento */
+        html.a11y-reduce-motion *,
+        html.a11y-reduce-motion *::before,
+        html.a11y-reduce-motion *::after {
+            animation-duration: 0.001ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.001ms !important;
+            scroll-behavior: auto !important;
+        }
+
+        /* 4. Destaque de Foco e Navegação por Teclado */
+        html.a11y-focus-highlight button:focus,
+        html.a11y-focus-highlight input:focus,
+        html.a11y-focus-highlight select:focus,
+        html.a11y-focus-highlight textarea:focus,
+        html.a11y-focus-highlight a:focus,
+        html.a11y-focus-highlight [tabindex]:focus,
+        html.a11y-focus-highlight button:hover {
+            outline: 3px solid #FF8800 !important;
+            outline-offset: 2px !important;
+            box-shadow: 0 0 0 5px rgba(255, 136, 0, 0.28) !important;
+        }
+
+        /* 5. Régua de Leitura (Reading Ruler) */
+        #a11yReadingRulerOverlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9998;
+            pointer-events: none;
+        }
+        #a11yReadingRulerTopMask {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(2, 18, 37, 0.42);
+            pointer-events: none;
+            transition: height 0.02s linear;
+        }
+        #a11yReadingRulerBand {
+            position: fixed;
+            left: 0;
+            right: 0;
+            border-top: 3px solid #25C5E9;
+            border-bottom: 3px solid #238689;
+            background: rgba(254, 249, 195, 0.14);
+            box-shadow: 0 0 20px rgba(37, 197, 233, 0.35);
+            pointer-events: none;
+            transition: top 0.02s linear, height 0.1s ease;
+        }
+        #a11yReadingRulerBottomMask {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(2, 18, 37, 0.42);
+            pointer-events: none;
+            transition: top 0.02s linear;
+        }
     </style>
 </head>
 <body class="font-sans min-h-screen lg:h-screen lg:overflow-hidden flex flex-col selection:bg-[#238689] selection:text-white">
@@ -430,6 +558,98 @@
                 <button type="button" onclick="startGuidedTour()" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl text-xs font-bold btn-glass-soft flex items-center justify-center" title="Mini Tutorial Guiado">
                     <i class="fa-regular fa-circle-question text-[#238689]"></i>
                 </button>
+
+                <!-- Botão & Painel de Acessibilidade Universal (Com Régua de Leitura) -->
+                <div class="relative" id="a11yDropdownWrapper">
+                    <button type="button" id="btnA11yMenuTrigger" onclick="toggleA11yPanel()" aria-label="Opções de Acessibilidade"
+                        class="h-8 sm:h-9 px-2.5 rounded-xl text-xs font-extrabold btn-glass-soft flex items-center gap-1.5 border border-[#238689]/30"
+                        title="Acessibilidade & Régua de Leitura (Alt + A)">
+                        <i class="fa-solid fa-universal-access text-[#238689] text-sm"></i>
+                        <span class="hidden md:inline">Acessibilidade</span>
+                        <span id="a11yActiveCountBadge" class="hidden px-1.5 py-0.2 rounded-full bg-[#238689] text-white text-[10px] font-mono">1</span>
+                    </button>
+
+                    <!-- Popover Glassmorphism de Acessibilidade -->
+                    <div id="a11yFloatingMenu" class="hidden absolute right-0 mt-2 w-80 sm:w-88 glass-shell rounded-3xl p-4 shadow-2xl border border-[#238689]/30 z-50 flex-col gap-3">
+                        <div class="flex items-center justify-between border-b border-[#238689]/15 pb-2.5">
+                            <div class="flex items-center gap-2">
+                                <span class="w-7 h-7 rounded-xl btn-cyan-primary flex items-center justify-center text-xs">
+                                    <i class="fa-solid fa-universal-access"></i>
+                                </span>
+                                <div>
+                                    <h3 class="text-xs font-extrabold text-[#021225] leading-tight">Central de Acessibilidade</h3>
+                                    <p class="text-[10px] text-slate-500">Leitura assistiva, contraste e inclusão</p>
+                                </div>
+                            </div>
+                            <button type="button" onclick="resetAllAccessibility()" class="text-[11px] font-bold text-[#238689] hover:underline">
+                                Restaurar
+                            </button>
+                        </div>
+
+                        <!-- 1. Tamanho da Fonte (A- / A / A+) -->
+                        <div class="glass-subpanel rounded-2xl p-2.5 flex items-center justify-between">
+                            <span class="text-xs font-bold text-[#021225] flex items-center gap-1.5">
+                                <i class="fa-solid fa-text-height text-[#238689]"></i>
+                                <span>Tamanho da Fonte</span>
+                            </span>
+                            <div class="flex items-center gap-1">
+                                <button type="button" onclick="changeA11yFontSize(-1)" class="px-2.5 py-1 rounded-lg text-xs font-extrabold btn-glass-soft" title="Diminuir Fonte">A-</button>
+                                <span id="a11yFontPctBadge" class="px-2 py-1 text-[11px] font-mono font-bold text-[#238689]">100%</span>
+                                <button type="button" onclick="changeA11yFontSize(1)" class="px-2.5 py-1 rounded-lg text-xs font-extrabold btn-glass-soft" title="Aumentar Fonte">A+</button>
+                            </div>
+                        </div>
+
+                        <!-- 2. Régua de Leitura (Reading Ruler) + Altura -->
+                        <div class="glass-subpanel rounded-2xl p-3 flex flex-col gap-2 border border-[#238689]/25">
+                            <div class="flex items-center justify-between">
+                                <label for="a11yToggleRuler" class="text-xs font-extrabold text-[#021225] flex items-center gap-1.5 cursor-pointer">
+                                    <i class="fa-solid fa-grip-lines text-[#238689]"></i>
+                                    <span>Régua de Leitura</span>
+                                </label>
+                                <input type="checkbox" id="a11yToggleRuler" onchange="toggleA11yFeature('readingRuler', this.checked)" class="w-4 h-4 rounded accent-[#238689] cursor-pointer">
+                            </div>
+                            <p class="text-[11px] text-slate-500 leading-snug">
+                                Faixa luminosa horizontal que acompanha o cursor para guiar o foco de leitura linha a linha.
+                            </p>
+                            <div id="a11yRulerControls" class="hidden pt-1.5 border-t border-[#238689]/15 flex items-center justify-between gap-2 text-[11px]">
+                                <span class="font-semibold text-[#021225]">Altura da Faixa:</span>
+                                <input type="range" id="a11yRulerHeightInput" min="48" max="180" step="12" value="90" oninput="setA11yRulerHeight(this.value)" class="w-32">
+                                <span id="a11yRulerHeightVal" class="font-mono font-bold text-[#238689]">90px</span>
+                            </div>
+                        </div>
+
+                        <!-- 3. Grade de Opções Visuais e Cognitivas -->
+                        <div class="grid grid-cols-2 gap-2">
+                            <button type="button" id="a11yBtnContrast" onclick="toggleA11yFeature('highContrast')" class="p-2.5 rounded-2xl text-xs font-bold btn-glass-soft flex flex-col items-start gap-1 text-left">
+                                <i class="fa-solid fa-circle-half-stroke text-[#238689]"></i>
+                                <span>Alto Contraste</span>
+                            </button>
+
+                            <button type="button" id="a11yBtnDyslexic" onclick="toggleA11yFeature('dyslexicFont')" class="p-2.5 rounded-2xl text-xs font-bold btn-glass-soft flex flex-col items-start gap-1 text-left">
+                                <i class="fa-solid fa-font text-[#238689]"></i>
+                                <span>Fonte Dislexia</span>
+                            </button>
+
+                            <button type="button" id="a11yBtnMotion" onclick="toggleA11yFeature('reduceMotion')" class="p-2.5 rounded-2xl text-xs font-bold btn-glass-soft flex flex-col items-start gap-1 text-left">
+                                <i class="fa-solid fa-Universal-access fa-pause text-[#238689]"></i>
+                                <span>Reduzir Movimento</span>
+                            </button>
+
+                            <button type="button" id="a11yBtnFocus" onclick="toggleA11yFeature('focusHighlight')" class="p-2.5 rounded-2xl text-xs font-bold btn-glass-soft flex flex-col items-start gap-1 text-left">
+                                <i class="fa-solid fa-keyboard text-[#238689]"></i>
+                                <span>Destacar Foco</span>
+                            </button>
+
+                            <button type="button" id="a11yBtnNarrator" onclick="toggleA11yFeature('voiceNarrator')" class="col-span-2 p-2.5 rounded-2xl text-xs font-bold btn-glass-soft flex items-center justify-between text-left">
+                                <span class="flex items-center gap-2">
+                                    <i class="fa-solid fa-ear-listen text-[#238689]"></i>
+                                    <span>Leitor de Voz ao Clicar / Focar</span>
+                                </span>
+                                <span id="a11yNarratorStateBadge" class="text-[10px] font-mono px-2 py-0.5 rounded-full badge-mint">OFF</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Seletor de Idioma (PT / EN / ES) -->
                 <div class="flex items-center bg-white/80 border border-[#238689]/20 rounded-xl p-0.5 shadow-xs" title="Idioma / Language / Idioma">
@@ -1630,6 +1850,31 @@
         </button>
     </div>
 
+    <!-- ======================================================================== -->
+    <!-- OVERLAY DA RÉGUA DE LEITURA (READING RULER)                              -->
+    <!-- ======================================================================== -->
+    <div id="a11yReadingRulerOverlay" class="hidden" aria-hidden="true">
+        <div id="a11yReadingRulerTopMask" style="height: 220px;"></div>
+        <div id="a11yReadingRulerBand" style="top: 220px; height: 90px;"></div>
+        <div id="a11yReadingRulerBottomMask" style="top: 310px;"></div>
+    </div>
+
+    <!-- ======================================================================== -->
+    <!-- WIDGET OFICIAL VLIBRAS (TRADUTOR DE LIBRAS GOV.BR)                       -->
+    <!-- ======================================================================== -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        if (window.VLibras) {
+            new window.VLibras.Widget('https://vlibras.gov.br/app');
+        }
+    </script>
+
     <!-- JAVASCRIPT -->
     <script>
         let currentOperatorName = localStorage.getItem('roboldo_ide_operator_name') || '';
@@ -2492,6 +2737,58 @@
             "Fechar Simulador": {
                 en: "Close Simulator",
                 es: "Cerrar Simulador"
+            },
+            "Acessibilidade": {
+                en: "Accessibility",
+                es: "Accesibilidad"
+            },
+            "Central de Acessibilidade": {
+                en: "Accessibility Center",
+                es: "Centro de Accesibilidad"
+            },
+            "Leitura assistiva, contraste e inclusão": {
+                en: "Assistive reading, contrast and inclusion",
+                es: "Lectura asistiva, contraste e inclusión"
+            },
+            "Restaurar": {
+                en: "Reset",
+                es: "Restaurar"
+            },
+            "Tamanho da Fonte": {
+                en: "Font Size",
+                es: "Tamaño de Fuente"
+            },
+            "Régua de Leitura": {
+                en: "Reading Ruler",
+                es: "Regla de Lectura"
+            },
+            "Faixa luminosa horizontal que acompanha o cursor para guiar o foco de leitura linha a linha.": {
+                en: "Horizontal highlight band that follows the cursor to guide line-by-line reading focus.",
+                es: "Franja luminosa horizontal que sigue el cursor para guiar el enfoque de lectura línea por línea."
+            },
+            "Altura da Faixa:": {
+                en: "Band Height:",
+                es: "Altura de Franja:"
+            },
+            "Alto Contraste": {
+                en: "High Contrast",
+                es: "Alto Contraste"
+            },
+            "Fonte Dislexia": {
+                en: "Dyslexia Font",
+                es: "Fuente Dislexia"
+            },
+            "Reduzir Movimento": {
+                en: "Reduce Motion",
+                es: "Reducir Movimiento"
+            },
+            "Destacar Foco": {
+                en: "Highlight Focus",
+                es: "Destacar Foco"
+            },
+            "Leitor de Voz ao Clicar / Focar": {
+                en: "Voice Reader on Click / Focus",
+                es: "Lector de Voz al Clicar / Enfocar"
             }
         };
 
@@ -5001,6 +5298,7 @@
         window.onload = function () {
             initI18nTextNodes();
             initRobot3DOrbitControls();
+            initAccessibilitySystem();
             selectHeadEmotion(3);
             triggerArmGesture(1, 'n');
             startTalkMouthLoop();
@@ -5018,6 +5316,269 @@
                 document.getElementById('onboardingModal').classList.remove('flex');
             }
         };
+
+        // =========================================================================
+        // MOTOR DE ACESSIBILIDADE UNIVERSAL + RÉGUA DE LEITURA (READING RULER)
+        // =========================================================================
+        const A11Y_FONT_STEPS = [90, 95, 100, 108, 116, 125];
+        let a11yState = {
+            fontStepIdx: 2, // 100%
+            readingRuler: false,
+            rulerHeight: 90,
+            rulerY: 260,
+            highContrast: false,
+            dyslexicFont: false,
+            reduceMotion: false,
+            focusHighlight: false,
+            voiceNarrator: false
+        };
+
+        function loadSavedA11yState() {
+            try {
+                const raw = localStorage.getItem('roboldo_ide_a11y');
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    a11yState = Object.assign({}, a11yState, parsed);
+                }
+            } catch (e) {}
+        }
+
+        function saveA11yState() {
+            try {
+                localStorage.setItem('roboldo_ide_a11y', JSON.stringify(a11yState));
+            } catch (e) {}
+        }
+
+        function toggleA11yPanel(forceState) {
+            const menu = document.getElementById('a11yFloatingMenu');
+            if (!menu) return;
+            const isOpen = !menu.classList.contains('hidden');
+            const nextState = (typeof forceState === 'boolean') ? forceState : !isOpen;
+            if (nextState) {
+                menu.classList.remove('hidden');
+                menu.classList.add('flex');
+            } else {
+                menu.classList.add('hidden');
+                menu.classList.remove('flex');
+            }
+        }
+
+        function changeA11yFontSize(delta) {
+            const nextIdx = Math.max(0, Math.min(A11Y_FONT_STEPS.length - 1, a11yState.fontStepIdx + delta));
+            a11yState.fontStepIdx = nextIdx;
+            applyA11yStateToDOM();
+            saveA11yState();
+        }
+
+        function setA11yRulerHeight(pxVal) {
+            a11yState.rulerHeight = Math.max(48, Math.min(200, Number(pxVal) || 90));
+            const lbl = document.getElementById('a11yRulerHeightVal');
+            if (lbl) lbl.textContent = `${a11yState.rulerHeight}px`;
+            updateReadingRulerPosition(a11yState.rulerY);
+            saveA11yState();
+        }
+
+        function updateReadingRulerPosition(clientY) {
+            if (!a11yState.readingRuler) return;
+            a11yState.rulerY = clientY;
+            const h = a11yState.rulerHeight || 90;
+            const topY = Math.max(0, clientY - h / 2);
+            const botY = topY + h;
+
+            const topMask = document.getElementById('a11yReadingRulerTopMask');
+            const band    = document.getElementById('a11yReadingRulerBand');
+            const botMask = document.getElementById('a11yReadingRulerBottomMask');
+
+            if (topMask) topMask.style.height = `${topY}px`;
+            if (band) {
+                band.style.top = `${topY}px`;
+                band.style.height = `${h}px`;
+            }
+            if (botMask) botMask.style.top = `${botY}px`;
+        }
+
+        function toggleA11yFeature(featureKey, explicitVal) {
+            if (typeof explicitVal === 'boolean') {
+                a11yState[featureKey] = explicitVal;
+            } else {
+                a11yState[featureKey] = !a11yState[featureKey];
+            }
+            applyA11yStateToDOM();
+            saveA11yState();
+
+            if (featureKey === 'readingRuler' && a11yState.readingRuler) {
+                const msg = currentAppLang === 'en'
+                    ? "Reading Ruler enabled! Move the mouse or touch the screen to guide reading."
+                    : currentAppLang === 'es'
+                    ? "¡Regla de Lectura activada! Mueve el cursor para guiar tu lectura."
+                    : "Régua de Leitura ativada! Mova o mouse ou toque na tela para guiar a leitura.";
+                showToast(msg, "info");
+            }
+        }
+
+        function resetAllAccessibility() {
+            a11yState = {
+                fontStepIdx: 2,
+                readingRuler: false,
+                rulerHeight: 90,
+                rulerY: 260,
+                highContrast: false,
+                dyslexicFont: false,
+                reduceMotion: false,
+                focusHighlight: false,
+                voiceNarrator: false
+            };
+            applyA11yStateToDOM();
+            saveA11yState();
+            const msg = currentAppLang === 'en'
+                ? "Accessibility settings restored to default."
+                : currentAppLang === 'es'
+                ? "Configuración de accesibilidad restaurada."
+                : "Configurações de acessibilidade restauradas ao padrão.";
+            showToast(msg, "info");
+        }
+
+        function applyA11yStateToDOM() {
+            const root = document.documentElement;
+            const pct = A11Y_FONT_STEPS[a11yState.fontStepIdx] || 100;
+            root.style.fontSize = `${pct}%`;
+
+            const fontBadge = document.getElementById('a11yFontPctBadge');
+            if (fontBadge) fontBadge.textContent = `${pct}%`;
+
+            root.classList.toggle('a11y-high-contrast', Boolean(a11yState.highContrast));
+            root.classList.toggle('a11y-dyslexic', Boolean(a11yState.dyslexicFont));
+            root.classList.toggle('a11y-reduce-motion', Boolean(a11yState.reduceMotion));
+            root.classList.toggle('a11y-focus-highlight', Boolean(a11yState.focusHighlight));
+
+            // Régua de leitura
+            const rulerOverlay = document.getElementById('a11yReadingRulerOverlay');
+            const rulerCheck   = document.getElementById('a11yToggleRuler');
+            const rulerCtrls   = document.getElementById('a11yRulerControls');
+            const rulerRange   = document.getElementById('a11yRulerHeightInput');
+            const rulerVal     = document.getElementById('a11yRulerHeightVal');
+
+            if (rulerCheck) rulerCheck.checked = Boolean(a11yState.readingRuler);
+            if (rulerRange) rulerRange.value = a11yState.rulerHeight || 90;
+            if (rulerVal)   rulerVal.textContent = `${a11yState.rulerHeight || 90}px`;
+
+            if (a11yState.readingRuler) {
+                if (rulerOverlay) rulerOverlay.classList.remove('hidden');
+                if (rulerCtrls) {
+                    rulerCtrls.classList.remove('hidden');
+                    rulerCtrls.classList.add('flex');
+                }
+                updateReadingRulerPosition(a11yState.rulerY || window.innerHeight * 0.4);
+            } else {
+                if (rulerOverlay) rulerOverlay.classList.add('hidden');
+                if (rulerCtrls) {
+                    rulerCtrls.classList.add('hidden');
+                    rulerCtrls.classList.remove('flex');
+                }
+            }
+
+            // Botões visuais de toggle no painel
+            const mapBtns = [
+                { id: 'a11yBtnContrast', active: a11yState.highContrast },
+                { id: 'a11yBtnDyslexic', active: a11yState.dyslexicFont },
+                { id: 'a11yBtnMotion',   active: a11yState.reduceMotion },
+                { id: 'a11yBtnFocus',    active: a11yState.focusHighlight },
+                { id: 'a11yBtnNarrator', active: a11yState.voiceNarrator }
+            ];
+            mapBtns.forEach(item => {
+                const el = document.getElementById(item.id);
+                if (!el) return;
+                el.classList.toggle('active-tile', Boolean(item.active));
+            });
+
+            const narBadge = document.getElementById('a11yNarratorStateBadge');
+            if (narBadge) narBadge.textContent = a11yState.voiceNarrator ? 'ON' : 'OFF';
+
+            // Contador de recursos ativos no botão da Topbar
+            let activeCount = 0;
+            if (a11yState.fontStepIdx !== 2) activeCount++;
+            if (a11yState.readingRuler) activeCount++;
+            if (a11yState.highContrast) activeCount++;
+            if (a11yState.dyslexicFont) activeCount++;
+            if (a11yState.reduceMotion) activeCount++;
+            if (a11yState.focusHighlight) activeCount++;
+            if (a11yState.voiceNarrator) activeCount++;
+
+            const countBadge = document.getElementById('a11yActiveCountBadge');
+            if (countBadge) {
+                if (activeCount > 0) {
+                    countBadge.textContent = String(activeCount);
+                    countBadge.classList.remove('hidden');
+                } else {
+                    countBadge.classList.add('hidden');
+                }
+            }
+        }
+
+        function narrateUIElement(el) {
+            if (!a11yState.voiceNarrator || !('speechSynthesis' in window) || !el) return;
+            const text = (el.getAttribute('aria-label') || el.getAttribute('title') || el.innerText || '').replace(/\s+/g, ' ').trim();
+            if (!text || text.length > 140) return;
+
+            window.speechSynthesis.cancel();
+            const utter = new SpeechSynthesisUtterance(text);
+            utter.lang = (I18N_UI_STRINGS[currentAppLang] && I18N_UI_STRINGS[currentAppLang].speechLang) || 'pt-BR';
+            utter.rate = 1.08;
+            window.speechSynthesis.speak(utter);
+        }
+
+        function initAccessibilitySystem() {
+            loadSavedA11yState();
+            applyA11yStateToDOM();
+
+            // Eventos para mover a Régua de Leitura com o mouse, toque ou foco do teclado
+            window.addEventListener('pointermove', (e) => {
+                if (a11yState.readingRuler) {
+                    updateReadingRulerPosition(e.clientY);
+                }
+            }, { passive: true });
+
+            window.addEventListener('touchmove', (e) => {
+                if (a11yState.readingRuler && e.touches && e.touches[0]) {
+                    updateReadingRulerPosition(e.touches[0].clientY);
+                }
+            }, { passive: true });
+
+            document.addEventListener('focusin', (e) => {
+                if (a11yState.readingRuler && e.target && e.target.getBoundingClientRect) {
+                    const rect = e.target.getBoundingClientRect();
+                    if (rect.top > 0 && rect.bottom < window.innerHeight) {
+                        updateReadingRulerPosition(rect.top + rect.height / 2);
+                    }
+                }
+                if (a11yState.voiceNarrator && e.target) {
+                    narrateUIElement(e.target);
+                }
+            });
+
+            document.addEventListener('click', (e) => {
+                // Fecha o menu de acessibilidade se clicar fora
+                const wrapper = document.getElementById('a11yDropdownWrapper');
+                if (wrapper && !wrapper.contains(e.target)) {
+                    toggleA11yPanel(false);
+                }
+                const btn = e.target.closest('button, a, label');
+                if (a11yState.voiceNarrator && btn) {
+                    narrateUIElement(btn);
+                }
+            });
+
+            // Atalho de teclado Alt + A para abrir Acessibilidade e Alt + R para Régua de Leitura
+            document.addEventListener('keydown', (e) => {
+                if (e.altKey && (e.key === 'a' || e.key === 'A')) {
+                    e.preventDefault();
+                    toggleA11yPanel();
+                } else if (e.altKey && (e.key === 'r' || e.key === 'R')) {
+                    e.preventDefault();
+                    toggleA11yFeature('readingRuler');
+                }
+            });
+        }
     </script>
 </body>
 </html>
