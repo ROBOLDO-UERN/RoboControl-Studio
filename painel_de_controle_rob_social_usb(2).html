@@ -166,9 +166,16 @@
         .eye-glow {
             animation: pulse-glow 3s infinite ease-in-out;
         }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
     </style>
 </head>
-<body class="font-sans h-screen overflow-hidden flex flex-col selection:bg-blue-600 selection:text-white">
+<body class="font-sans min-h-screen lg:h-screen lg:overflow-hidden flex flex-col selection:bg-blue-600 selection:text-white">
 
     <!-- Notificação Toast Flutuante -->
     <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
@@ -289,62 +296,90 @@
     </div>
 
     <!-- ======================================================================== -->
-    <!-- TOPBAR MINIMALISTA (GOOGLE WORKSPACE STYLE)                              -->
+    <!-- TOPBAR MINIMALISTA (GOOGLE WORKSPACE STYLE - RESPONSIVO MOBILE/DESKTOP)  -->
     <!-- ======================================================================== -->
-    <header class="bg-white/90 backdrop-blur-md border-b border-slate-200/90 shrink-0 z-30 px-6 py-3">
-        <div class="w-full flex flex-wrap items-center justify-between gap-4">
-            <!-- Brand -->
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-2xl btn-blue-primary flex items-center justify-center">
-                    <i class="fa-solid fa-robot text-white text-base"></i>
+    <header class="bg-white/95 backdrop-blur-md border-b border-slate-200/90 sticky top-0 shrink-0 z-30 px-4 sm:px-6 py-2.5 sm:py-3">
+        <div class="w-full flex items-center justify-between gap-2">
+            <!-- Brand + Botão Menu Mobile -->
+            <div class="flex items-center gap-2.5 min-w-0">
+                <button type="button" onclick="toggleMobileSidebarDrawer()" class="lg:hidden w-9 h-9 rounded-xl btn-blue-soft flex items-center justify-center shrink-0" title="Abrir Menu de Módulos">
+                    <i class="fa-solid fa-bars text-sm"></i>
+                </button>
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl btn-blue-primary flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-robot text-white text-sm sm:text-base"></i>
                 </div>
-                <div>
-                    <div class="flex items-center gap-2">
-                        <h1 class="font-extrabold text-base text-slate-900 tracking-tight">RoboControl <span class="text-blue-600">Studio</span></h1>
-                        <span class="px-2 py-0.5 text-[10px] font-semibold bg-blue-50 text-blue-700 border border-blue-200 rounded-full">
+                <div class="min-w-0">
+                    <div class="flex items-center gap-1.5">
+                        <h1 class="font-extrabold text-sm sm:text-base text-slate-900 tracking-tight truncate">RoboControl <span class="text-blue-600">Studio</span></h1>
+                        <span class="hidden sm:inline-block px-2 py-0.5 text-[10px] font-semibold bg-blue-50 text-blue-700 border border-blue-200 rounded-full">
                             v3.5 Minimal
                         </span>
                     </div>
-                    <p class="text-[11px] text-slate-500">Roboldo IDE • Controle Dual-ESP & Coreografias (LAR / UERN)</p>
+                    <p class="text-[10px] sm:text-[11px] text-slate-500 truncate">Roboldo IDE • Controle Dual-ESP & Coreografias</p>
                 </div>
             </div>
 
-            <!-- Conexões USB Simplificadas & Perfil -->
-            <div class="flex items-center gap-2">
+            <!-- Conexões USB Simplificadas & Botão Tutorial -->
+            <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
                 <!-- Botão USB Cabeça -->
-                <button id="btnConnectHead" onclick="toggleSerialPort('head')" class="px-3 py-1.5 rounded-xl text-xs font-bold btn-blue-soft flex items-center gap-1.5" title="Conectar ESP1 Cabeça (9600 bps)">
-                    <span id="headConnDot" class="w-2 h-2 rounded-full bg-blue-500"></span>
-                    <span>Cabeça:</span>
-                    <span id="headConnText" class="font-mono text-[11px]">Simulação</span>
+                <button id="btnConnectHead" onclick="toggleSerialPort('head')" class="px-2.5 sm:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold btn-blue-soft flex items-center gap-1.5" title="Conectar ESP1 Cabeça (9600 bps)">
+                    <span id="headConnDot" class="w-2 h-2 rounded-full bg-blue-500 shrink-0"></span>
+                    <span>Cabeça<span class="hidden md:inline">:</span></span>
+                    <span id="headConnText" class="hidden md:inline font-mono text-[11px]">Simulação</span>
                     <span id="btnConnectHeadText" class="sr-only">Conectar</span>
                 </button>
                 <select id="headBaudSelect" class="hidden"><option value="9600" selected>9600</option></select>
 
                 <!-- Botão USB Braços -->
-                <button id="btnConnectArms" onclick="toggleSerialPort('arms')" class="px-3 py-1.5 rounded-xl text-xs font-bold btn-blue-soft flex items-center gap-1.5" title="Conectar ESP2 Braços (115200 bps)">
-                    <span id="armsConnDot" class="w-2 h-2 rounded-full bg-blue-500"></span>
-                    <span>Braços:</span>
-                    <span id="armsConnText" class="font-mono text-[11px]">Simulação</span>
+                <button id="btnConnectArms" onclick="toggleSerialPort('arms')" class="px-2.5 sm:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold btn-blue-soft flex items-center gap-1.5" title="Conectar ESP2 Braços (115200 bps)">
+                    <span id="armsConnDot" class="w-2 h-2 rounded-full bg-blue-500 shrink-0"></span>
+                    <span>Braços<span class="hidden md:inline">:</span></span>
+                    <span id="armsConnText" class="hidden md:inline font-mono text-[11px]">Simulação</span>
                     <span id="btnConnectArmsText" class="sr-only">Conectar</span>
                 </button>
                 <select id="armsBaudSelect" class="hidden"><option value="115200" selected>115200</option></select>
 
                 <input type="checkbox" id="autoSendToggle" checked class="hidden">
 
-                <!-- Saudação do Usuário & Tutorial -->
-                <button type="button" onclick="openOnboardingModal()" class="px-3 py-1.5 rounded-xl text-xs font-bold btn-blue-primary flex items-center gap-1.5" title="Alterar Nome ou Reiniciar Tutorial">
-                    <i class="fa-regular fa-circle-user"></i>
-                    <span id="userGreetingBadge">Olá, Operador</span>
-                </button>
-                <button type="button" onclick="startGuidedTour()" class="px-2.5 py-1.5 rounded-xl text-xs font-bold btn-blue-soft" title="Mini Tutorial Guiado">
+                <!-- Botão Mini Tutorial -->
+                <button type="button" onclick="startGuidedTour()" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl text-xs font-bold btn-blue-soft flex items-center justify-center" title="Mini Tutorial Guiado">
                     <i class="fa-regular fa-circle-question"></i>
                 </button>
             </div>
+        </div>
+
+        <!-- Barra Horizontal de Módulos para Mobile / Tablet (oculta no Desktop lg+) -->
+        <div class="lg:hidden mt-2.5 pt-2 border-t border-slate-100 flex items-center gap-1.5 overflow-x-auto no-scrollbar" id="mobileModuleChips">
+            <button type="button" onclick="switchModule('overview')" data-mod="overview" class="nav-pill-btn nav-active px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 shrink-0">
+                <i class="fa-solid fa-layer-group text-[11px]"></i><span>1. Início</span>
+            </button>
+            <button type="button" onclick="switchModule('head')" data-mod="head" class="nav-pill-btn px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 shrink-0">
+                <i class="fa-regular fa-face-smile text-[11px]"></i><span>2. Cabeça</span>
+            </button>
+            <button type="button" onclick="switchModule('arms')" data-mod="arms" class="nav-pill-btn px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 shrink-0">
+                <i class="fa-solid fa-hands-asl-interpreting text-[11px]"></i><span>3. Braços</span>
+            </button>
+            <button type="button" onclick="switchModule('voice')" data-mod="voice" class="nav-pill-btn px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 shrink-0">
+                <i class="fa-solid fa-microphone-lines text-[11px]"></i><span>4. Voz</span>
+            </button>
+            <button type="button" onclick="switchModule('mapping')" data-mod="mapping" class="nav-pill-btn px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 shrink-0">
+                <i class="fa-solid fa-map-location-dot text-[11px]"></i><span>5. Mapa</span>
+            </button>
+            <button type="button" onclick="switchModule('vision')" data-mod="vision" class="nav-pill-btn px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 shrink-0">
+                <i class="fa-solid fa-eye text-[11px]"></i><span>6. Visão</span>
+            </button>
+            <button type="button" onclick="switchModule('sequencer')" data-mod="sequencer" class="nav-pill-btn px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 shrink-0">
+                <i class="fa-solid fa-film text-[11px]"></i><span>7. Scripts</span>
+            </button>
+            <button type="button" onclick="switchModule('telemetry')" data-mod="telemetry" class="nav-pill-btn px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 shrink-0">
+                <i class="fa-solid fa-terminal text-[11px]"></i><span>8. Serial</span>
+            </button>
         </div>
     </header>
 
     <!-- Elementos ocultos de compatibilidade -->
     <div class="hidden">
+        <span id="userGreetingBadge"></span>
         <span id="sidebarAvatarInitial">O</span>
         <span id="sidebarUserName">Operador</span>
         <span id="headConnBadge"></span>
@@ -354,15 +389,23 @@
     <!-- ======================================================================== -->
     <!-- WORKSPACE PRINCIPAL: MENU LATERAL + MÓDULO ATIVO + SIMULADOR CLEAN       -->
     <!-- ======================================================================== -->
-    <div class="flex-1 flex overflow-hidden">
+    <div class="flex-1 flex lg:overflow-hidden relative">
 
-        <!-- MENU LATERAL DE MÓDULOS (SIDEBAR CLEAN GOOGLE DESIGN) -->
-        <aside class="w-64 bg-white/85 backdrop-blur-md border-r border-slate-200/90 p-4 flex flex-col justify-between shrink-0 select-none overflow-y-auto">
+        <!-- Backdrop do Menu Lateral no Mobile -->
+        <div id="mobileSidebarBackdrop" onclick="toggleMobileSidebarDrawer(false)" class="hidden fixed inset-0 bg-slate-900/35 backdrop-blur-xs z-40 lg:hidden"></div>
+
+        <!-- MENU LATERAL DE MÓDULOS (SIDEBAR DESKTOP + DRAWER MOBILE) -->
+        <aside id="mainSidebarAside" class="hidden lg:flex fixed lg:static inset-y-0 left-0 z-40 w-64 bg-white/95 lg:bg-white/85 backdrop-blur-md border-r border-slate-200/90 p-4 flex-col justify-between shrink-0 select-none overflow-y-auto shadow-2xl lg:shadow-none">
             <div class="flex flex-col gap-4">
                 <div>
                     <div class="px-3 mb-2 flex items-center justify-between">
                         <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Módulos do Roboldo</span>
-                        <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">8 Módulos</span>
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">8 Módulos</span>
+                            <button type="button" onclick="toggleMobileSidebarDrawer(false)" class="lg:hidden w-6 h-6 rounded-lg btn-blue-soft flex items-center justify-center text-xs">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
                     </div>
 
                     <nav class="flex flex-col gap-1" id="sidebarModuleNav">
@@ -427,12 +470,12 @@
             </div>
         </aside>
 
-        <!-- ÁREA SCROLLABLE COM MÓDULO ATIVO + SIMULADOR -->
-        <div class="flex-1 overflow-y-auto p-5 lg:p-6">
-            <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <!-- ÁREA SCROLLABLE COM MÓDULO ATIVO + SIMULADOR (RESPONSIVO MOBILE/DESKTOP) -->
+        <div class="flex-1 lg:overflow-y-auto p-3.5 sm:p-5 lg:p-6 pb-20 lg:pb-6">
+            <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-start">
 
-                <!-- COLUNA PRINCIPAL DOS MÓDULOS (8 COLUNAS) -->
-                <div class="lg:col-span-8 flex flex-col gap-5">
+                <!-- COLUNA PRINCIPAL DOS MÓDULOS (8 COLUNAS NO DESKTOP, ABAIXO DO SIMULADOR NO MOBILE) -->
+                <div class="order-2 lg:order-1 lg:col-span-8 flex flex-col gap-5">
 
             <!-- ================================================================ -->
             <!-- MÓDULO 1: INÍCIO, PARTES DO ROBOLDO & MACROS RÁPIDAS             -->
@@ -1283,9 +1326,9 @@
 
         </div>
 
-        <!-- COLUNA LATERAL DIREITA: SIMULADOR DO ROBOLDO (4 COLUNAS) -->
-        <aside class="lg:col-span-4 flex flex-col gap-5 lg:sticky lg:top-20">
-            <div class="google-card rounded-3xl p-5 flex flex-col gap-4">
+        <!-- COLUNA LATERAL DIREITA: SIMULADOR DO ROBOLDO (4 COLUNAS NO DESKTOP, TOPO NO MOBILE) -->
+        <aside class="order-1 lg:order-2 lg:col-span-4 flex flex-col gap-4 lg:sticky lg:top-4">
+            <div class="google-card rounded-3xl p-4 sm:p-5 flex flex-col gap-3.5">
                 <div class="flex items-center justify-between">
                     <span class="text-xs font-extrabold uppercase tracking-wider text-blue-700 flex items-center gap-1.5">
                         <i class="fa-solid fa-robot"></i> Simulador do Roboldo
@@ -1296,7 +1339,7 @@
                 </div>
 
                 <!-- Palco do Roboldo com Degradê Suave Azul Claro -->
-                <div class="w-full h-64 rounded-2xl bg-gradient-to-b from-blue-50/90 via-sky-50/60 to-white border border-blue-100 flex items-center justify-center relative overflow-hidden">
+                <div class="w-full h-48 sm:h-60 lg:h-64 rounded-2xl bg-gradient-to-b from-blue-50/90 via-sky-50/60 to-white border border-blue-100 flex items-center justify-center relative overflow-hidden">
                     <svg id="robotSvg" viewBox="0 0 400 230" class="w-full h-full">
                         <defs>
                             <linearGradient id="bodyGrad" x1="0" y1="0" x2="0" y2="1">
@@ -1490,6 +1533,23 @@
             }
         }
 
+        function toggleMobileSidebarDrawer(forceState) {
+            const aside = document.getElementById('mainSidebarAside');
+            const backdrop = document.getElementById('mobileSidebarBackdrop');
+            const isOpen = !aside.classList.contains('hidden');
+            const nextState = (typeof forceState === 'boolean') ? forceState : !isOpen;
+
+            if (nextState) {
+                aside.classList.remove('hidden');
+                aside.classList.add('flex');
+                backdrop.classList.remove('hidden');
+            } else {
+                aside.classList.add('hidden');
+                aside.classList.remove('flex');
+                backdrop.classList.add('hidden');
+            }
+        }
+
         function switchModule(moduleId) {
             currentModuleId = moduleId;
             document.querySelectorAll('.module-view').forEach(sec => {
@@ -1503,13 +1563,15 @@
                 targetSec.classList.add('flex');
             }
 
-            document.querySelectorAll('#sidebarModuleNav .nav-pill-btn').forEach(btn => {
+            document.querySelectorAll('#sidebarModuleNav .nav-pill-btn, #mobileModuleChips .nav-pill-btn').forEach(btn => {
                 if (btn.dataset.mod === moduleId) {
                     btn.classList.add('nav-active');
                 } else {
                     btn.classList.remove('nav-active');
                 }
             });
+
+            toggleMobileSidebarDrawer(false);
         }
 
         function startGuidedTour() {
