@@ -619,7 +619,7 @@
                         </div>
 
                         <!-- 3. Grade de Opções Visuais e Cognitivas -->
-                        <div class="grid grid-cols-2 gap-2">
+                        <div class="grid grid-cols-3 gap-2">
                             <button type="button" id="a11yBtnContrast" onclick="toggleA11yFeature('highContrast')" class="p-2.5 rounded-2xl text-xs font-bold btn-glass-soft flex flex-col items-start gap-1 text-left">
                                 <i class="fa-solid fa-circle-half-stroke text-[#238689]"></i>
                                 <span>Alto Contraste</span>
@@ -630,22 +630,9 @@
                                 <span>Fonte Dislexia</span>
                             </button>
 
-                            <button type="button" id="a11yBtnMotion" onclick="toggleA11yFeature('reduceMotion')" class="p-2.5 rounded-2xl text-xs font-bold btn-glass-soft flex flex-col items-start gap-1 text-left">
-                                <i class="fa-solid fa-Universal-access fa-pause text-[#238689]"></i>
-                                <span>Reduzir Movimento</span>
-                            </button>
-
                             <button type="button" id="a11yBtnFocus" onclick="toggleA11yFeature('focusHighlight')" class="p-2.5 rounded-2xl text-xs font-bold btn-glass-soft flex flex-col items-start gap-1 text-left">
                                 <i class="fa-solid fa-keyboard text-[#238689]"></i>
                                 <span>Destacar Foco</span>
-                            </button>
-
-                            <button type="button" id="a11yBtnNarrator" onclick="toggleA11yFeature('voiceNarrator')" class="col-span-2 p-2.5 rounded-2xl text-xs font-bold btn-glass-soft flex items-center justify-between text-left">
-                                <span class="flex items-center gap-2">
-                                    <i class="fa-solid fa-ear-listen text-[#238689]"></i>
-                                    <span>Leitor de Voz ao Clicar / Focar</span>
-                                </span>
-                                <span id="a11yNarratorStateBadge" class="text-[10px] font-mono px-2 py-0.5 rounded-full badge-mint">OFF</span>
                             </button>
                         </div>
                     </div>
@@ -5328,9 +5315,7 @@
             rulerY: 260,
             highContrast: false,
             dyslexicFont: false,
-            reduceMotion: false,
-            focusHighlight: false,
-            voiceNarrator: false
+            focusHighlight: false
         };
 
         function loadSavedA11yState() {
@@ -5338,6 +5323,8 @@
                 const raw = localStorage.getItem('roboldo_ide_a11y');
                 if (raw) {
                     const parsed = JSON.parse(raw);
+                    delete parsed.reduceMotion;
+                    delete parsed.voiceNarrator;
                     a11yState = Object.assign({}, a11yState, parsed);
                 }
             } catch (e) {}
@@ -5424,9 +5411,7 @@
                 rulerY: 260,
                 highContrast: false,
                 dyslexicFont: false,
-                reduceMotion: false,
-                focusHighlight: false,
-                voiceNarrator: false
+                focusHighlight: false
             };
             applyA11yStateToDOM();
             saveA11yState();
@@ -5448,7 +5433,7 @@
 
             root.classList.toggle('a11y-high-contrast', Boolean(a11yState.highContrast));
             root.classList.toggle('a11y-dyslexic', Boolean(a11yState.dyslexicFont));
-            root.classList.toggle('a11y-reduce-motion', Boolean(a11yState.reduceMotion));
+            root.classList.remove('a11y-reduce-motion');
             root.classList.toggle('a11y-focus-highlight', Boolean(a11yState.focusHighlight));
 
             // Régua de leitura
@@ -5481,9 +5466,7 @@
             const mapBtns = [
                 { id: 'a11yBtnContrast', active: a11yState.highContrast },
                 { id: 'a11yBtnDyslexic', active: a11yState.dyslexicFont },
-                { id: 'a11yBtnMotion',   active: a11yState.reduceMotion },
-                { id: 'a11yBtnFocus',    active: a11yState.focusHighlight },
-                { id: 'a11yBtnNarrator', active: a11yState.voiceNarrator }
+                { id: 'a11yBtnFocus',    active: a11yState.focusHighlight }
             ];
             mapBtns.forEach(item => {
                 const el = document.getElementById(item.id);
@@ -5491,18 +5474,13 @@
                 el.classList.toggle('active-tile', Boolean(item.active));
             });
 
-            const narBadge = document.getElementById('a11yNarratorStateBadge');
-            if (narBadge) narBadge.textContent = a11yState.voiceNarrator ? 'ON' : 'OFF';
-
             // Contador de recursos ativos no botão da Topbar
             let activeCount = 0;
             if (a11yState.fontStepIdx !== 2) activeCount++;
             if (a11yState.readingRuler) activeCount++;
             if (a11yState.highContrast) activeCount++;
             if (a11yState.dyslexicFont) activeCount++;
-            if (a11yState.reduceMotion) activeCount++;
             if (a11yState.focusHighlight) activeCount++;
-            if (a11yState.voiceNarrator) activeCount++;
 
             const countBadge = document.getElementById('a11yActiveCountBadge');
             if (countBadge) {
@@ -5513,18 +5491,6 @@
                     countBadge.classList.add('hidden');
                 }
             }
-        }
-
-        function narrateUIElement(el) {
-            if (!a11yState.voiceNarrator || !('speechSynthesis' in window) || !el) return;
-            const text = (el.getAttribute('aria-label') || el.getAttribute('title') || el.innerText || '').replace(/\s+/g, ' ').trim();
-            if (!text || text.length > 140) return;
-
-            window.speechSynthesis.cancel();
-            const utter = new SpeechSynthesisUtterance(text);
-            utter.lang = (I18N_UI_STRINGS[currentAppLang] && I18N_UI_STRINGS[currentAppLang].speechLang) || 'pt-BR';
-            utter.rate = 1.08;
-            window.speechSynthesis.speak(utter);
         }
 
         function initAccessibilitySystem() {
@@ -5551,9 +5517,6 @@
                         updateReadingRulerPosition(rect.top + rect.height / 2);
                     }
                 }
-                if (a11yState.voiceNarrator && e.target) {
-                    narrateUIElement(e.target);
-                }
             });
 
             document.addEventListener('click', (e) => {
@@ -5561,10 +5524,6 @@
                 const wrapper = document.getElementById('a11yDropdownWrapper');
                 if (wrapper && !wrapper.contains(e.target)) {
                     toggleA11yPanel(false);
-                }
-                const btn = e.target.closest('button, a, label');
-                if (a11yState.voiceNarrator && btn) {
-                    narrateUIElement(btn);
                 }
             });
 
