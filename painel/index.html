@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RoboControl Studio v4.0 | Roboldo IDE — Glass Edition</title>
+    <title>RoboControl Studio v4.0 | Roboldo IDE â€” Glass Edition</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Plus Jakarta Sans, Inter & JetBrains Mono -->
@@ -44,7 +44,7 @@
             --ink-black: #021225;
         }
 
-        /* Background Branco Puxado com Degradês Claros e Quase Imperceptíveis */
+        /* Background Branco Puxado com DegradÃªs Claros e Quase ImperceptÃ­veis */
         body {
             background-color: #FAFDFB;
             background-image:
@@ -72,7 +72,7 @@
         }
 
         /* =====================================================================
-           GLASSMORPHISM SYSTEM — AUTÊNTICO, ELEGANTE E TRANSLÚCIDO
+           GLASSMORPHISM SYSTEM â€” AUTÃŠNTICO, ELEGANTE E TRANSLÃšCIDO
            ===================================================================== */
         .glass-shell {
             background: rgba(255, 255, 255, 0.72);
@@ -159,7 +159,7 @@
             box-shadow: 0 3px 12px rgba(37, 197, 233, 0.55);
         }
 
-        /* Botões Principais (Dark Cyan + Sky Aqua) */
+        /* BotÃµes Principais (Dark Cyan + Sky Aqua) */
         .btn-cyan-primary {
             background: linear-gradient(135deg, #238689 0%, #1d7275 55%, #25C5E9 145%);
             color: #FFFFFF;
@@ -176,7 +176,7 @@
             transform: translateY(0);
         }
 
-        /* Botões Glass Suaves (Mint Cream + Tea Green + Dark Cyan) */
+        /* BotÃµes Glass Suaves (Mint Cream + Tea Green + Dark Cyan) */
         .btn-glass-soft {
             background: rgba(255, 255, 255, 0.78);
             color: #196669;
@@ -202,7 +202,7 @@
             color: #FFFFFF !important;
         }
 
-        /* Pílulas de Navegação Lateral e Superior */
+        /* PÃ­lulas de NavegaÃ§Ã£o Lateral e Superior */
         .nav-pill-btn {
             color: rgba(2, 18, 37, 0.72);
             background: transparent;
@@ -230,7 +230,7 @@
             font-weight: 600;
         }
 
-        /* Badges com estética Mint / Tea Green */
+        /* Badges com estÃ©tica Mint / Tea Green */
         .badge-mint {
             background: linear-gradient(135deg, rgba(242, 255, 246, 0.95) 0%, rgba(202, 255, 222, 0.65) 100%);
             color: #165e61;
@@ -256,7 +256,7 @@
 </head>
 <body class="font-sans min-h-screen lg:h-screen lg:overflow-hidden flex flex-col selection:bg-[#238689] selection:text-white">
 
-    <!-- Notificação Toast Flutuante -->
+    <!-- NotificaÃ§Ã£o Toast Flutuante -->
     <div id="toastContainer" class="fixed bottom-24 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
     <!-- ======================================================================== -->
@@ -264,7 +264,7 @@
     <!-- ======================================================================== -->
     <div id="onboardingModal" class="fixed inset-0 z-50 bg-[#021225]/25 backdrop-blur-md flex items-center justify-center p-4">
         <div class="glass-shell rounded-3xl max-w-xl w-full overflow-hidden relative border border-white/90 shadow-2xl">
-            <!-- Topo com Degradê Suave da Paleta v4 -->
+            <!-- Topo com DegradÃª Suave da Paleta v4 -->
             <div class="h-1.5 w-full bg-gradient-to-r from-[#CAFFDE] via-[#25C5E9] to-[#238689]"></div>
 
             <div class="p-7 sm:p-8 flex flex-col gap-6">
@@ -272,8 +272,8 @@
                 <div class="flex items-center gap-4">
                     <img src="../assets/logo-roboldo.png" alt="Logo Roboldo" class="w-14 h-14 rounded-2xl object-contain bg-white border border-slate-200 p-1 shrink-0 shadow-sm">
                     <div>
-                        <h2 class="text-xl font-extrabold text-[#021225] tracking-tight">Olá! Bem-vindo ao RoboControl Studio</h2>
-                        <p class="text-xs text-slate-500 mt-0.5">Ambiente translúcido de calibração, movimentos 3-DoF e voz neural do Roboldo (LAR / UERN)</p>
+                        <h2 class="text-xl font-extrabold text-[#021225] tracking-tight">OlÃ¡! Bem-vindo ao RoboControl Studio</h2>
+                        <p class="text-xs text-slate-500 mt-0.5">Ambiente translÃºcido de calibraÃ§Ã£o, movimentos 3-DoF e voz neural do Roboldo (LAR / UERN)</p>
                     </div>
                 </div>
 
@@ -281,16 +281,16 @@
                 <div class="glass-subpanel rounded-2xl p-4 flex flex-col gap-2">
                     <label for="onboardUserName" class="text-xs font-bold text-[#021225] flex items-center gap-1.5">
                         <i class="fa-regular fa-user text-[#238689]"></i>
-                        Como podemos chamar você?
+                        Como podemos chamar vocÃª?
                     </label>
-                    <input type="text" id="onboardUserName" placeholder="Digite seu nome (ex: Artemísia)..."
+                    <input type="text" id="onboardUserName" placeholder="Digite seu nome (ex: ArtemÃ­sia)..."
                         onkeydown="if(event.key==='Enter') finishOnboarding('tour')"
                         class="w-full glass-input rounded-xl px-3.5 py-2.5 text-sm placeholder-slate-400">
                 </div>
 
-                <!-- 2 Opções Elegantes -->
+                <!-- 2 OpÃ§Ãµes Elegantes -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                    <!-- Opção 1: Mini Tutorial -->
+                    <!-- OpÃ§Ã£o 1: Mini Tutorial -->
                     <div onclick="finishOnboarding('tour')" class="cursor-pointer group rounded-2xl p-4 bg-gradient-to-b from-[#F2FFF6]/95 to-white/95 border-2 border-[#238689]/70 hover:border-[#25C5E9] transition flex flex-col justify-between gap-3 shadow-sm">
                         <div>
                             <div class="flex items-center justify-between mb-2">
@@ -298,12 +298,12 @@
                                     <i class="fa-solid fa-compass"></i>
                                 </span>
                                 <span class="text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full badge-mint">
-                                    1º Contato
+                                    1Âº Contato
                                 </span>
                             </div>
                             <h3 class="text-sm font-extrabold text-[#021225]">Fazer Mini Tutorial</h3>
                             <p class="text-xs text-slate-600 mt-1 leading-relaxed">
-                                Um passeio guiado pelos 8 módulos de controle e simulação do Roboldo.
+                                Um passeio guiado pelos 8 mÃ³dulos de controle e simulaÃ§Ã£o do Roboldo.
                             </p>
                         </div>
                         <button type="button" class="w-full py-2.5 px-3 rounded-xl text-xs font-bold btn-cyan-primary flex items-center justify-center gap-1.5">
@@ -312,7 +312,7 @@
                         </button>
                     </div>
 
-                    <!-- Opção 2: Já usei o Roboldo-IDE -->
+                    <!-- OpÃ§Ã£o 2: JÃ¡ usei o Roboldo-IDE -->
                     <div onclick="finishOnboarding('explore')" class="cursor-pointer group rounded-2xl p-4 bg-white/80 border border-slate-200/90 hover:border-[#238689]/60 transition flex flex-col justify-between gap-3">
                         <div>
                             <div class="flex items-center justify-between mb-2">
@@ -325,11 +325,11 @@
                             </div>
                             <h3 class="text-sm font-extrabold text-[#021225]">Explorar Livremente</h3>
                             <p class="text-xs text-slate-600 mt-1 leading-relaxed">
-                                Navegue direto pelas partes do Roboldo, câmera SLAM e montagem de scripts.
+                                Navegue direto pelas partes do Roboldo, cÃ¢mera SLAM e montagem de scripts.
                             </p>
                         </div>
                         <button type="button" class="w-full py-2.5 px-3 rounded-xl text-xs font-bold btn-glass-soft flex items-center justify-center gap-1.5">
-                            <span>Acessar Estúdio</span>
+                            <span>Acessar EstÃºdio</span>
                             <i class="fa-solid fa-bolt text-[#25C5E9]"></i>
                         </button>
                     </div>
@@ -349,9 +349,9 @@
                 </div>
                 <div>
                     <span class="text-[10px] font-extrabold uppercase tracking-wider text-[#238689]" id="tourStepTag">MINI TUTORIAL ROBOLDO IDE</span>
-                    <h4 class="text-sm font-extrabold text-[#021225]" id="tourStepTitle">Visão Geral & Partes do Roboldo</h4>
+                    <h4 class="text-sm font-extrabold text-[#021225]" id="tourStepTitle">VisÃ£o Geral & Partes do Roboldo</h4>
                     <p class="text-xs text-slate-600 mt-0.5" id="tourStepDesc">
-                        Veja como a cabeça, braços e voz funcionam juntos.
+                        Veja como a cabeÃ§a, braÃ§os e voz funcionam juntos.
                     </p>
                 </div>
             </div>
@@ -360,7 +360,7 @@
                     Anterior
                 </button>
                 <button type="button" onclick="nextTourStep()" id="btnTourNext" class="px-4 py-1.5 rounded-xl text-xs font-bold btn-cyan-primary">
-                    <span>Próximo</span><i class="fa-solid fa-chevron-right ml-1.5"></i>
+                    <span>PrÃ³ximo</span><i class="fa-solid fa-chevron-right ml-1.5"></i>
                 </button>
                 <button type="button" onclick="closeGuidedTour()" class="px-2.5 py-1.5 rounded-xl text-xs font-medium btn-glass-soft" title="Fechar Tutorial">
                     <i class="fa-solid fa-xmark"></i>
@@ -370,13 +370,13 @@
     </div>
 
     <!-- ======================================================================== -->
-    <!-- TOPBAR GLASSMORPHISM (CLEAN & TRANSLÚCIDA - RESPONSIVA)                  -->
+    <!-- TOPBAR GLASSMORPHISM (CLEAN & TRANSLÃšCIDA - RESPONSIVA)                  -->
     <!-- ======================================================================== -->
     <header class="glass-shell border-b border-[#238689]/15 sticky top-0 shrink-0 z-30 px-4 sm:px-6 py-2.5 sm:py-3">
         <div class="w-full flex items-center justify-between gap-3">
-            <!-- Brand + Botão Menu Mobile -->
+            <!-- Brand + BotÃ£o Menu Mobile -->
             <div class="flex items-center gap-3 min-w-0">
-                <button type="button" onclick="toggleMobileSidebarDrawer()" class="lg:hidden w-9 h-9 rounded-xl btn-glass-soft flex items-center justify-center shrink-0" title="Abrir Menu de Módulos">
+                <button type="button" onclick="toggleMobileSidebarDrawer()" class="lg:hidden w-9 h-9 rounded-xl btn-glass-soft flex items-center justify-center shrink-0" title="Abrir Menu de MÃ³dulos">
                     <i class="fa-solid fa-bars text-sm"></i>
                 </button>
                 <img src="../assets/logo-roboldo.png" alt="Logo Roboldo" class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl object-contain bg-white border border-slate-200 p-0.5 shrink-0 shadow-sm">
@@ -386,55 +386,55 @@
                             RoboControl <span class="text-[#238689]">Studio</span>
                         </h1>
                     </div>
-                    <p class="text-[10px] sm:text-[11px] text-slate-500 truncate">Roboldo IDE • Controle Dual-ESP, Visão & Coreografias</p>
+                    <p class="text-[10px] sm:text-[11px] text-slate-500 truncate">Roboldo IDE â€¢ Controle Dual-ESP, VisÃ£o & Coreografias</p>
                 </div>
             </div>
 
-            <!-- Conexões USB Simplificadas & Botão Tutorial -->
+            <!-- ConexÃµes USB Simplificadas & BotÃ£o Tutorial -->
             <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                <!-- Saudação sutil do Operador -->
+                <!-- SaudaÃ§Ã£o sutil do Operador -->
                 <button type="button" onclick="openOnboardingModal()" class="hidden xl:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold btn-glass-soft" title="Alterar Operador">
                     <i class="fa-regular fa-user text-[#238689] text-[11px]"></i>
                     <span id="userGreetingBadge">Visitante</span>
                 </button>
 
-                <!-- Botão USB Cabeça -->
-                <button id="btnConnectHead" onclick="toggleSerialPort('head')" class="px-2.5 sm:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold btn-glass-soft flex items-center gap-1.5" title="Conectar ESP1 Cabeça (9600 bps)">
+                <!-- BotÃ£o USB CabeÃ§a -->
+                <button id="btnConnectHead" onclick="toggleSerialPort('head')" class="px-2.5 sm:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold btn-glass-soft flex items-center gap-1.5" title="Conectar ESP1 CabeÃ§a (9600 bps)">
                     <span id="headConnDot" class="w-2 h-2 rounded-full bg-[#25C5E9] shrink-0 shadow-[0_0_6px_#25C5E9]"></span>
-                    <span>Cabeça<span class="hidden md:inline">:</span></span>
-                    <span id="headConnText" class="hidden md:inline font-mono text-[11px] text-[#238689]">Simulação</span>
+                    <span>CabeÃ§a<span class="hidden md:inline">:</span></span>
+                    <span id="headConnText" class="hidden md:inline font-mono text-[11px] text-[#238689]">SimulaÃ§Ã£o</span>
                     <span id="btnConnectHeadText" class="sr-only">Conectar</span>
                 </button>
                 <select id="headBaudSelect" class="hidden"><option value="9600" selected>9600</option></select>
 
-                <!-- Botão USB Braços -->
-                <button id="btnConnectArms" onclick="toggleSerialPort('arms')" class="px-2.5 sm:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold btn-glass-soft flex items-center gap-1.5" title="Conectar ESP2 Braços (115200 bps)">
+                <!-- BotÃ£o USB BraÃ§os -->
+                <button id="btnConnectArms" onclick="toggleSerialPort('arms')" class="px-2.5 sm:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-bold btn-glass-soft flex items-center gap-1.5" title="Conectar ESP2 BraÃ§os (115200 bps)">
                     <span id="armsConnDot" class="w-2 h-2 rounded-full bg-[#238689] shrink-0"></span>
-                    <span>Braços<span class="hidden md:inline">:</span></span>
-                    <span id="armsConnText" class="hidden md:inline font-mono text-[11px] text-[#238689]">Simulação</span>
+                    <span>BraÃ§os<span class="hidden md:inline">:</span></span>
+                    <span id="armsConnText" class="hidden md:inline font-mono text-[11px] text-[#238689]">SimulaÃ§Ã£o</span>
                     <span id="btnConnectArmsText" class="sr-only">Conectar</span>
                 </button>
                 <select id="armsBaudSelect" class="hidden"><option value="115200" selected>115200</option></select>
 
                 <input type="checkbox" id="autoSendToggle" checked class="hidden">
 
-                <!-- Botão Mini Tutorial -->
+                <!-- BotÃ£o Mini Tutorial -->
                 <button type="button" onclick="startGuidedTour()" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl text-xs font-bold btn-glass-soft flex items-center justify-center" title="Mini Tutorial Guiado">
                     <i class="fa-regular fa-circle-question text-[#238689]"></i>
                 </button>
             </div>
         </div>
 
-        <!-- Barra Horizontal de Módulos para Mobile / Tablet (oculta no Desktop lg+) -->
+        <!-- Barra Horizontal de MÃ³dulos para Mobile / Tablet (oculta no Desktop lg+) -->
         <div class="lg:hidden mt-2.5 pt-2 border-t border-[#238689]/10 flex items-center gap-1.5 overflow-x-auto no-scrollbar" id="mobileModuleChips">
             <button type="button" onclick="switchModule('overview')" data-mod="overview" class="nav-pill-btn nav-active px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 shrink-0">
-                <i class="fa-solid fa-layer-group text-[11px]"></i><span>1. Início</span>
+                <i class="fa-solid fa-layer-group text-[11px]"></i><span>1. InÃ­cio</span>
             </button>
             <button type="button" onclick="switchModule('head')" data-mod="head" class="nav-pill-btn px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 shrink-0">
-                <i class="fa-regular fa-face-smile text-[11px]"></i><span>2. Cabeça</span>
+                <i class="fa-regular fa-face-smile text-[11px]"></i><span>2. CabeÃ§a</span>
             </button>
             <button type="button" onclick="switchModule('arms')" data-mod="arms" class="nav-pill-btn px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 shrink-0">
-                <i class="fa-solid fa-hands-asl-interpreting text-[11px]"></i><span>3. Braços</span>
+                <i class="fa-solid fa-hands-asl-interpreting text-[11px]"></i><span>3. BraÃ§os</span>
             </button>
             <button type="button" onclick="switchModule('voice')" data-mod="voice" class="nav-pill-btn px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 shrink-0">
                 <i class="fa-solid fa-microphone-lines text-[11px]"></i><span>4. Voz</span>
@@ -443,7 +443,7 @@
                 <i class="fa-solid fa-map-location-dot text-[11px]"></i><span>5. Mapa</span>
             </button>
             <button type="button" onclick="switchModule('vision')" data-mod="vision" class="nav-pill-btn px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 shrink-0">
-                <i class="fa-solid fa-eye text-[11px]"></i><span>6. Visão</span>
+                <i class="fa-solid fa-eye text-[11px]"></i><span>6. VisÃ£o</span>
             </button>
             <button type="button" onclick="switchModule('sequencer')" data-mod="sequencer" class="nav-pill-btn px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-1.5 shrink-0">
                 <i class="fa-solid fa-film text-[11px]"></i><span>7. Scripts</span>
@@ -463,19 +463,19 @@
     </div>
 
     <!-- ======================================================================== -->
-    <!-- WORKSPACE PRINCIPAL: MENU LATERAL GLASS + MÓDULO ATIVO + SIMULADOR       -->
+    <!-- WORKSPACE PRINCIPAL: MENU LATERAL GLASS + MÃ“DULO ATIVO + SIMULADOR       -->
     <!-- ======================================================================== -->
     <div class="flex-1 flex lg:overflow-hidden relative">
 
         <!-- Backdrop do Menu Lateral no Mobile -->
         <div id="mobileSidebarBackdrop" onclick="toggleMobileSidebarDrawer(false)" class="hidden fixed inset-0 bg-[#021225]/30 backdrop-blur-xs z-40 lg:hidden"></div>
 
-        <!-- MENU LATERAL DE MÓDULOS (SIDEBAR GLASS DESKTOP + DRAWER MOBILE) -->
+        <!-- MENU LATERAL DE MÃ“DULOS (SIDEBAR GLASS DESKTOP + DRAWER MOBILE) -->
         <aside id="mainSidebarAside" class="hidden lg:flex fixed lg:static inset-y-0 left-0 z-40 w-64 glass-shell border-r border-[#238689]/15 p-4 flex-col justify-between shrink-0 select-none overflow-y-auto shadow-2xl lg:shadow-none">
             <div class="flex flex-col gap-4">
                 <div>
                     <div class="px-3 mb-2.5 flex items-center justify-between">
-                        <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Módulos do Roboldo</span>
+                        <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">MÃ³dulos do Roboldo</span>
                         <div class="flex items-center gap-1.5">
                             <button type="button" onclick="toggleMobileSidebarDrawer(false)" class="lg:hidden w-6 h-6 rounded-lg btn-glass-soft flex items-center justify-center text-xs">
                                 <i class="fa-solid fa-xmark"></i>
@@ -489,8 +489,8 @@
                                 <i class="fa-solid fa-layer-group text-xs"></i>
                             </span>
                             <div class="min-w-0">
-                                <div class="truncate">1. Início & Partes</div>
-                                <div class="nav-subtext text-[10px] font-normal text-slate-400 truncate">Visão geral e macros</div>
+                                <div class="truncate">1. InÃ­cio & Partes</div>
+                                <div class="nav-subtext text-[10px] font-normal text-slate-400 truncate">VisÃ£o geral e macros</div>
                             </div>
                         </button>
                         <button type="button" onclick="switchModule('head')" data-mod="head" class="nav-pill-btn w-full text-left px-3 py-2 rounded-2xl text-xs font-bold flex items-center gap-3">
@@ -498,8 +498,8 @@
                                 <i class="fa-regular fa-face-smile text-xs"></i>
                             </span>
                             <div class="min-w-0">
-                                <div class="truncate">2. Cabeça & Rosto</div>
-                                <div class="nav-subtext text-[10px] font-normal text-slate-400 truncate">Expressões e pescoço 2-DoF</div>
+                                <div class="truncate">2. CabeÃ§a & Rosto</div>
+                                <div class="nav-subtext text-[10px] font-normal text-slate-400 truncate">ExpressÃµes e pescoÃ§o 2-DoF</div>
                             </div>
                         </button>
                         <button type="button" onclick="switchModule('arms')" data-mod="arms" class="nav-pill-btn w-full text-left px-3 py-2 rounded-2xl text-xs font-bold flex items-center gap-3">
@@ -507,8 +507,8 @@
                                 <i class="fa-solid fa-hands-asl-interpreting text-xs"></i>
                             </span>
                             <div class="min-w-0">
-                                <div class="truncate">3. Braços (3-DoF)</div>
-                                <div class="nav-subtext text-[10px] font-normal text-slate-400 truncate">Coreografias e 6 ângulos</div>
+                                <div class="truncate">3. BraÃ§os (3-DoF)</div>
+                                <div class="nav-subtext text-[10px] font-normal text-slate-400 truncate">Coreografias e 6 Ã¢ngulos</div>
                             </div>
                         </button>
                         <button type="button" onclick="switchModule('voice')" data-mod="voice" class="nav-pill-btn w-full text-left px-3 py-2 rounded-2xl text-xs font-bold flex items-center gap-3">
@@ -526,7 +526,7 @@
                             </span>
                             <div class="min-w-0">
                                 <div class="truncate">5. Mapeamento & SLAM</div>
-                                <div class="nav-subtext text-[10px] font-normal text-slate-400 truncate">Câmera e mapa 2D</div>
+                                <div class="nav-subtext text-[10px] font-normal text-slate-400 truncate">CÃ¢mera e mapa 2D</div>
                             </div>
                         </button>
                         <button type="button" onclick="switchModule('vision')" data-mod="vision" class="nav-pill-btn w-full text-left px-3 py-2 rounded-2xl text-xs font-bold flex items-center gap-3">
@@ -534,8 +534,8 @@
                                 <i class="fa-solid fa-eye text-xs"></i>
                             </span>
                             <div class="min-w-0">
-                                <div class="truncate">6. Visão Computacional</div>
-                                <div class="nav-subtext text-[10px] font-normal text-slate-400 truncate">Rastreamento e detecção</div>
+                                <div class="truncate">6. VisÃ£o Computacional</div>
+                                <div class="nav-subtext text-[10px] font-normal text-slate-400 truncate">Rastreamento e detecÃ§Ã£o</div>
                             </div>
                         </button>
                         <button type="button" onclick="switchModule('sequencer')" data-mod="sequencer" class="nav-pill-btn w-full text-left px-3 py-2 rounded-2xl text-xs font-bold flex items-center gap-3">
@@ -560,7 +560,7 @@
                 </div>
             </div>
 
-            <!-- Rodapé Identidade Visual v4 -->
+            <!-- RodapÃ© Identidade Visual v4 -->
             <div class="mt-4 pt-3 border-t border-[#238689]/10 px-2 flex items-center justify-between text-[11px] text-slate-500">
                 <div class="flex items-center gap-1.5 font-semibold text-[#021225]">
                     <span class="w-2 h-2 rounded-full bg-[#CAFFDE] border border-[#238689]"></span>
@@ -576,27 +576,27 @@
             </div>
         </aside>
 
-        <!-- ÁREA SCROLLABLE COM MÓDULO ATIVO EM LARGURA TOTAL -->
+        <!-- ÃREA SCROLLABLE COM MÃ“DULO ATIVO EM LARGURA TOTAL -->
         <div class="flex-1 lg:overflow-y-auto p-3.5 sm:p-5 lg:p-6 pb-24 lg:pb-10">
             <div class="max-w-5xl mx-auto flex flex-col gap-5">
 
-                <!-- COLUNA PRINCIPAL DOS MÓDULOS -->
+                <!-- COLUNA PRINCIPAL DOS MÃ“DULOS -->
                 <div class="w-full flex flex-col gap-5">
 
                     <!-- ================================================================ -->
-                    <!-- MÓDULO 1: INÍCIO, PARTES DO ROBOLDO & MACROS SINCRONIZADAS       -->
+                    <!-- MÃ“DULO 1: INÃCIO, PARTES DO ROBOLDO & MACROS SINCRONIZADAS       -->
                     <!-- ================================================================ -->
                     <section id="mod-overview" class="module-view flex flex-col gap-5">
-                        <!-- Hero Card Glass com Degradê Quase Imperceptível Mint/White -->
+                        <!-- Hero Card Glass com DegradÃª Quase ImperceptÃ­vel Mint/White -->
                         <div class="glass-card rounded-3xl p-6 relative overflow-hidden">
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
                                 <div>
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold badge-mint mb-2">
                                         <i class="fa-solid fa-wand-magic-sparkles text-[#238689]"></i> Painel Unificado do Roboldo
                                     </span>
-                                    <h2 class="text-xl font-extrabold text-[#021225] tracking-tight" id="overviewWelcomeTitle">Bem-vindo(a)! Conheça as Partes do Roboldo</h2>
+                                    <h2 class="text-xl font-extrabold text-[#021225] tracking-tight" id="overviewWelcomeTitle">Bem-vindo(a)! ConheÃ§a as Partes do Roboldo</h2>
                                     <p class="text-xs text-slate-600 mt-1 leading-relaxed max-w-2xl">
-                                        Acione gestos sincronizados com um clique ou explore os módulos de <strong class="text-[#238689]">Cabeça DWIN</strong>, <strong class="text-[#238689]">Braços 3-DoF</strong>, <strong class="text-[#238689]">Voz Neural</strong> e <strong class="text-[#238689]">Visão & SLAM</strong>.
+                                        Acione gestos sincronizados com um clique ou explore os mÃ³dulos de <strong class="text-[#238689]">CabeÃ§a DWIN</strong>, <strong class="text-[#238689]">BraÃ§os 3-DoF</strong>, <strong class="text-[#238689]">Voz Neural</strong> e <strong class="text-[#238689]">VisÃ£o & SLAM</strong>.
                                     </p>
                                 </div>
                                 <div class="flex items-center gap-2 shrink-0">
@@ -609,35 +609,35 @@
                                 </div>
                             </div>
 
-                            <!-- Barra de Macros Sincronizadas (Cabeça + Braços em 1 Clique) -->
+                            <!-- Barra de Macros Sincronizadas (CabeÃ§a + BraÃ§os em 1 Clique) -->
                             <div class="mt-5 pt-4 border-t border-[#238689]/12 flex flex-col gap-2.5">
                                 <div class="flex items-center justify-between">
                                     <span class="text-[11px] font-extrabold uppercase tracking-wider text-[#238689] flex items-center gap-1.5">
-                                        <i class="fa-solid fa-bolt text-[#25C5E9]"></i> Ações Rápidas Sincronizadas (Cabeça + Braços)
+                                        <i class="fa-solid fa-bolt text-[#25C5E9]"></i> AÃ§Ãµes RÃ¡pidas Sincronizadas (CabeÃ§a + BraÃ§os)
                                     </span>
                                     <span class="text-[10px] font-mono text-slate-400">Dual-ESP Instant Trigger</span>
                                 </div>
                                 <div class="flex flex-wrap gap-2">
                                     <button type="button" onclick="triggerCombinedMacro('neutral')" class="px-3 py-1.5 rounded-xl text-xs font-bold btn-glass-soft flex items-center gap-1.5">
-                                        <span>🧍</span><span>Neutro Total</span>
+                                        <span>ðŸ§</span><span>Neutro Total</span>
                                     </button>
                                     <button type="button" onclick="triggerCombinedMacro('greet_right')" class="px-3 py-1.5 rounded-xl text-xs font-bold btn-glass-soft flex items-center gap-1.5">
-                                        <span>👋</span><span>Olá Feliz</span>
+                                        <span>ðŸ‘‹</span><span>OlÃ¡ Feliz</span>
                                     </button>
                                     <button type="button" onclick="triggerCombinedMacro('warm_hug')" class="px-3 py-1.5 rounded-xl text-xs font-bold btn-glass-soft flex items-center gap-1.5">
-                                        <span>🤗</span><span>Abraço Acolhedor</span>
+                                        <span>ðŸ¤—</span><span>AbraÃ§o Acolhedor</span>
                                     </button>
                                     <button type="button" onclick="triggerCombinedMacro('handshake')" class="px-3 py-1.5 rounded-xl text-xs font-bold btn-glass-soft flex items-center gap-1.5">
-                                        <span>🤝</span><span>Cumprimento</span>
+                                        <span>ðŸ¤</span><span>Cumprimento</span>
                                     </button>
                                     <button type="button" onclick="triggerCombinedMacro('surprised_wave2')" class="px-3 py-1.5 rounded-xl text-xs font-bold btn-glass-soft flex items-center gap-1.5">
-                                        <span>🙌</span><span>Surpreso + Aceno Duplo</span>
+                                        <span>ðŸ™Œ</span><span>Surpreso + Aceno Duplo</span>
                                     </button>
                                     <button type="button" onclick="triggerCombinedMacro('angry_hips')" class="px-3 py-1.5 rounded-xl text-xs font-bold btn-glass-soft flex items-center gap-1.5">
-                                        <span>🦸</span><span>Mãos na Cintura</span>
+                                        <span>ðŸ¦¸</span><span>MÃ£os na Cintura</span>
                                     </button>
                                     <button type="button" onclick="triggerCombinedMacro('party_dance')" class="px-3 py-1.5 rounded-xl text-xs font-bold btn-glass-soft flex items-center gap-1.5">
-                                        <span>🕺</span><span>Modo Festa</span>
+                                        <span>ðŸ•º</span><span>Modo Festa</span>
                                     </button>
                                 </div>
                             </div>
@@ -645,49 +645,49 @@
 
                         <!-- Sobre o Projeto Roboldo IDE & Como Funciona o Roboldo -->
                         <div class="glass-card rounded-3xl p-5 sm:p-6 flex flex-col md:flex-row items-center gap-6">
-                            <!-- Lateral Esquerda: Ilustração Oficial do Roboldo -->
+                            <!-- Lateral Esquerda: IlustraÃ§Ã£o Oficial do Roboldo -->
                             <div class="w-full md:w-56 shrink-0 glass-subpanel rounded-2xl p-4 flex flex-col items-center justify-center relative">
-                                <img src="../assets/feliz.png" alt="Robô Social Roboldo — LAR / UERN" class="w-40 h-40 object-contain drop-shadow-md transition-transform duration-300 hover:scale-105">
+                                <img src="../assets/feliz.png" alt="RobÃ´ Social Roboldo â€” LAR / UERN" class="w-40 h-40 object-contain drop-shadow-md transition-transform duration-300 hover:scale-105">
                                 <span class="mt-2.5 px-3 py-0.5 rounded-full text-[10px] font-extrabold badge-mint">
-                                    Roboldo • LAR / UERN
+                                    Roboldo â€¢ LAR / UERN
                                 </span>
                             </div>
 
-                            <!-- Lateral Direita: Explicação e Subsistemas -->
+                            <!-- Lateral Direita: ExplicaÃ§Ã£o e Subsistemas -->
                             <div class="flex-1 flex flex-col gap-3">
                                 <div>
                                     <span class="inline-flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-[#238689] mb-1">
-                                        <i class="fa-solid fa-circle-info text-[#25C5E9]"></i> Arquitetura do Sistema • Roboldo IDE
+                                        <i class="fa-solid fa-circle-info text-[#25C5E9]"></i> Arquitetura do Sistema â€¢ Roboldo IDE
                                     </span>
                                     <h3 class="text-base sm:text-lg font-extrabold text-[#021225] leading-snug">
-                                        O que é o Roboldo IDE e como o Roboldo funciona?
+                                        O que Ã© o Roboldo IDE e como o Roboldo funciona?
                                     </h3>
                                 </div>
 
                                 <p class="text-xs text-slate-600 leading-relaxed">
-                                    O <strong class="text-[#021225]">Roboldo</strong> é um robô social, assistivo e educacional desenvolvido no <strong class="text-[#238689]">Laboratório de Automação e Robótica (LAR / UERN)</strong> para interação humano-robô (IHR), atividades pedagógicas e inclusão. O <strong class="text-[#021225]">RoboControl Studio</strong> integra todos os subsistemas em tempo real:
+                                    O <strong class="text-[#021225]">Roboldo</strong> Ã© um robÃ´ social, assistivo e educacional desenvolvido no <strong class="text-[#238689]">LaboratÃ³rio de AutomaÃ§Ã£o e RobÃ³tica (LAR / UERN)</strong> para interaÃ§Ã£o humano-robÃ´ (IHR), atividades pedagÃ³gicas e inclusÃ£o. O <strong class="text-[#021225]">RoboControl Studio</strong> integra todos os subsistemas em tempo real:
                                 </p>
 
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
                                     <div class="glass-subpanel rounded-xl p-2.5 flex items-start gap-2.5">
                                         <i class="fa-regular fa-face-smile text-[#238689] mt-0.5"></i>
                                         <div>
-                                            <strong class="text-[#021225] block">Cabeça DWIN & Pescoço 2-DoF</strong>
-                                            <span class="text-[11px] text-slate-500">Tela facial dinâmica, orelhas articuladas e pescoço com rotação horizontal (Yaw) e vertical (Pitch).</span>
+                                            <strong class="text-[#021225] block">CabeÃ§a DWIN & PescoÃ§o 2-DoF</strong>
+                                            <span class="text-[11px] text-slate-500">Tela facial dinÃ¢mica, orelhas articuladas e pescoÃ§o com rotaÃ§Ã£o horizontal (Yaw) e vertical (Pitch).</span>
                                         </div>
                                     </div>
                                     <div class="glass-subpanel rounded-xl p-2.5 flex items-start gap-2.5">
                                         <i class="fa-solid fa-hands-asl-interpreting text-[#238689] mt-0.5"></i>
                                         <div>
-                                            <strong class="text-[#021225] block">Braços 3-DoF & Voz Offline</strong>
-                                            <span class="text-[11px] text-slate-500">6 juntas controladas via PWM de 14-Bits sincronizadas com síntese neural Piper TTS e lip-sync.</span>
+                                            <strong class="text-[#021225] block">BraÃ§os 3-DoF & Voz Offline</strong>
+                                            <span class="text-[11px] text-slate-500">6 juntas controladas via PWM de 14-Bits sincronizadas com sÃ­ntese neural Piper TTS e lip-sync.</span>
                                         </div>
                                     </div>
                                     <div class="glass-subpanel rounded-xl p-2.5 flex items-start gap-2.5">
                                         <i class="fa-solid fa-map-location-dot text-[#238689] mt-0.5"></i>
                                         <div>
-                                            <strong class="text-[#021225] block">Mapeamento SLAM & Visão</strong>
-                                            <span class="text-[11px] text-slate-500">Câmera integrada para construção de mapa 2D do ambiente e rastreamento facial automático.</span>
+                                            <strong class="text-[#021225] block">Mapeamento SLAM & VisÃ£o</strong>
+                                            <span class="text-[11px] text-slate-500">CÃ¢mera integrada para construÃ§Ã£o de mapa 2D do ambiente e rastreamento facial automÃ¡tico.</span>
                                         </div>
                                     </div>
                                     <div class="glass-subpanel rounded-xl p-2.5 flex items-start gap-2.5">
@@ -701,20 +701,20 @@
                             </div>
                         </div>
 
-                        <!-- Cards dos 6 Módulos Operacionais -->
+                        <!-- Cards dos 6 MÃ³dulos Operacionais -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div class="glass-card glass-card-interactive rounded-3xl p-5 flex flex-col justify-between gap-4">
                                 <div>
                                     <div class="w-10 h-10 rounded-2xl badge-mint flex items-center justify-center mb-3 font-bold">
                                         <i class="fa-regular fa-face-smile text-lg text-[#238689]"></i>
                                     </div>
-                                    <h4 class="text-sm font-extrabold text-[#021225]">Cabeça & Rosto DWIN (Pescoço 2-DoF)</h4>
+                                    <h4 class="text-sm font-extrabold text-[#021225]">CabeÃ§a & Rosto DWIN (PescoÃ§o 2-DoF)</h4>
                                     <p class="text-xs text-slate-600 mt-1 leading-relaxed">
-                                        Escolha entre 6 expressões faciais na tela do robô e movimente as duas orelhas e o pescoço em 2 eixos (Yaw e Pitch).
+                                        Escolha entre 6 expressÃµes faciais na tela do robÃ´ e movimente as duas orelhas e o pescoÃ§o em 2 eixos (Yaw e Pitch).
                                     </p>
                                 </div>
                                 <button onclick="switchModule('head')" class="w-full py-2.5 px-3 rounded-xl text-xs font-bold btn-cyan-primary">
-                                    Configurar Cabeça &rarr;
+                                    Configurar CabeÃ§a &rarr;
                                 </button>
                             </div>
 
@@ -723,13 +723,13 @@
                                     <div class="w-10 h-10 rounded-2xl badge-mint flex items-center justify-center mb-3 font-bold">
                                         <i class="fa-solid fa-hands-asl-interpreting text-lg text-[#238689]"></i>
                                     </div>
-                                    <h4 class="text-sm font-extrabold text-[#021225]">Braços Articulados (3-DoF)</h4>
+                                    <h4 class="text-sm font-extrabold text-[#021225]">BraÃ§os Articulados (3-DoF)</h4>
                                     <p class="text-xs text-slate-600 mt-1 leading-relaxed">
-                                        Acione coreografias prontas (acenos, abraço, dança) ou ajuste os 6 ângulos dos ombros e cotovelos com espelhamento.
+                                        Acione coreografias prontas (acenos, abraÃ§o, danÃ§a) ou ajuste os 6 Ã¢ngulos dos ombros e cotovelos com espelhamento.
                                     </p>
                                 </div>
                                 <button onclick="switchModule('arms')" class="w-full py-2.5 px-3 rounded-xl text-xs font-bold btn-cyan-primary">
-                                    Configurar Braços &rarr;
+                                    Configurar BraÃ§os &rarr;
                                 </button>
                             </div>
 
@@ -740,7 +740,7 @@
                                     </div>
                                     <h4 class="text-sm font-extrabold text-[#021225]">Voz Offline & Sincronia Labial</h4>
                                     <p class="text-xs text-slate-600 mt-1 leading-relaxed">
-                                        Digite qualquer frase para o Roboldo falar em português com síntese neural Piper TTS e ritmo labial DWIN.
+                                        Digite qualquer frase para o Roboldo falar em portuguÃªs com sÃ­ntese neural Piper TTS e ritmo labial DWIN.
                                     </p>
                                 </div>
                                 <button onclick="switchModule('voice')" class="w-full py-2.5 px-3 rounded-xl text-xs font-bold btn-cyan-primary">
@@ -753,9 +753,9 @@
                                     <div class="w-10 h-10 rounded-2xl badge-mint flex items-center justify-center mb-3 font-bold">
                                         <i class="fa-solid fa-map-location-dot text-lg text-[#238689]"></i>
                                     </div>
-                                    <h4 class="text-sm font-extrabold text-[#021225]">Mapeamento & Câmera (SLAM)</h4>
+                                    <h4 class="text-sm font-extrabold text-[#021225]">Mapeamento & CÃ¢mera (SLAM)</h4>
                                     <p class="text-xs text-slate-600 mt-1 leading-relaxed">
-                                        Acesse a câmera ao vivo para mapear o ambiente 2D (Occupancy Grid), marcar obstáculos e definir destinos (POIs).
+                                        Acesse a cÃ¢mera ao vivo para mapear o ambiente 2D (Occupancy Grid), marcar obstÃ¡culos e definir destinos (POIs).
                                     </p>
                                 </div>
                                 <button onclick="switchModule('mapping')" class="w-full py-2.5 px-3 rounded-xl text-xs font-bold btn-cyan-primary">
@@ -768,13 +768,13 @@
                                     <div class="w-10 h-10 rounded-2xl badge-mint flex items-center justify-center mb-3 font-bold">
                                         <i class="fa-solid fa-eye text-lg text-[#238689]"></i>
                                     </div>
-                                    <h4 class="text-sm font-extrabold text-[#021225]">Visão Computacional</h4>
+                                    <h4 class="text-sm font-extrabold text-[#021225]">VisÃ£o Computacional</h4>
                                     <p class="text-xs text-slate-600 mt-1 leading-relaxed">
-                                        Detecção de rostos, gestos e objetos com auto-tracking sincronizado ao pescoço 2-DoF (Yaw e Pitch).
+                                        DetecÃ§Ã£o de rostos, gestos e objetos com auto-tracking sincronizado ao pescoÃ§o 2-DoF (Yaw e Pitch).
                                     </p>
                                 </div>
                                 <button onclick="switchModule('vision')" class="w-full py-2.5 px-3 rounded-xl text-xs font-bold btn-cyan-primary">
-                                    Abrir Visão Computacional &rarr;
+                                    Abrir VisÃ£o Computacional &rarr;
                                 </button>
                             </div>
 
@@ -785,7 +785,7 @@
                                     </div>
                                     <h4 class="text-sm font-extrabold text-[#021225]">Montagem de Scripts</h4>
                                     <p class="text-xs text-slate-600 mt-1 leading-relaxed">
-                                        Crie apresentações passo a passo combinando poses dos sliders, expressões e falas no tempo certo.
+                                        Crie apresentaÃ§Ãµes passo a passo combinando poses dos sliders, expressÃµes e falas no tempo certo.
                                     </p>
                                 </div>
                                 <button onclick="switchModule('sequencer')" class="w-full py-2.5 px-3 rounded-xl text-xs font-bold btn-cyan-primary">
@@ -796,18 +796,18 @@
                     </section>
 
                     <!-- ================================================================ -->
-                    <!-- MÓDULO 2: CABEÇA, EXPRESSÕES & SERVOS                            -->
+                    <!-- MÃ“DULO 2: CABEÃ‡A, EXPRESSÃ•ES & SERVOS                            -->
                     <!-- ================================================================ -->
                     <section id="mod-head" class="module-view hidden flex-col gap-5">
                         <div class="glass-card rounded-3xl p-6 flex flex-col gap-5">
                             <div class="flex flex-wrap items-center justify-between gap-3 border-b border-[#238689]/12 pb-4">
                                 <div>
-                                    <h2 class="font-extrabold text-base text-[#021225]">Cabeça & Expressões Faciais DWIN</h2>
+                                    <h2 class="font-extrabold text-base text-[#021225]">CabeÃ§a & ExpressÃµes Faciais DWIN</h2>
                                     <p class="text-xs text-slate-500">Comando atual: <code id="headActiveCmdBadge" class="text-[#238689] font-bold">"h\n"</code></p>
                                 </div>
                                 <button onclick="sendHeadCommandNow('MANUAL')" class="px-4 py-2 rounded-xl text-xs font-bold btn-cyan-primary flex items-center gap-1.5">
                                     <i class="fa-solid fa-paper-plane"></i>
-                                    <span>Enviar para Cabeça</span>
+                                    <span>Enviar para CabeÃ§a</span>
                                 </button>
                             </div>
 
@@ -824,7 +824,7 @@
                                     </button>
                                     <button type="button" onclick="selectHeadMode(1)" data-mode="1" class="mode-btn p-3 rounded-2xl text-xs font-bold btn-glass-soft flex flex-col items-center gap-1">
                                         <i class="fa-regular fa-face-smile-beam text-base"></i>
-                                        <span>Emoção</span>
+                                        <span>EmoÃ§Ã£o</span>
                                     </button>
                                     <button type="button" onclick="selectHeadMode(2)" data-mode="2" class="mode-btn p-3 rounded-2xl text-xs font-bold btn-glass-soft flex flex-col items-center gap-1">
                                         <i class="fa-regular fa-comment-dots text-base"></i>
@@ -833,30 +833,30 @@
                                 </div>
                             </div>
 
-                            <!-- 2. Expressões -->
+                            <!-- 2. ExpressÃµes -->
                             <div id="emotionSection">
                                 <div class="flex justify-between items-center mb-2">
-                                    <label class="text-xs font-bold text-[#021225]">2. Escolha a Expressão</label>
-                                    <span id="emotionDwinInfo" class="text-[11px] font-mono font-semibold badge-mint px-2.5 py-0.5 rounded-lg">Pág 12→13→14</span>
+                                    <label class="text-xs font-bold text-[#021225]">2. Escolha a ExpressÃ£o</label>
+                                    <span id="emotionDwinInfo" class="text-[11px] font-mono font-semibold badge-mint px-2.5 py-0.5 rounded-lg">PÃ¡g 12â†’13â†’14</span>
                                 </div>
                                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                                     <button type="button" onclick="selectHeadEmotion(3)" data-emo="3" class="emo-btn p-3 rounded-2xl text-xs font-bold btn-glass-soft flex items-center justify-center gap-2">
-                                        <span class="text-lg">😄</span><span>Feliz ('h')</span>
+                                        <span class="text-lg">ðŸ˜„</span><span>Feliz ('h')</span>
                                     </button>
                                     <button type="button" onclick="selectHeadEmotion(5)" data-emo="5" class="emo-btn p-3 rounded-2xl text-xs font-bold btn-glass-soft flex items-center justify-center gap-2">
-                                        <span class="text-lg">😲</span><span>Surpreso ('u')</span>
+                                        <span class="text-lg">ðŸ˜²</span><span>Surpreso ('u')</span>
                                     </button>
                                     <button type="button" onclick="selectHeadEmotion(1)" data-emo="1" class="emo-btn p-3 rounded-2xl text-xs font-bold btn-glass-soft flex items-center justify-center gap-2">
-                                        <span class="text-lg">😕</span><span>Confuso ('c')</span>
+                                        <span class="text-lg">ðŸ˜•</span><span>Confuso ('c')</span>
                                     </button>
                                     <button type="button" onclick="selectHeadEmotion(0)" data-emo="0" class="emo-btn p-3 rounded-2xl text-xs font-bold btn-glass-soft flex items-center justify-center gap-2">
-                                        <span class="text-lg">😠</span><span>Bravo ('a')</span>
+                                        <span class="text-lg">ðŸ˜ </span><span>Bravo ('a')</span>
                                     </button>
                                     <button type="button" onclick="selectHeadEmotion(2)" data-emo="2" class="emo-btn p-3 rounded-2xl text-xs font-bold btn-glass-soft flex items-center justify-center gap-2">
-                                        <span class="text-lg">😨</span><span>Medo ('f')</span>
+                                        <span class="text-lg">ðŸ˜¨</span><span>Medo ('f')</span>
                                     </button>
                                     <button type="button" onclick="selectHeadEmotion(4)" data-emo="4" class="emo-btn p-3 rounded-2xl text-xs font-bold btn-glass-soft flex items-center justify-center gap-2">
-                                        <span class="text-lg">😢</span><span>Triste ('s')</span>
+                                        <span class="text-lg">ðŸ˜¢</span><span>Triste ('s')</span>
                                     </button>
                                 </div>
                             </div>
@@ -865,27 +865,27 @@
                             <div id="talkStyleSection">
                                 <div class="flex justify-between items-center mb-2">
                                     <label class="text-xs font-bold text-[#021225]">3. Ritmo da Boca ao Falar</label>
-                                    <span id="talkEnumBadge" class="text-[11px] font-mono font-semibold badge-mint px-2.5 py-0.5 rounded-lg">Pág 21</span>
+                                    <span id="talkEnumBadge" class="text-[11px] font-mono font-semibold badge-mint px-2.5 py-0.5 rounded-lg">PÃ¡g 21</span>
                                 </div>
                                 <div class="grid grid-cols-3 gap-2.5">
                                     <button type="button" onclick="selectHeadTalkStyle(0)" data-talk="0" class="talk-btn p-2.5 rounded-2xl text-xs font-bold btn-glass-soft">
-                                        Sílabas ('1')
+                                        SÃ­labas ('1')
                                     </button>
                                     <button type="button" onclick="selectHeadTalkStyle(1)" data-talk="1" class="talk-btn p-2.5 rounded-2xl text-xs font-bold btn-glass-soft">
                                         Animado ('2')
                                     </button>
                                     <button type="button" onclick="selectHeadTalkStyle(2)" data-talk="2" class="talk-btn p-2.5 rounded-2xl text-xs font-bold btn-glass-soft">
-                                        Rápido ('3')
+                                        RÃ¡pido ('3')
                                     </button>
                                 </div>
                             </div>
 
-                            <!-- 4. Sliders de Orelhas e Pescoço 2-DoF -->
+                            <!-- 4. Sliders de Orelhas e PescoÃ§o 2-DoF -->
                             <div class="glass-subpanel rounded-2xl p-4 flex flex-col gap-3">
                                 <div class="flex flex-wrap items-center justify-between gap-2">
                                     <div>
-                                        <span class="text-xs font-bold text-[#021225] block">4. Posição das Orelhas e Pescoço 2-DoF (Lados + Cima/Baixo)</span>
-                                        <span class="text-[11px] text-slate-500" id="overrideStatusDesc">Controle independente de Orelhas, Pescoço Horizontal (Yaw) e Pescoço Vertical (Pitch)</span>
+                                        <span class="text-xs font-bold text-[#021225] block">4. PosiÃ§Ã£o das Orelhas e PescoÃ§o 2-DoF (Lados + Cima/Baixo)</span>
+                                        <span class="text-[11px] text-slate-500" id="overrideStatusDesc">Controle independente de Orelhas, PescoÃ§o Horizontal (Yaw) e PescoÃ§o Vertical (Pitch)</span>
                                     </div>
                                     <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-bold text-[#238689] badge-mint px-3 py-1 rounded-xl">
                                         <input type="checkbox" id="overrideServosToggle" onchange="toggleHeadServoOverride(this.checked)" class="rounded accent-[#238689]">
@@ -897,7 +897,7 @@
                                     <div class="bg-white/85 p-3 rounded-xl border border-[#238689]/15">
                                         <div class="flex justify-between text-xs font-semibold text-[#021225] mb-1.5">
                                             <span>Orelha Direita</span>
-                                            <span id="lbl_earRightAngle" class="font-mono text-[#238689] font-bold">130°</span>
+                                            <span id="lbl_earRightAngle" class="font-mono text-[#238689] font-bold">130Â°</span>
                                         </div>
                                         <input type="range" id="rng_earRightAngle" min="10" max="170" value="130" oninput="onHeadServoSliderChange('earRightAngle', this.value)">
                                     </div>
@@ -905,23 +905,23 @@
                                     <div class="bg-white/85 p-3 rounded-xl border border-[#238689]/15">
                                         <div class="flex justify-between text-xs font-semibold text-[#021225] mb-1.5">
                                             <span>Orelha Esquerda</span>
-                                            <span id="lbl_earLeftAngle" class="font-mono text-[#238689] font-bold">130°</span>
+                                            <span id="lbl_earLeftAngle" class="font-mono text-[#238689] font-bold">130Â°</span>
                                         </div>
                                         <input type="range" id="rng_earLeftAngle" min="10" max="170" value="130" oninput="onHeadServoSliderChange('earLeftAngle', this.value)">
                                     </div>
 
                                     <div class="bg-white/85 p-3 rounded-xl border border-[#238689]/15">
                                         <div class="flex justify-between text-xs font-semibold text-[#021225] mb-1.5">
-                                            <span>Pescoço — Lados (Yaw / Esq-Dir)</span>
-                                            <span id="lbl_neckAngle" class="font-mono text-[#238689] font-bold">90°</span>
+                                            <span>PescoÃ§o â€” Lados (Yaw / Esq-Dir)</span>
+                                            <span id="lbl_neckAngle" class="font-mono text-[#238689] font-bold">90Â°</span>
                                         </div>
                                         <input type="range" id="rng_neckAngle" min="45" max="135" value="90" oninput="onHeadServoSliderChange('neckAngle', this.value)">
                                     </div>
 
                                     <div class="bg-white/85 p-3 rounded-xl border border-[#238689]/15">
                                         <div class="flex justify-between text-xs font-semibold text-[#021225] mb-1.5">
-                                            <span>Pescoço — Cima e Baixo (Pitch)</span>
-                                            <span id="lbl_neckPitchAngle" class="font-mono text-[#238689] font-bold">90°</span>
+                                            <span>PescoÃ§o â€” Cima e Baixo (Pitch)</span>
+                                            <span id="lbl_neckPitchAngle" class="font-mono text-[#238689] font-bold">90Â°</span>
                                         </div>
                                         <input type="range" id="rng_neckPitchAngle" min="50" max="130" value="90" oninput="onHeadServoSliderChange('neckPitchAngle', this.value)">
                                     </div>
@@ -929,7 +929,7 @@
                                     <div class="bg-white/85 p-3 rounded-xl border border-[#238689]/15 sm:col-span-2">
                                         <div class="flex justify-between text-xs font-semibold text-[#021225] mb-1.5">
                                             <span>Suavidade do Movimento (Delay por Grau)</span>
-                                            <span id="lbl_servoStepDelayMs" class="font-mono text-[#238689] font-bold">10 ms/°</span>
+                                            <span id="lbl_servoStepDelayMs" class="font-mono text-[#238689] font-bold">10 ms/Â°</span>
                                         </div>
                                         <input type="range" id="rng_servoStepDelayMs" min="2" max="50" value="10" oninput="onHeadServoSliderChange('servoStepDelayMs', this.value)">
                                     </div>
@@ -939,13 +939,13 @@
                     </section>
 
                     <!-- ================================================================ -->
-                    <!-- MÓDULO 3: BRAÇOS 3-DoF (COREOGRAFIAS & 6 ÂNGULOS)                -->
+                    <!-- MÃ“DULO 3: BRAÃ‡OS 3-DoF (COREOGRAFIAS & 6 Ã‚NGULOS)                -->
                     <!-- ================================================================ -->
                     <section id="mod-arms" class="module-view hidden flex-col gap-5">
                         <div class="glass-card rounded-3xl p-6 flex flex-col gap-5">
                             <div class="flex flex-wrap items-center justify-between gap-3 border-b border-[#238689]/12 pb-4">
                                 <div>
-                                    <h2 class="font-extrabold text-base text-[#021225]">Braços Articulados (3-DoF)</h2>
+                                    <h2 class="font-extrabold text-base text-[#021225]">BraÃ§os Articulados (3-DoF)</h2>
                                     <p class="text-xs text-slate-500">Comando atual: <code id="armsActiveCmdBadge" class="text-[#238689] font-bold">"n\n"</code></p>
                                 </div>
                                 <div class="flex items-center gap-2">
@@ -953,7 +953,7 @@
                                         <i class="fa-solid fa-plus mr-1"></i>Salvar Pose no Script
                                     </button>
                                     <button onclick="sendArmsCustomPoseNow('MANUAL')" class="px-4 py-2 rounded-xl text-xs font-bold btn-cyan-primary">
-                                        <i class="fa-solid fa-paper-plane mr-1"></i>Enviar 6 Ângulos
+                                        <i class="fa-solid fa-paper-plane mr-1"></i>Enviar 6 Ã‚ngulos
                                     </button>
                                 </div>
                             </div>
@@ -966,95 +966,95 @@
                                 </div>
                                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                                     <button type="button" onclick="triggerArmGesture(1, 'n')" data-gest="1" class="gest-btn p-3 rounded-2xl text-xs font-bold btn-glass-soft flex flex-col items-center gap-1">
-                                        <span class="text-lg">🧍</span><span>Neutro ('n')</span>
+                                        <span class="text-lg">ðŸ§</span><span>Neutro ('n')</span>
                                     </button>
                                     <button type="button" onclick="triggerArmGesture(2, 'ad')" data-gest="2" class="gest-btn p-3 rounded-2xl text-xs font-bold btn-glass-soft flex flex-col items-center gap-1">
-                                        <span class="text-lg">👋</span><span>Aceno Dir ('ad')</span>
+                                        <span class="text-lg">ðŸ‘‹</span><span>Aceno Dir ('ad')</span>
                                     </button>
                                     <button type="button" onclick="triggerArmGesture(3, 'ae')" data-gest="3" class="gest-btn p-3 rounded-2xl text-xs font-bold btn-glass-soft flex flex-col items-center gap-1">
-                                        <span class="text-lg">🤚</span><span>Aceno Esq ('ae')</span>
+                                        <span class="text-lg">ðŸ¤š</span><span>Aceno Esq ('ae')</span>
                                     </button>
                                     <button type="button" onclick="triggerArmGesture(4, 'a2')" data-gest="4" class="gest-btn p-3 rounded-2xl text-xs font-bold btn-glass-soft flex flex-col items-center gap-1">
-                                        <span class="text-lg">🙌</span><span>Aceno Duplo ('a2')</span>
+                                        <span class="text-lg">ðŸ™Œ</span><span>Aceno Duplo ('a2')</span>
                                     </button>
                                     <button type="button" onclick="triggerArmGesture(5, 'ab')" data-gest="5" class="gest-btn p-3 rounded-2xl text-xs font-bold btn-glass-soft flex flex-col items-center gap-1">
-                                        <span class="text-lg">🤗</span><span>Abraço ('ab')</span>
+                                        <span class="text-lg">ðŸ¤—</span><span>AbraÃ§o ('ab')</span>
                                     </button>
                                     <button type="button" onclick="triggerArmGesture(6, 'mc')" data-gest="6" class="gest-btn p-3 rounded-2xl text-xs font-bold btn-glass-soft flex flex-col items-center gap-1">
-                                        <span class="text-lg">🦸</span><span>Na Cintura ('mc')</span>
+                                        <span class="text-lg">ðŸ¦¸</span><span>Na Cintura ('mc')</span>
                                     </button>
                                     <button type="button" onclick="triggerArmGesture(7, 'am')" data-gest="7" class="gest-btn p-3 rounded-2xl text-xs font-bold btn-glass-soft flex flex-col items-center gap-1">
-                                        <span class="text-lg">🤝</span><span>Aperto Mão ('am')</span>
+                                        <span class="text-lg">ðŸ¤</span><span>Aperto MÃ£o ('am')</span>
                                     </button>
                                     <button type="button" onclick="triggerArmGesture(8, 'd')" data-gest="8" class="gest-btn p-3 rounded-2xl text-xs font-bold btn-glass-soft flex flex-col items-center gap-1">
-                                        <span class="text-lg">🕺</span><span>Dancinha ('d')</span>
+                                        <span class="text-lg">ðŸ•º</span><span>Dancinha ('d')</span>
                                     </button>
                                 </div>
                             </div>
 
-                            <!-- 2. Sliders dos 6 Ângulos -->
+                            <!-- 2. Sliders dos 6 Ã‚ngulos -->
                             <div class="flex items-center justify-between pt-2 border-t border-[#238689]/12">
-                                <span class="text-xs font-bold text-[#021225]">2. Ajuste Manual dos 6 Ângulos (0° a 180°)</span>
+                                <span class="text-xs font-bold text-[#021225]">2. Ajuste Manual dos 6 Ã‚ngulos (0Â° a 180Â°)</span>
                                 <label class="flex items-center gap-2 text-xs font-bold text-[#238689] badge-mint px-3 py-1 rounded-xl cursor-pointer">
                                     <input type="checkbox" id="mirrorArmsCheckbox" class="rounded accent-[#238689]">
-                                    <span>Espelhar Braços</span>
+                                    <span>Espelhar BraÃ§os</span>
                                 </label>
                             </div>
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <!-- Braço Direito -->
+                                <!-- BraÃ§o Direito -->
                                 <div class="glass-subpanel rounded-2xl p-4 flex flex-col gap-3">
                                     <span class="font-extrabold text-xs text-[#238689] flex items-center justify-between">
-                                        <span>Braço Direito</span>
+                                        <span>BraÃ§o Direito</span>
                                         <span class="text-[10px] font-mono text-slate-400">GPIOs 3, 1, 0</span>
                                     </span>
                                     <div class="bg-white/85 p-3 rounded-xl border border-[#238689]/15">
                                         <div class="flex justify-between text-xs font-semibold text-[#021225] mb-1">
                                             <span>Ombro Pitch</span>
-                                            <span id="lbl_right_pitch" class="font-mono text-[#238689] font-bold">90°</span>
+                                            <span id="lbl_right_pitch" class="font-mono text-[#238689] font-bold">90Â°</span>
                                         </div>
                                         <input type="range" id="rng_right_pitch" min="0" max="180" value="90" oninput="onArmCustomSliderChange('right', 'pitch', this.value)">
                                     </div>
                                     <div class="bg-white/85 p-3 rounded-xl border border-[#238689]/15">
                                         <div class="flex justify-between text-xs font-semibold text-[#021225] mb-1">
                                             <span>Ombro Roll</span>
-                                            <span id="lbl_right_roll" class="font-mono text-[#238689] font-bold">90°</span>
+                                            <span id="lbl_right_roll" class="font-mono text-[#238689] font-bold">90Â°</span>
                                         </div>
                                         <input type="range" id="rng_right_roll" min="0" max="180" value="90" oninput="onArmCustomSliderChange('right', 'roll', this.value)">
                                     </div>
                                     <div class="bg-white/85 p-3 rounded-xl border border-[#238689]/15">
                                         <div class="flex justify-between text-xs font-semibold text-[#021225] mb-1">
                                             <span>Cotovelo</span>
-                                            <span id="lbl_right_elbow" class="font-mono text-[#238689] font-bold">90°</span>
+                                            <span id="lbl_right_elbow" class="font-mono text-[#238689] font-bold">90Â°</span>
                                         </div>
                                         <input type="range" id="rng_right_elbow" min="0" max="180" value="90" oninput="onArmCustomSliderChange('right', 'elbow', this.value)">
                                     </div>
                                 </div>
 
-                                <!-- Braço Esquerdo -->
+                                <!-- BraÃ§o Esquerdo -->
                                 <div class="glass-subpanel rounded-2xl p-4 flex flex-col gap-3">
                                     <span class="font-extrabold text-xs text-[#238689] flex items-center justify-between">
-                                        <span>Braço Esquerdo</span>
+                                        <span>BraÃ§o Esquerdo</span>
                                         <span class="text-[10px] font-mono text-slate-400">GPIOs 6, 5, 7</span>
                                     </span>
                                     <div class="bg-white/85 p-3 rounded-xl border border-[#238689]/15">
                                         <div class="flex justify-between text-xs font-semibold text-[#021225] mb-1">
                                             <span>Ombro Pitch</span>
-                                            <span id="lbl_left_pitch" class="font-mono text-[#238689] font-bold">90°</span>
+                                            <span id="lbl_left_pitch" class="font-mono text-[#238689] font-bold">90Â°</span>
                                         </div>
                                         <input type="range" id="rng_left_pitch" min="0" max="180" value="90" oninput="onArmCustomSliderChange('left', 'pitch', this.value)">
                                     </div>
                                     <div class="bg-white/85 p-3 rounded-xl border border-[#238689]/15">
                                         <div class="flex justify-between text-xs font-semibold text-[#021225] mb-1">
                                             <span>Ombro Roll</span>
-                                            <span id="lbl_left_roll" class="font-mono text-[#238689] font-bold">90°</span>
+                                            <span id="lbl_left_roll" class="font-mono text-[#238689] font-bold">90Â°</span>
                                         </div>
                                         <input type="range" id="rng_left_roll" min="0" max="180" value="90" oninput="onArmCustomSliderChange('left', 'roll', this.value)">
                                     </div>
                                     <div class="bg-white/85 p-3 rounded-xl border border-[#238689]/15">
                                         <div class="flex justify-between text-xs font-semibold text-[#021225] mb-1">
                                             <span>Cotovelo</span>
-                                            <span id="lbl_left_elbow" class="font-mono text-[#238689] font-bold">90°</span>
+                                            <span id="lbl_left_elbow" class="font-mono text-[#238689] font-bold">90Â°</span>
                                         </div>
                                         <input type="range" id="rng_left_elbow" min="0" max="180" value="90" oninput="onArmCustomSliderChange('left', 'elbow', this.value)">
                                     </div>
@@ -1064,14 +1064,14 @@
                     </section>
 
                     <!-- ================================================================ -->
-                    <!-- MÓDULO 4: VOZ PIPER OFFLINE                                      -->
+                    <!-- MÃ“DULO 4: VOZ PIPER OFFLINE                                      -->
                     <!-- ================================================================ -->
                     <section id="mod-voice" class="module-view hidden flex-col gap-5">
                         <div class="glass-card rounded-3xl p-6 flex flex-col gap-5">
                             <div class="flex items-center justify-between border-b border-[#238689]/12 pb-4">
                                 <div>
                                     <h2 class="font-extrabold text-base text-[#021225]">Voz do Roboldo (Piper TTS Offline)</h2>
-                                    <p class="text-xs text-slate-500">Síntese neural em português com sincronia labial DWIN</p>
+                                    <p class="text-xs text-slate-500">SÃ­ntese neural em portuguÃªs com sincronia labial DWIN</p>
                                 </div>
                                 <span id="ttsStatusBadge" class="text-xs font-bold px-3 py-1 rounded-full badge-mint">
                                     Pronto
@@ -1085,7 +1085,7 @@
                                         Restaurar texto COIN
                                     </button>
                                 </div>
-                                <textarea id="texto" rows="4" class="w-full glass-input rounded-2xl p-3.5 text-xs leading-relaxed">Olá, eu sou o Roboldo! Robô social da UERN! É um prazer estar com você aqui no COIN! Eu sou a versão 2.0. Meu irmão 1.0 e 1.2 também estão aqui presentes. Por ser o irmão mais novo, eu tenho braços, um rostinho dinâmico e posso ter acesso à câmera! Também tenho suporte pra tablet, onde podem ser alocados programas com jogos e pranchas assistivas. Quer saber mais sobre mim? Pergunta pra minha programadora, Artemísia! Bom evento!</textarea>
+                                <textarea id="texto" rows="4" class="w-full glass-input rounded-2xl p-3.5 text-xs leading-relaxed">OlÃ¡, eu sou o Roboldo! RobÃ´ social da UERN! Ã‰ um prazer estar com vocÃª aqui no COIN! Eu sou a versÃ£o 2.0. Meu irmÃ£o 1.0 e 1.2 tambÃ©m estÃ£o aqui presentes. Por ser o irmÃ£o mais novo, eu tenho braÃ§os, um rostinho dinÃ¢mico e posso ter acesso Ã  cÃ¢mera! TambÃ©m tenho suporte pra tablet, onde podem ser alocados programas com jogos e pranchas assistivas. Quer saber mais sobre mim? Pergunta pra minha programadora, ArtemÃ­sia! Bom evento!</textarea>
                             </div>
 
                             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 glass-subpanel p-4 rounded-2xl">
@@ -1117,15 +1117,15 @@
                                     <label class="text-xs font-bold text-[#021225] block mb-1">Voz Local:</label>
                                     <select id="vozes" class="w-full glass-input rounded-xl px-3 py-2 text-xs">
                                         <option value="pt-BR-FranciscaNeural">Faber (Neural Offline)</option>
-                                        <option value="pt-BR-AntonioNeural">Antônio (Neural Offline)</option>
+                                        <option value="pt-BR-AntonioNeural">AntÃ´nio (Neural Offline)</option>
                                     </select>
                                 </div>
                                 <div>
                                     <label class="text-xs font-bold text-[#021225] block mb-1">Ritmo da Boca DWIN:</label>
                                     <select id="piperTalkStyleSelect" class="w-full glass-input rounded-xl px-3 py-2 text-xs">
-                                        <option value="1">Sílabas ('1')</option>
+                                        <option value="1">SÃ­labas ('1')</option>
                                         <option value="2" selected>Animado ('2')</option>
-                                        <option value="3">Rápido ('3')</option>
+                                        <option value="3">RÃ¡pido ('3')</option>
                                     </select>
                                 </div>
                                 <input type="hidden" id="piperEndpoint" value="/api/synthesize">
@@ -1147,24 +1147,24 @@
                     </section>
 
                     <!-- ================================================================ -->
-                    <!-- MÓDULO 5: MAPEAMENTO DO AMBIENTE & ACESSO À CÂMERA (SLAM 2D)     -->
+                    <!-- MÃ“DULO 5: MAPEAMENTO DO AMBIENTE & ACESSO Ã€ CÃ‚MERA (SLAM 2D)     -->
                     <!-- ================================================================ -->
                     <section id="mod-mapping" class="module-view hidden flex-col gap-5">
                         <div class="glass-card rounded-3xl p-6 flex flex-col gap-5">
                             <div class="flex flex-wrap items-center justify-between gap-3 border-b border-[#238689]/12 pb-4">
                                 <div>
                                     <div class="flex items-center gap-2">
-                                        <h2 class="font-extrabold text-base text-[#021225]">Mapeamento do Ambiente & Acesso à Câmera (SLAM)</h2>
+                                        <h2 class="font-extrabold text-base text-[#021225]">Mapeamento do Ambiente & Acesso Ã  CÃ¢mera (SLAM)</h2>
                                         <span id="mapStatusBadge" class="px-2.5 py-0.5 text-[10px] font-bold uppercase rounded-full badge-mint">
                                             MAPEAMENTO ATIVO
                                         </span>
                                     </div>
-                                    <p class="text-xs text-slate-500">Use a câmera do Roboldo para escanear o ambiente e construir o mapa de ocupação 2D</p>
+                                    <p class="text-xs text-slate-500">Use a cÃ¢mera do Roboldo para escanear o ambiente e construir o mapa de ocupaÃ§Ã£o 2D</p>
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <button type="button" id="btnToggleMapCam" onclick="toggleCameraStream('mapping')" class="px-3.5 py-2 rounded-xl text-xs font-bold btn-cyan-primary flex items-center gap-1.5">
                                         <i class="fa-solid fa-video"></i>
-                                        <span id="btnToggleMapCamText">Ativar Câmera Real</span>
+                                        <span id="btnToggleMapCamText">Ativar CÃ¢mera Real</span>
                                     </button>
                                     <button type="button" onclick="scanEnvironmentStep()" class="px-3.5 py-2 rounded-xl text-xs font-bold btn-glass-soft flex items-center gap-1.5">
                                         <i class="fa-solid fa-compass"></i>
@@ -1176,16 +1176,16 @@
                                 </div>
                             </div>
 
-                            <!-- Grid: Feed da Câmera de Mapeamento + Mapa Occupancy Grid 2D -->
+                            <!-- Grid: Feed da CÃ¢mera de Mapeamento + Mapa Occupancy Grid 2D -->
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <!-- Feed da Câmera (Com Varredura Visual SLAM) -->
+                                <!-- Feed da CÃ¢mera (Com Varredura Visual SLAM) -->
                                 <div class="glass-subpanel rounded-2xl p-4 flex flex-col gap-3">
                                     <div class="flex items-center justify-between">
                                         <span class="text-xs font-extrabold text-[#238689] flex items-center gap-1.5">
-                                            <i class="fa-solid fa-camera"></i> Câmera do Roboldo (Visual SLAM)
+                                            <i class="fa-solid fa-camera"></i> CÃ¢mera do Roboldo (Visual SLAM)
                                         </span>
                                         <span id="mapCamModeLabel" class="text-[10px] font-mono font-semibold text-[#238689] bg-white/90 px-2 py-0.5 rounded-lg border border-[#238689]/20">
-                                            Modo Simulação 3D
+                                            Modo SimulaÃ§Ã£o 3D
                                         </span>
                                     </div>
 
@@ -1194,7 +1194,7 @@
                                         <canvas id="mapCameraOverlay" width="420" height="240" class="w-full h-full object-cover"></canvas>
                                         <div class="absolute bottom-2 left-2.5 right-2.5 flex items-center justify-between text-[10px] font-mono text-white bg-[#021225]/80 backdrop-blur-sm px-2.5 py-1 rounded-xl border border-[#25C5E9]/25">
                                             <span id="slamKeypointsCount">Keypoints ORB: 148 pts</span>
-                                            <span id="slamDepthEst">Profundidade Média: 1.85 m</span>
+                                            <span id="slamDepthEst">Profundidade MÃ©dia: 1.85 m</span>
                                         </div>
                                     </div>
 
@@ -1203,7 +1203,7 @@
                                             <i class="fa-solid fa-location-dot mr-1"></i>Marcar Destino
                                         </button>
                                         <button type="button" onclick="setMapClickMode('obstacle')" id="btnMapModeObs" class="py-2 px-2 rounded-xl text-xs font-bold btn-glass-soft">
-                                            <i class="fa-solid fa-cube mr-1"></i>Obstáculo
+                                            <i class="fa-solid fa-cube mr-1"></i>ObstÃ¡culo
                                         </button>
                                         <button type="button" onclick="setMapClickMode('poi')" id="btnMapModePoi" class="py-2 px-2 rounded-xl text-xs font-bold btn-glass-soft">
                                             <i class="fa-solid fa-bookmark mr-1"></i>Salvar POI
@@ -1230,7 +1230,7 @@
                                         <div class="flex items-center gap-3 text-[11px] font-semibold text-slate-600">
                                             <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-[#238689] inline-block"></span> Roboldo</span>
                                             <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-[#25C5E9] inline-block"></span> Rota A*</span>
-                                            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-[#021225] inline-block"></span> Obstáculo</span>
+                                            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-[#021225] inline-block"></span> ObstÃ¡culo</span>
                                         </div>
                                         <button type="button" onclick="navigateRobotAlongPath()" class="px-3 py-1 rounded-lg text-xs font-bold btn-cyan-primary">
                                             Navegar &rarr;
@@ -1244,16 +1244,16 @@
                                 <span class="text-xs font-bold text-[#021225]">Pontos de Interesse (POIs) Mapeados:</span>
                                 <div class="flex flex-wrap gap-2">
                                     <button type="button" onclick="goToPresetPoi('Bancada Principal', 2, 2)" class="px-3 py-1.5 rounded-xl text-xs font-bold btn-glass-soft">
-                                        📍 Bancada Principal (2.0, 2.0)
+                                        ðŸ“ Bancada Principal (2.0, 2.0)
                                     </button>
                                     <button type="button" onclick="goToPresetPoi('Entrada LAR/UERN', 9, 2)" class="px-3 py-1.5 rounded-xl text-xs font-bold btn-glass-soft">
-                                        📍 Entrada LAR/UERN (9.0, 2.0)
+                                        ðŸ“ Entrada LAR/UERN (9.0, 2.0)
                                     </button>
-                                    <button type="button" onclick="goToPresetPoi('Palco Apresentação COIN', 10, 5)" class="px-3 py-1.5 rounded-xl text-xs font-bold btn-glass-soft">
-                                        📍 Palco COIN (10.0, 5.0)
+                                    <button type="button" onclick="goToPresetPoi('Palco ApresentaÃ§Ã£o COIN', 10, 5)" class="px-3 py-1.5 rounded-xl text-xs font-bold btn-glass-soft">
+                                        ðŸ“ Palco COIN (10.0, 5.0)
                                     </button>
                                     <button type="button" onclick="goToPresetPoi('Base Auto-Docking', 1, 6)" class="px-3 py-1.5 rounded-xl text-xs font-bold btn-glass-soft">
-                                        ⚡ Base Auto-Docking (1.0, 6.0)
+                                        âš¡ Base Auto-Docking (1.0, 6.0)
                                     </button>
                                 </div>
                             </div>
@@ -1261,19 +1261,19 @@
                     </section>
 
                     <!-- ================================================================ -->
-                    <!-- MÓDULO 6: VISÃO COMPUTACIONAL & AUTO-TRACKING PESCOÇO 2-DoF      -->
+                    <!-- MÃ“DULO 6: VISÃƒO COMPUTACIONAL & AUTO-TRACKING PESCOÃ‡O 2-DoF      -->
                     <!-- ================================================================ -->
                     <section id="mod-vision" class="module-view hidden flex-col gap-5">
                         <div class="glass-card rounded-3xl p-6 flex flex-col gap-5">
                             <div class="flex flex-wrap items-center justify-between gap-3 border-b border-[#238689]/12 pb-4">
                                 <div>
                                     <div class="flex items-center gap-2">
-                                        <h2 class="font-extrabold text-base text-[#021225]">Visão Computacional & Percepção IHR</h2>
+                                        <h2 class="font-extrabold text-base text-[#021225]">VisÃ£o Computacional & PercepÃ§Ã£o IHR</h2>
                                         <span id="cvStatusBadge" class="px-2.5 py-0.5 text-[10px] font-bold uppercase rounded-full badge-mint">
-                                            DETECÇÃO ATIVA (30 FPS)
+                                            DETECÃ‡ÃƒO ATIVA (30 FPS)
                                         </span>
                                     </div>
-                                    <p class="text-xs text-slate-500">Detecção facial, gestos e objetos com rastreamento automático pelo pescoço 2-DoF</p>
+                                    <p class="text-xs text-slate-500">DetecÃ§Ã£o facial, gestos e objetos com rastreamento automÃ¡tico pelo pescoÃ§o 2-DoF</p>
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <button type="button" id="btnToggleCvCam" onclick="toggleCameraStream('vision')" class="px-3.5 py-2 rounded-xl text-xs font-bold btn-cyan-primary flex items-center gap-1.5">
@@ -1282,20 +1282,20 @@
                                     </button>
                                     <label class="inline-flex items-center gap-2 badge-mint px-3 py-2 rounded-xl text-xs font-bold cursor-pointer">
                                         <input type="checkbox" id="cvAutoTrackNeckToggle" checked onchange="toggleCvNeckTracking(this.checked)" class="rounded accent-[#238689]">
-                                        <span>Seguir Alvo c/ Pescoço 2-DoF</span>
+                                        <span>Seguir Alvo c/ PescoÃ§o 2-DoF</span>
                                     </label>
                                 </div>
                             </div>
 
-                            <!-- Seletor de Pipeline de Visão Computacional -->
+                            <!-- Seletor de Pipeline de VisÃ£o Computacional -->
                             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                                 <button type="button" onclick="selectCvPipeline('face')" data-cv="face" class="cv-mode-btn p-3 rounded-2xl text-xs font-bold btn-glass-soft active-tile flex flex-col items-center gap-1">
                                     <i class="fa-regular fa-face-smile-beam text-base"></i>
-                                    <span>Detecção Facial & Emoção</span>
+                                    <span>DetecÃ§Ã£o Facial & EmoÃ§Ã£o</span>
                                 </button>
                                 <button type="button" onclick="selectCvPipeline('hands')" data-cv="hands" class="cv-mode-btn p-3 rounded-2xl text-xs font-bold btn-glass-soft flex flex-col items-center gap-1">
                                     <i class="fa-regular fa-hand-paper text-base"></i>
-                                    <span>Gestos & Mãos (MediaPipe)</span>
+                                    <span>Gestos & MÃ£os (MediaPipe)</span>
                                 </button>
                                 <button type="button" onclick="selectCvPipeline('objects')" data-cv="objects" class="cv-mode-btn p-3 rounded-2xl text-xs font-bold btn-glass-soft flex flex-col items-center gap-1">
                                     <i class="fa-solid fa-cubes text-base"></i>
@@ -1307,11 +1307,11 @@
                                 </button>
                             </div>
 
-                            <!-- Viewport de Visão Computacional + Painel de Detecções -->
+                            <!-- Viewport de VisÃ£o Computacional + Painel de DetecÃ§Ãµes -->
                             <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
                                 <div class="md:col-span-7 glass-subpanel rounded-2xl p-4 flex flex-col gap-2.5">
                                     <div class="flex items-center justify-between text-xs">
-                                        <span class="font-extrabold text-[#238689]">Feed de Visão Computacional (Clique p/ mover o alvo)</span>
+                                        <span class="font-extrabold text-[#238689]">Feed de VisÃ£o Computacional (Clique p/ mover o alvo)</span>
                                         <span id="cvTargetCoordsBadge" class="font-mono text-[11px] text-[#238689] bg-white/90 px-2 py-0.5 rounded-lg border border-[#238689]/20">
                                             Alvo: X=52% Y=46%
                                         </span>
@@ -1323,10 +1323,10 @@
                                     </div>
                                 </div>
 
-                                <!-- Telemetria de Detecção & Reação Automática do Roboldo -->
+                                <!-- Telemetria de DetecÃ§Ã£o & ReaÃ§Ã£o AutomÃ¡tica do Roboldo -->
                                 <div class="md:col-span-5 glass-subpanel rounded-2xl p-4 flex flex-col justify-between gap-3">
                                     <div class="flex flex-col gap-2.5">
-                                        <span class="text-xs font-extrabold text-[#238689]">Detecções em Tempo Real</span>
+                                        <span class="text-xs font-extrabold text-[#238689]">DetecÃ§Ãµes em Tempo Real</span>
 
                                         <div class="bg-white/90 p-3 rounded-xl border border-[#238689]/15 flex items-center justify-between">
                                             <div>
@@ -1340,14 +1340,14 @@
 
                                         <div class="bg-white/90 p-3 rounded-xl border border-[#238689]/15 flex items-center justify-between">
                                             <div>
-                                                <span class="text-[10px] font-bold uppercase text-slate-400 block">Tracking Pescoço 2-DoF</span>
-                                                <span id="cvNeckTrackOutput" class="text-xs font-mono font-bold text-[#238689]">Yaw: 90° | Pitch: 95°</span>
+                                                <span class="text-[10px] font-bold uppercase text-slate-400 block">Tracking PescoÃ§o 2-DoF</span>
+                                                <span id="cvNeckTrackOutput" class="text-xs font-mono font-bold text-[#238689]">Yaw: 90Â° | Pitch: 95Â°</span>
                                             </div>
                                             <span class="text-[11px] font-bold text-[#238689]">Ativo</span>
                                         </div>
 
                                         <div class="bg-white/90 p-3 rounded-xl border border-[#238689]/15">
-                                            <span class="text-[10px] font-bold uppercase text-slate-400 block mb-1">Reação Social do Roboldo (IHR)</span>
+                                            <span class="text-[10px] font-bold uppercase text-slate-400 block mb-1">ReaÃ§Ã£o Social do Roboldo (IHR)</span>
                                             <p id="cvSocialReactionText" class="text-xs text-slate-700 font-medium">
                                                 Espelhando sorriso ('h') e mantendo contato visual com o visitante.
                                             </p>
@@ -1364,7 +1364,7 @@
                     </section>
 
                     <!-- ================================================================ -->
-                    <!-- MÓDULO 7: MONTAGEM DE SCRIPTS & TIMELINE                         -->
+                    <!-- MÃ“DULO 7: MONTAGEM DE SCRIPTS & TIMELINE                         -->
                     <!-- ================================================================ -->
                     <section id="mod-sequencer" class="module-view hidden flex-col gap-5">
                         <div class="glass-card rounded-3xl p-6 flex flex-col gap-4">
@@ -1376,14 +1376,14 @@
                                             PARADO
                                         </span>
                                     </div>
-                                    <p class="text-xs text-slate-500">Monte passos sequenciais com cabeça, braços e voz sincronizados</p>
+                                    <p class="text-xs text-slate-500">Monte passos sequenciais com cabeÃ§a, braÃ§os e voz sincronizados</p>
                                 </div>
 
                                 <div class="flex flex-wrap items-center gap-2">
                                     <select id="presetScriptSelect" onchange="loadPresetScript(this.value)" class="glass-input rounded-xl px-3 py-2 text-xs font-semibold">
-                                        <option value="coin_presentation">1. Apresentação Oficial COIN</option>
+                                        <option value="coin_presentation">1. ApresentaÃ§Ã£o Oficial COIN</option>
                                         <option value="custom_choreo">2. Coreografia Customizada</option>
-                                        <option value="empathy_hug">3. Reação Empática & Abraço</option>
+                                        <option value="empathy_hug">3. ReaÃ§Ã£o EmpÃ¡tica & AbraÃ§o</option>
                                     </select>
                                     <button type="button" onclick="playCurrentScript()" class="px-4 py-2 rounded-xl text-xs font-bold btn-cyan-primary">
                                         <i class="fa-solid fa-play mr-1"></i>Executar
@@ -1420,11 +1420,11 @@
                                         <tr class="border-b border-[#238689]/15 text-[11px] font-bold uppercase text-[#238689] bg-[#F2FFF6]/80">
                                             <th class="py-2.5 px-3 w-10">#</th>
                                             <th class="py-2.5 px-3">Passo</th>
-                                            <th class="py-2.5 px-3">Cabeça</th>
-                                            <th class="py-2.5 px-3">Braços</th>
+                                            <th class="py-2.5 px-3">CabeÃ§a</th>
+                                            <th class="py-2.5 px-3">BraÃ§os</th>
                                             <th class="py-2.5 px-3">Fala</th>
                                             <th class="py-2.5 px-3 w-24">Tempo</th>
-                                            <th class="py-2.5 px-3 w-28 text-right">Ações</th>
+                                            <th class="py-2.5 px-3 w-28 text-right">AÃ§Ãµes</th>
                                         </tr>
                                     </thead>
                                     <tbody id="scriptStepsTableBody" class="divide-y divide-[#238689]/10 text-xs"></tbody>
@@ -1434,14 +1434,14 @@
                     </section>
 
                     <!-- ================================================================ -->
-                    <!-- MÓDULO 8: MONITOR SERIAL & PAYLOADS                              -->
+                    <!-- MÃ“DULO 8: MONITOR SERIAL & PAYLOADS                              -->
                     <!-- ================================================================ -->
                     <section id="mod-telemetry" class="module-view hidden flex-col gap-5">
                         <div class="glass-card rounded-3xl p-6 flex flex-col gap-4">
                             <div class="flex flex-wrap items-center justify-between gap-2 border-b border-[#238689]/12 pb-3">
                                 <div>
                                     <h2 class="font-extrabold text-base text-[#021225]">Monitor Serial & Payloads Dual-ESP</h2>
-                                    <p class="text-xs text-slate-500">Comunicação USB Web Serial com ESP1 Cabeça e ESP2 Braços</p>
+                                    <p class="text-xs text-slate-500">ComunicaÃ§Ã£o USB Web Serial com ESP1 CabeÃ§a e ESP2 BraÃ§os</p>
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <button type="button" id="protoNativeBtn" onclick="setProtocolMode('NATIVE')" class="px-3 py-1 rounded-xl text-xs font-bold btn-cyan-primary">Nativo C++</button>
@@ -1455,14 +1455,14 @@
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div class="glass-subpanel rounded-2xl p-3.5">
                                     <div class="flex justify-between text-[11px] font-bold text-[#238689] mb-1">
-                                        <span>USB 1 • CABEÇA (9600 bps)</span>
+                                        <span>USB 1 â€¢ CABEÃ‡A (9600 bps)</span>
                                         <span id="headProtoTag">String Nativa</span>
                                     </div>
                                     <pre id="headPayloadPreview" class="text-xs font-mono text-[#021225] font-semibold overflow-x-auto"></pre>
                                 </div>
                                 <div class="glass-subpanel rounded-2xl p-3.5">
                                     <div class="flex justify-between text-[11px] font-bold text-[#238689] mb-1">
-                                        <span>USB 2 • BRAÇOS (115200 bps)</span>
+                                        <span>USB 2 â€¢ BRAÃ‡OS (115200 bps)</span>
                                         <span id="armsProtoTag">String Nativa</span>
                                     </div>
                                     <pre id="armsPayloadPreview" class="text-xs font-mono text-[#021225] font-semibold overflow-x-auto"></pre>
@@ -1477,8 +1477,8 @@
 
                             <div class="flex gap-2">
                                 <select id="manualTargetSelect" class="glass-input rounded-xl px-3 py-2 text-xs font-semibold">
-                                    <option value="head">USB 1 (Cabeça)</option>
-                                    <option value="arms">USB 2 (Braços)</option>
+                                    <option value="head">USB 1 (CabeÃ§a)</option>
+                                    <option value="arms">USB 2 (BraÃ§os)</option>
                                 </select>
                                 <input type="text" id="customSerialInput" placeholder="Enviar comando manual (ex: RAW:130,130,90,90,10 ou ad)" onkeydown="if(event.key==='Enter') sendCustomRawSerial()" class="flex-1 glass-input rounded-xl px-3 py-2 text-xs font-mono">
                                 <button onclick="sendCustomRawSerial()" class="px-4 py-2 rounded-xl text-xs font-bold btn-cyan-primary">Enviar</button>
@@ -1496,7 +1496,7 @@
     <!-- ======================================================================== -->
     <div id="roboldoFloatingWidget" class="fixed right-4 bottom-5 z-40 flex flex-col items-end gap-3 pointer-events-none">
 
-        <!-- Janela Popover do Simulador 3D (Só fica aberta quando o usuário clica para ver) -->
+        <!-- Janela Popover do Simulador 3D (SÃ³ fica aberta quando o usuÃ¡rio clica para ver) -->
         <div id="simulatorFloatingPanel" class="hidden pointer-events-auto w-[355px] sm:w-[400px] glass-shell rounded-3xl p-4 sm:p-5 flex-col gap-3 border border-[#238689]/25 shadow-2xl transition-all duration-200">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-2">
@@ -1505,7 +1505,7 @@
                         <span class="text-xs font-extrabold uppercase tracking-wider text-[#021225] block leading-none">
                             Simulador 3D do Roboldo
                         </span>
-                        <span class="text-[10px] text-slate-500">Arraste para girar • Cinemática 3-DoF Real</span>
+                        <span class="text-[10px] text-slate-500">Arraste para girar â€¢ CinemÃ¡tica 3-DoF Real</span>
                     </div>
                 </div>
                 <div class="flex items-center gap-1.5">
@@ -1518,10 +1518,10 @@
                 </div>
             </div>
 
-            <!-- Botões Rápidos de Ângulo de Câmera 3D -->
+            <!-- BotÃµes RÃ¡pidos de Ã‚ngulo de CÃ¢mera 3D -->
             <div class="flex items-center justify-between gap-1.5 bg-blue-50/70 border border-blue-100 rounded-xl px-2.5 py-1.5 text-[10px]">
                 <span class="font-bold text-blue-800 flex items-center gap-1">
-                    <i class="fa-solid fa-cube text-blue-600"></i> Câmera 3D:
+                    <i class="fa-solid fa-cube text-blue-600"></i> CÃ¢mera 3D:
                 </span>
                 <div class="flex items-center gap-1">
                     <button type="button" onclick="setSim3DCameraPreset('iso')" id="camBtnIso" class="px-2 py-0.5 rounded-lg font-bold bg-blue-600 text-white transition">3/4 Perspectiva</button>
@@ -1530,11 +1530,11 @@
                 </div>
             </div>
 
-            <!-- Palco 3D do Roboldo com as Cores Originais Azuis Clássicas e Profundidade Z -->
+            <!-- Palco 3D do Roboldo com as Cores Originais Azuis ClÃ¡ssicas e Profundidade Z -->
             <div id="robot3DStageContainer" class="w-full h-60 rounded-2xl bg-gradient-to-b from-blue-50/95 via-sky-50/65 to-white border border-blue-100 flex items-center justify-center relative overflow-hidden shadow-inner cursor-grab active:cursor-grabbing select-none">
                 <canvas id="robot3DCanvas" width="380" height="240" class="w-full h-full"></canvas>
 
-                <!-- SVG oculto de compatibilidade para referências legadas -->
+                <!-- SVG oculto de compatibilidade para referÃªncias legadas -->
                 <svg id="robotSvg" viewBox="0 0 400 230" class="hidden">
                     <g id="svgHeadGroup"></g>
                     <g id="svgEarRight"></g>
@@ -1548,10 +1548,10 @@
 
                 <div class="absolute bottom-2 left-2.5 right-2.5 flex items-center justify-between pointer-events-none">
                     <span class="px-2 py-0.5 rounded-lg bg-white/85 backdrop-blur-xs border border-blue-200 text-[9px] font-mono font-bold text-blue-800" id="sim3DCamAngleBadge">
-                        Cam Yaw: -24° • Pitch: 14°
+                        Cam Yaw: -24Â° â€¢ Pitch: 14Â°
                     </span>
                     <span class="px-2 py-0.5 rounded-lg bg-blue-600/90 text-white text-[9px] font-bold">
-                        Pitch: Frente/Trás • Roll: Cima/Baixo
+                        Pitch: Frente/TrÃ¡s â€¢ Roll: Cima/Baixo
                     </span>
                 </div>
 
@@ -1560,26 +1560,26 @@
                 </div>
             </div>
 
-            <!-- Resumo Limpo de Ângulos -->
+            <!-- Resumo Limpo de Ã‚ngulos -->
             <div class="grid grid-cols-2 gap-2.5 text-xs">
                 <div class="glass-subpanel rounded-2xl p-2.5">
-                    <span class="text-slate-500 block text-[10px] font-bold uppercase">Cabeça (Orelhas | Pesc)</span>
-                    <span id="liveHeadAnglesBadge" class="font-mono text-[#021225] font-bold text-[11px]">130°,130° | Y:90° P:95°</span>
+                    <span class="text-slate-500 block text-[10px] font-bold uppercase">CabeÃ§a (Orelhas | Pesc)</span>
+                    <span id="liveHeadAnglesBadge" class="font-mono text-[#021225] font-bold text-[11px]">130Â°,130Â° | Y:90Â° P:95Â°</span>
                 </div>
                 <div class="glass-subpanel rounded-2xl p-2.5">
-                    <span class="text-slate-500 block text-[10px] font-bold uppercase">Braços (Dir | Esq)</span>
+                    <span class="text-slate-500 block text-[10px] font-bold uppercase">BraÃ§os (Dir | Esq)</span>
                     <span id="liveArmAnglesBadge" class="font-mono text-[#021225] font-bold text-[11px]">90,90,90 | 90,90,90</span>
                 </div>
             </div>
 
-            <!-- Último Comando -->
+            <!-- Ãšltimo Comando -->
             <div class="bg-white/85 border border-[#238689]/15 rounded-2xl px-3 py-2 flex items-center justify-between text-xs">
                 <span class="font-mono text-[#021225] font-medium truncate text-[11px]" id="lastSerialQuickPreview">HEAD: "h\n" | ARMS: "n\n"</span>
                 <button onclick="switchModule('telemetry'); toggleFloatingSimulator(false);" class="text-[#238689] font-extrabold hover:underline shrink-0 ml-2">Serial &rarr;</button>
             </div>
         </div>
 
-        <!-- Botão Flutuante Estilo VLibras (Sempre visível em todas as abas) -->
+        <!-- BotÃ£o Flutuante Estilo VLibras (Sempre visÃ­vel em todas as abas) -->
         <button type="button" id="btnFloatingRoboldoTrigger" onclick="toggleFloatingSimulator()"
             class="pointer-events-auto group flex items-center gap-2.5 pl-2 pr-3.5 py-2 rounded-2xl bg-white/95 backdrop-blur-md border-2 border-blue-500/80 hover:border-blue-600 shadow-[0_10px_28px_rgba(37,99,235,0.24)] hover:shadow-[0_14px_34px_rgba(37,99,235,0.34)] transition-all duration-200 hover:-translate-y-0.5"
             title="Abrir / Fechar Simulador do Roboldo">
@@ -1589,7 +1589,7 @@
                     <!-- Orelhas -->
                     <rect x="10" y="28" width="8" height="24" rx="4" fill="#3b82f6" stroke="#1d4ed8" stroke-width="1.5"/>
                     <rect x="102" y="28" width="8" height="24" rx="4" fill="#3b82f6" stroke="#1d4ed8" stroke-width="1.5"/>
-                    <!-- Cabeça Azul -->
+                    <!-- CabeÃ§a Azul -->
                     <rect x="18" y="12" width="84" height="62" rx="18" fill="#2563eb" stroke="#1e40af" stroke-width="2"/>
                     <!-- Rosto Branco -->
                     <rect x="27" y="20" width="66" height="46" rx="12" fill="#ffffff" stroke="#bfdbfe" stroke-width="1.5"/>
@@ -1599,7 +1599,7 @@
                     <ellipse cx="43" cy="40" rx="6.5" ry="7" fill="#1a73e8"/>
                     <ellipse cx="77" cy="40" rx="6.5" ry="7" fill="#1a73e8"/>
                     <path d="M 47 54 Q 60 62 73 54" stroke="#1a73e8" stroke-width="3" fill="none" stroke-linecap="round"/>
-                    <!-- Pescoço e Torso -->
+                    <!-- PescoÃ§o e Torso -->
                     <rect x="50" y="74" width="20" height="10" rx="3" fill="#60a5fa" stroke="#2563eb" stroke-width="1.2"/>
                     <rect x="30" y="84" width="60" height="24" rx="10" fill="#2563eb" stroke="#1e40af" stroke-width="1.5"/>
                     <circle cx="60" cy="96" r="6" fill="#ffffff" stroke="#93c5fd" stroke-width="1.5"/>
@@ -1608,7 +1608,7 @@
                 <span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-white"></span>
             </div>
             <div class="text-left">
-                <span class="block text-[10px] font-extrabold uppercase tracking-wider text-blue-600 leading-tight">Ver Robô</span>
+                <span class="block text-[10px] font-extrabold uppercase tracking-wider text-blue-600 leading-tight">Ver RobÃ´</span>
                 <span id="floatingTriggerLabel" class="block text-xs font-extrabold text-[#021225] leading-tight">Simulador Roboldo</span>
             </div>
         </button>
@@ -1623,51 +1623,51 @@
         const TOUR_STEPS = [
             {
                 module: 'overview',
-                tag: 'PASSO 1 DE 8 • INÍCIO & PARTES',
-                title: 'Conheça as Partes do Roboldo',
-                desc: 'Use as Ações Rápidas para testar o robô inteiro ou clique em qualquer cartão para abrir o módulo correspondente.'
+                tag: 'PASSO 1 DE 8 â€¢ INÃCIO & PARTES',
+                title: 'ConheÃ§a as Partes do Roboldo',
+                desc: 'Use as AÃ§Ãµes RÃ¡pidas para testar o robÃ´ inteiro ou clique em qualquer cartÃ£o para abrir o mÃ³dulo correspondente.'
             },
             {
                 module: 'head',
-                tag: 'PASSO 2 DE 8 • CABEÇA & PESCOÇO 2-DoF',
-                title: 'Expressões Faciais, Orelhas e Pescoço 2-DoF',
-                desc: 'Mude a expressão do rosto DWIN ou ajuste as orelhas e os 2 eixos do pescoço (Yaw lados e Pitch cima/baixo).'
+                tag: 'PASSO 2 DE 8 â€¢ CABEÃ‡A & PESCOÃ‡O 2-DoF',
+                title: 'ExpressÃµes Faciais, Orelhas e PescoÃ§o 2-DoF',
+                desc: 'Mude a expressÃ£o do rosto DWIN ou ajuste as orelhas e os 2 eixos do pescoÃ§o (Yaw lados e Pitch cima/baixo).'
             },
             {
                 module: 'arms',
-                tag: 'PASSO 3 DE 8 • BRAÇOS ARTICULADOS',
-                title: 'Coreografias e 6 Ângulos dos Braços',
-                desc: 'Escolha um gesto pronto (como Aceno ou Abraço) ou personalize os 6 ângulos dos ombros e cotovelos.'
+                tag: 'PASSO 3 DE 8 â€¢ BRAÃ‡OS ARTICULADOS',
+                title: 'Coreografias e 6 Ã‚ngulos dos BraÃ§os',
+                desc: 'Escolha um gesto pronto (como Aceno ou AbraÃ§o) ou personalize os 6 Ã¢ngulos dos ombros e cotovelos.'
             },
             {
                 module: 'voice',
-                tag: 'PASSO 4 DE 8 • VOZ DO ROBOLDO',
-                title: 'Síntese de Voz em Português',
-                desc: 'Digite qualquer texto para o Roboldo falar com sincronia automática da boca.'
+                tag: 'PASSO 4 DE 8 â€¢ VOZ DO ROBOLDO',
+                title: 'SÃ­ntese de Voz em PortuguÃªs',
+                desc: 'Digite qualquer texto para o Roboldo falar com sincronia automÃ¡tica da boca.'
             },
             {
                 module: 'mapping',
-                tag: 'PASSO 5 DE 8 • MAPEAMENTO & CÂMERA (SLAM)',
-                title: 'Mapeamento 2D do Ambiente com Câmera',
-                desc: 'Use a câmera para mapear o ambiente, marcar obstáculos e navegar até Pontos de Interesse (POIs).'
+                tag: 'PASSO 5 DE 8 â€¢ MAPEAMENTO & CÃ‚MERA (SLAM)',
+                title: 'Mapeamento 2D do Ambiente com CÃ¢mera',
+                desc: 'Use a cÃ¢mera para mapear o ambiente, marcar obstÃ¡culos e navegar atÃ© Pontos de Interesse (POIs).'
             },
             {
                 module: 'vision',
-                tag: 'PASSO 6 DE 8 • VISÃO COMPUTACIONAL',
-                title: 'Detecção Facial, Gestos e Auto-Tracking',
-                desc: 'Detecte rostos, mãos e objetos e faça o pescoço 2-DoF acompanhar o alvo automaticamente.'
+                tag: 'PASSO 6 DE 8 â€¢ VISÃƒO COMPUTACIONAL',
+                title: 'DetecÃ§Ã£o Facial, Gestos e Auto-Tracking',
+                desc: 'Detecte rostos, mÃ£os e objetos e faÃ§a o pescoÃ§o 2-DoF acompanhar o alvo automaticamente.'
             },
             {
                 module: 'sequencer',
-                tag: 'PASSO 7 DE 8 • MONTAGEM DE SCRIPTS',
+                tag: 'PASSO 7 DE 8 â€¢ MONTAGEM DE SCRIPTS',
                 title: 'Crie Roteiros e Coreografias',
-                desc: 'Combine poses capturadas dos sliders, expressões e falas em uma sequência passo a passo.'
+                desc: 'Combine poses capturadas dos sliders, expressÃµes e falas em uma sequÃªncia passo a passo.'
             },
             {
                 module: 'telemetry',
-                tag: 'PASSO 8 DE 8 • MONITOR SERIAL',
-                title: 'Comunicação USB com os 2 ESP32',
-                desc: 'Acompanhe os comandos enviados em tempo real para a Cabeça e para os Braços.'
+                tag: 'PASSO 8 DE 8 â€¢ MONITOR SERIAL',
+                title: 'ComunicaÃ§Ã£o USB com os 2 ESP32',
+                desc: 'Acompanhe os comandos enviados em tempo real para a CabeÃ§a e para os BraÃ§os.'
             }
         ];
 
@@ -1676,10 +1676,10 @@
             currentOperatorName = cleanName;
             localStorage.setItem('roboldo_ide_operator_name', cleanName);
 
-            document.getElementById('userGreetingBadge').textContent = `Olá, ${cleanName}`;
+            document.getElementById('userGreetingBadge').textContent = `OlÃ¡, ${cleanName}`;
             document.getElementById('sidebarUserName').textContent = cleanName;
             document.getElementById('sidebarAvatarInitial').textContent = cleanName.charAt(0).toUpperCase();
-            document.getElementById('overviewWelcomeTitle').textContent = `Olá, ${cleanName}! Conheça as Partes do Roboldo`;
+            document.getElementById('overviewWelcomeTitle').textContent = `OlÃ¡, ${cleanName}! ConheÃ§a as Partes do Roboldo`;
         }
 
         function openOnboardingModal() {
@@ -1708,7 +1708,7 @@
             } else {
                 closeGuidedTour();
                 switchModule('overview');
-                showToast(`Olá, ${currentOperatorName}! Navegação livre ativada.`, 'success');
+                showToast(`OlÃ¡, ${currentOperatorName}! NavegaÃ§Ã£o livre ativada.`, 'success');
             }
         }
 
@@ -1786,7 +1786,7 @@
                 renderTourStep();
             } else {
                 closeGuidedTour();
-                showToast(`Tutorial concluído! Bom trabalho, ${currentOperatorName}.`, 'success');
+                showToast(`Tutorial concluÃ­do! Bom trabalho, ${currentOperatorName}.`, 'success');
             }
         }
 
@@ -1811,7 +1811,7 @@
             prevBtn.style.visibility = activeTourStep === 0 ? 'hidden' : 'visible';
             nextBtn.innerHTML = (activeTourStep === TOUR_STEPS.length - 1)
                 ? `<span>Concluir</span><i class="fa-solid fa-check ml-1.5"></i>`
-                : `<span>Próximo</span><i class="fa-solid fa-chevron-right ml-1.5"></i>`;
+                : `<span>PrÃ³ximo</span><i class="fa-solid fa-chevron-right ml-1.5"></i>`;
         }
 
         let protocolMode = 'NATIVE';
@@ -1839,12 +1839,12 @@
         };
 
         const HEAD_EMOTION_CATALOG = {
-            0: { name: "Angry",     cmd: "a", earR: 40,  earL: 40,  neck: 90,  neckPitch: 82,  speed: 8,  dwin: "Pág 3→4→5" },
-            1: { name: "Confused",  cmd: "c", earR: 135, earL: 55,  neck: 110, neckPitch: 95,  speed: 15, dwin: "Pág 6→7→8" },
-            2: { name: "Fear",      cmd: "f", earR: 30,  earL: 30,  neck: 75,  neckPitch: 78,  speed: 5,  dwin: "Pág 9→10→11" },
-            3: { name: "Happy",     cmd: "h", earR: 130, earL: 130, neck: 90,  neckPitch: 95,  speed: 10, dwin: "Pág 12→13→14" },
-            4: { name: "Sad",       cmd: "s", earR: 25,  earL: 25,  neck: 70,  neckPitch: 68,  speed: 30, dwin: "Pág 15→16→17" },
-            5: { name: "Surprised", cmd: "u", earR: 160, earL: 160, neck: 90,  neckPitch: 108, speed: 4,  dwin: "Pág 18→19→20" }
+            0: { name: "Angry",     cmd: "a", earR: 40,  earL: 40,  neck: 90,  neckPitch: 82,  speed: 8,  dwin: "PÃ¡g 3â†’4â†’5" },
+            1: { name: "Confused",  cmd: "c", earR: 135, earL: 55,  neck: 110, neckPitch: 95,  speed: 15, dwin: "PÃ¡g 6â†’7â†’8" },
+            2: { name: "Fear",      cmd: "f", earR: 30,  earL: 30,  neck: 75,  neckPitch: 78,  speed: 5,  dwin: "PÃ¡g 9â†’10â†’11" },
+            3: { name: "Happy",     cmd: "h", earR: 130, earL: 130, neck: 90,  neckPitch: 95,  speed: 10, dwin: "PÃ¡g 12â†’13â†’14" },
+            4: { name: "Sad",       cmd: "s", earR: 25,  earL: 25,  neck: 70,  neckPitch: 68,  speed: 30, dwin: "PÃ¡g 15â†’16â†’17" },
+            5: { name: "Surprised", cmd: "u", earR: 160, earL: 160, neck: 90,  neckPitch: 108, speed: 4,  dwin: "PÃ¡g 18â†’19â†’20" }
         };
 
         const HEAD_NEUTRAL_PRESET = { earR: 90,  earL: 90,  neck: 90, neckPitch: 90, speed: 20 };
@@ -1880,7 +1880,7 @@
                 ]
             },
             'ab': {
-                name: "Abraço", enumName: "GESTURE_HUG",
+                name: "AbraÃ§o", enumName: "GESTURE_HUG",
                 steps: [
                     { r: [80, 170, 150], l: [100, 10, 30], delay: 10, dwell: 350 },
                     { r: [80, 170, 160], l: [100, 10, 20], delay: 10, dwell: 500 },
@@ -1888,7 +1888,7 @@
                 ]
             },
             'am': {
-                name: "Aperto de Mão", enumName: "GESTURE_HANDSHAKE",
+                name: "Aperto de MÃ£o", enumName: "GESTURE_HANDSHAKE",
                 steps: [
                     { r: [80, 160, 90], l: [-1, -1, -1], delay: 10, dwell: 300 },
                     { r: [70, 160, 90], l: [-1, -1, -1], delay: 8,  dwell: 120 },
@@ -1907,8 +1907,8 @@
         };
 
         const usbConnections = {
-            head: { port: null, reader: null, connected: false, txCount: 0, label: "Cabeça USB" },
-            arms: { port: null, reader: null, connected: false, txCount: 0, label: "Braços USB" }
+            head: { port: null, reader: null, connected: false, txCount: 0, label: "CabeÃ§a USB" },
+            arms: { port: null, reader: null, connected: false, txCount: 0, label: "BraÃ§os USB" }
         };
 
         let headDebounceTimer = null;
@@ -1926,25 +1926,25 @@
         let scriptAbortFlag = false;
         let scriptTimeoutHandle = null;
 
-        const DEFAULT_COIN_TEXT = "Olá, eu sou o Roboldo! Robô social da UERN! É um prazer estar com você aqui no COIN! Eu sou a versão 2.0. Meu irmão 1.0 e 1.2 também estão aqui presentes. Por ser o irmão mais novo, eu tenho braços, um rostinho dinâmico e posso ter acesso à câmera! Também tenho suporte pra tablet, onde podem ser alocados programas com jogos e pranchas assistivas. Quer saber mais sobre mim? Pergunta pra minha programadora, Artemísia! Bom evento!";
+        const DEFAULT_COIN_TEXT = "OlÃ¡, eu sou o Roboldo! RobÃ´ social da UERN! Ã‰ um prazer estar com vocÃª aqui no COIN! Eu sou a versÃ£o 2.0. Meu irmÃ£o 1.0 e 1.2 tambÃ©m estÃ£o aqui presentes. Por ser o irmÃ£o mais novo, eu tenho braÃ§os, um rostinho dinÃ¢mico e posso ter acesso Ã  cÃ¢mera! TambÃ©m tenho suporte pra tablet, onde podem ser alocados programas com jogos e pranchas assistivas. Quer saber mais sobre mim? Pergunta pra minha programadora, ArtemÃ­sia! Bom evento!";
 
         const PRESET_SCRIPTS = {
             coin_presentation: [
-                { label: "1. Saudação Inicial + Aceno", headCmd: "h", armCmd: "ad", speakText: "Olá, eu sou o Roboldo! Robô social da UERN! É um prazer estar com você aqui no COIN!", talkStyle: "2", waitForSpeech: true, delayMs: 600 },
-                { label: "2. Apresentar Irmãos", headCmd: "RAW:135,135,112,12", armCmd: "60,135,110,120,45,70", speakText: "Eu sou a versão 2.0. Meu irmão 1.0 e 1.2 também estão aqui presentes.", talkStyle: "1", waitForSpeech: true, delayMs: 500 },
-                { label: "3. Mostrar Braços e Rosto", headCmd: "u", armCmd: "150,160,145,30,25,35", speakText: "Por ser o irmão mais novo, eu tenho braços, um rostinho dinâmico e posso ter acesso à câmera!", talkStyle: "2", waitForSpeech: true, delayMs: 500 },
-                { label: "4. Homenagem + Abraço", headCmd: "h", armCmd: "ab", speakText: "Quer saber mais sobre mim? Pergunta pra minha programadora, Artemísia! Bom evento!", talkStyle: "2", waitForSpeech: true, delayMs: 800 },
+                { label: "1. SaudaÃ§Ã£o Inicial + Aceno", headCmd: "h", armCmd: "ad", speakText: "OlÃ¡, eu sou o Roboldo! RobÃ´ social da UERN! Ã‰ um prazer estar com vocÃª aqui no COIN!", talkStyle: "2", waitForSpeech: true, delayMs: 600 },
+                { label: "2. Apresentar IrmÃ£os", headCmd: "RAW:135,135,112,12", armCmd: "60,135,110,120,45,70", speakText: "Eu sou a versÃ£o 2.0. Meu irmÃ£o 1.0 e 1.2 tambÃ©m estÃ£o aqui presentes.", talkStyle: "1", waitForSpeech: true, delayMs: 500 },
+                { label: "3. Mostrar BraÃ§os e Rosto", headCmd: "u", armCmd: "150,160,145,30,25,35", speakText: "Por ser o irmÃ£o mais novo, eu tenho braÃ§os, um rostinho dinÃ¢mico e posso ter acesso Ã  cÃ¢mera!", talkStyle: "2", waitForSpeech: true, delayMs: 500 },
+                { label: "4. Homenagem + AbraÃ§o", headCmd: "h", armCmd: "ab", speakText: "Quer saber mais sobre mim? Pergunta pra minha programadora, ArtemÃ­sia! Bom evento!", talkStyle: "2", waitForSpeech: true, delayMs: 800 },
                 { label: "5. Retorno ao Neutro", headCmd: "n", armCmd: "n", speakText: "", talkStyle: "1", waitForSpeech: false, delayMs: 800 }
             ],
             custom_choreo: [
-                { label: "Passo 1: Atenção", headCmd: "RAW:155,155,90,8", armCmd: "75,165,155,105,15,25", speakText: "Iniciando demonstração de movimentos customizados!", talkStyle: "2", waitForSpeech: true, delayMs: 400 },
-                { label: "Passo 2: Pose Assimétrica", headCmd: "RAW:160,40,65,10", armCmd: "165,160,130,20,80,90", speakText: "", talkStyle: "1", waitForSpeech: false, delayMs: 900 },
-                { label: "Passo 3: Pose de Vitória", headCmd: "h", armCmd: "170,165,120,10,20,60", speakText: "Qualquer ângulo pode ser coreografado pelo painel!", talkStyle: "2", waitForSpeech: true, delayMs: 800 },
+                { label: "Passo 1: AtenÃ§Ã£o", headCmd: "RAW:155,155,90,8", armCmd: "75,165,155,105,15,25", speakText: "Iniciando demonstraÃ§Ã£o de movimentos customizados!", talkStyle: "2", waitForSpeech: true, delayMs: 400 },
+                { label: "Passo 2: Pose AssimÃ©trica", headCmd: "RAW:160,40,65,10", armCmd: "165,160,130,20,80,90", speakText: "", talkStyle: "1", waitForSpeech: false, delayMs: 900 },
+                { label: "Passo 3: Pose de VitÃ³ria", headCmd: "h", armCmd: "170,165,120,10,20,60", speakText: "Qualquer Ã¢ngulo pode ser coreografado pelo painel!", talkStyle: "2", waitForSpeech: true, delayMs: 800 },
                 { label: "Passo 4: Neutro", headCmd: "n", armCmd: "90,90,90,90,90,90", speakText: "", talkStyle: "1", waitForSpeech: false, delayMs: 600 }
             ],
             empathy_hug: [
-                { label: "1. Surpresa", headCmd: "u", armCmd: "130,145,70,50,35,110", speakText: "Uau! Que alegria encontrar você por aqui!", talkStyle: "2", waitForSpeech: true, delayMs: 400 },
-                { label: "2. Sorriso + Abraço", headCmd: "h", armCmd: "ab", speakText: "Vem cá me dar um abraço de robô!", talkStyle: "2", waitForSpeech: true, delayMs: 1000 },
+                { label: "1. Surpresa", headCmd: "u", armCmd: "130,145,70,50,35,110", speakText: "Uau! Que alegria encontrar vocÃª por aqui!", talkStyle: "2", waitForSpeech: true, delayMs: 400 },
+                { label: "2. Sorriso + AbraÃ§o", headCmd: "h", armCmd: "ab", speakText: "Vem cÃ¡ me dar um abraÃ§o de robÃ´!", talkStyle: "2", waitForSpeech: true, delayMs: 1000 },
                 { label: "3. Aceno Duplo", headCmd: "h", armCmd: "a2", speakText: "", talkStyle: "1", waitForSpeech: false, delayMs: 1200 }
             ]
         };
@@ -2001,7 +2001,7 @@
             try {
                 if (conn.port) await conn.port.close();
             } catch (e) {}
-            document.getElementById(target === 'head' ? 'headConnText' : 'armsConnText').textContent = 'Simulação';
+            document.getElementById(target === 'head' ? 'headConnText' : 'armsConnText').textContent = 'SimulaÃ§Ã£o';
             showToast(`${conn.label} desconectado.`, "info");
         }
 
@@ -2070,7 +2070,7 @@
 
         function selectHeadTalkStyle(talkIdx) {
             headState.talkStyle = Number(talkIdx);
-            document.getElementById('talkEnumBadge').textContent = `Pág ${21 + talkIdx}`;
+            document.getElementById('talkEnumBadge').textContent = `PÃ¡g ${21 + talkIdx}`;
 
             document.querySelectorAll('.talk-btn').forEach(btn => {
                 const active = Number(btn.dataset.talk) === talkIdx;
@@ -2101,15 +2101,15 @@
             headState.servoStepDelayMs = s;
 
             document.getElementById('rng_earRightAngle').value = r;
-            document.getElementById('lbl_earRightAngle').textContent = `${r}°`;
+            document.getElementById('lbl_earRightAngle').textContent = `${r}Â°`;
             document.getElementById('rng_earLeftAngle').value = l;
-            document.getElementById('lbl_earLeftAngle').textContent = `${l}°`;
+            document.getElementById('lbl_earLeftAngle').textContent = `${l}Â°`;
             document.getElementById('rng_neckAngle').value = nYaw;
-            document.getElementById('lbl_neckAngle').textContent = `${nYaw}°`;
+            document.getElementById('lbl_neckAngle').textContent = `${nYaw}Â°`;
             document.getElementById('rng_neckPitchAngle').value = nPitch;
-            document.getElementById('lbl_neckPitchAngle').textContent = `${nPitch}°`;
+            document.getElementById('lbl_neckPitchAngle').textContent = `${nPitch}Â°`;
             document.getElementById('rng_servoStepDelayMs').value = s;
-            document.getElementById('lbl_servoStepDelayMs').textContent = `${s} ms/°`;
+            document.getElementById('lbl_servoStepDelayMs').textContent = `${s} ms/Â°`;
         }
 
         function toggleHeadServoOverride(enabled) {
@@ -2123,9 +2123,9 @@
             headState[field] = val;
 
             if (field === 'servoStepDelayMs') {
-                document.getElementById('lbl_servoStepDelayMs').textContent = `${val} ms/°`;
+                document.getElementById('lbl_servoStepDelayMs').textContent = `${val} ms/Â°`;
             } else {
-                document.getElementById(`lbl_${field}`).textContent = `${val}°`;
+                document.getElementById(`lbl_${field}`).textContent = `${val}Â°`;
             }
 
             headState.overrideServos = true;
@@ -2142,7 +2142,7 @@
         async function sendHeadCommandNow(source = 'MANUAL') {
             const cmds = buildHeadNativeStrings();
             for (const c of cmds) await writeToEspSerial('head', c);
-            if (source === 'MANUAL') showToast("Comando enviado para a Cabeça!", "success");
+            if (source === 'MANUAL') showToast("Comando enviado para a CabeÃ§a!", "success");
         }
 
         function triggerArmGesture(gestureEnumId, cmdShort) {
@@ -2177,12 +2177,12 @@
                 if (rightObj[axis] >= 0) {
                     armState.customPose.right[axis] = rightObj[axis];
                     document.getElementById(`rng_right_${axis}`).value = rightObj[axis];
-                    document.getElementById(`lbl_right_${axis}`).textContent = `${rightObj[axis]}°`;
+                    document.getElementById(`lbl_right_${axis}`).textContent = `${rightObj[axis]}Â°`;
                 }
                 if (leftObj[axis] >= 0) {
                     armState.customPose.left[axis] = leftObj[axis];
                     document.getElementById(`rng_left_${axis}`).value = leftObj[axis];
-                    document.getElementById(`lbl_left_${axis}`).textContent = `${leftObj[axis]}°`;
+                    document.getElementById(`lbl_left_${axis}`).textContent = `${leftObj[axis]}Â°`;
                 }
             });
         }
@@ -2195,14 +2195,14 @@
             const l = armState.customPose.left;
 
             armState.customPose[side][axis] = val;
-            document.getElementById(`lbl_${side}_${axis}`).textContent = `${val}°`;
+            document.getElementById(`lbl_${side}_${axis}`).textContent = `${val}Â°`;
 
             if (document.getElementById('mirrorArmsCheckbox').checked) {
                 const otherSide = (side === 'right') ? 'left' : 'right';
                 const mirroredVal = 180 - val;
                 armState.customPose[otherSide][axis] = mirroredVal;
                 document.getElementById(`rng_${otherSide}_${axis}`).value = mirroredVal;
-                document.getElementById(`lbl_${otherSide}_${axis}`).textContent = `${mirroredVal}°`;
+                document.getElementById(`lbl_${otherSide}_${axis}`).textContent = `${mirroredVal}Â°`;
             }
 
             armState.gestureCmdStr = `${r.pitch},${r.roll},${r.elbow},${l.pitch},${l.roll},${l.elbow}`;
@@ -2222,7 +2222,7 @@
             armState.gestureCmdStr = csvCmd;
             await writeToEspSerial('arms', csvCmd);
             updateInspectorAndVisuals();
-            if (source === 'MANUAL') showToast("6 ângulos enviados para os Braços!", "success");
+            if (source === 'MANUAL') showToast("6 Ã¢ngulos enviados para os BraÃ§os!", "success");
         }
 
         async function triggerCombinedMacro(macroKey) {
@@ -2231,31 +2231,31 @@
                 document.getElementById('overrideServosToggle').checked = false;
                 selectHeadMode(0);
                 triggerArmGesture(1, 'n');
-                showToast("Roboldo em Posição Neutra", "info");
+                showToast("Roboldo em PosiÃ§Ã£o Neutra", "info");
             } else if (macroKey === 'greet_right') {
                 selectHeadEmotion(3);
                 triggerArmGesture(2, 'ad');
-                showToast("Ação: Olá Feliz!", "success");
+                showToast("AÃ§Ã£o: OlÃ¡ Feliz!", "success");
             } else if (macroKey === 'warm_hug') {
                 selectHeadEmotion(3);
                 triggerArmGesture(5, 'ab');
-                showToast("Ação: Abraço Acolhedor!", "success");
+                showToast("AÃ§Ã£o: AbraÃ§o Acolhedor!", "success");
             } else if (macroKey === 'handshake') {
                 selectHeadTalkStyle(0);
                 triggerArmGesture(7, 'am');
-                showToast("Ação: Cumprimento!", "success");
+                showToast("AÃ§Ã£o: Cumprimento!", "success");
             } else if (macroKey === 'angry_hips') {
                 selectHeadEmotion(0);
                 triggerArmGesture(6, 'mc');
-                showToast("Ação: Mãos na Cintura!", "info");
+                showToast("AÃ§Ã£o: MÃ£os na Cintura!", "info");
             } else if (macroKey === 'surprised_wave2') {
                 selectHeadEmotion(5);
                 triggerArmGesture(4, 'a2');
-                showToast("Ação: Surpreso + Aceno Duplo!", "success");
+                showToast("AÃ§Ã£o: Surpreso + Aceno Duplo!", "success");
             } else if (macroKey === 'party_dance') {
                 selectHeadEmotion(3);
                 triggerArmGesture(8, 'd');
-                showToast("Ação: Modo Festa / Dancinha!", "success");
+                showToast("AÃ§Ã£o: Modo Festa / Dancinha!", "success");
             }
         }
 
@@ -2305,9 +2305,9 @@
         }
 
         // =========================================================================
-        // MOTOR DE VISUALIZAÇÃO 3D DO ROBOLDO (CINEMÁTICA 3-DoF REAL PITCH/ROLL/ELBOW)
+        // MOTOR DE VISUALIZAÃ‡ÃƒO 3D DO ROBOLDO (CINEMÃTICA 3-DoF REAL PITCH/ROLL/ELBOW)
         // =========================================================================
-        let sim3DCamYaw = -24;   // graus (visão 3/4 isométrica por padrão para ver frente/trás e cima/baixo)
+        let sim3DCamYaw = -24;   // graus (visÃ£o 3/4 isomÃ©trica por padrÃ£o para ver frente/trÃ¡s e cima/baixo)
         let sim3DCamPitch = 13;  // graus
         let sim3DDragging = false;
         let sim3DLastMouse = { x: 0, y: 0 };
@@ -2333,7 +2333,7 @@
 
         function updateSim3DCamBadge() {
             const b = document.getElementById('sim3DCamAngleBadge');
-            if (b) b.textContent = `Cam Yaw: ${Math.round(sim3DCamYaw)}° • Pitch: ${Math.round(sim3DCamPitch)}°`;
+            if (b) b.textContent = `Cam Yaw: ${Math.round(sim3DCamYaw)}Â° â€¢ Pitch: ${Math.round(sim3DCamPitch)}Â°`;
         }
 
         function initRobot3DOrbitControls() {
@@ -2359,11 +2359,11 @@
             stage.addEventListener('pointercancel', () => { sim3DDragging = false; });
         }
 
-        // Operações vetoriais 3D
+        // OperaÃ§Ãµes vetoriais 3D
         function vec3Add(a, b) { return { x: a.x + b.x, y: a.y + b.y, z: a.z + b.z }; }
         function vec3Scale(v, s) { return { x: v.x * s, y: v.y * s, z: v.z * s }; }
 
-        // Rotação de Rodrigues em torno de eixo unitário k por ângulo theta (rad)
+        // RotaÃ§Ã£o de Rodrigues em torno de eixo unitÃ¡rio k por Ã¢ngulo theta (rad)
         function rotateAroundAxis3D(v, k, theta) {
             const cosT = Math.cos(theta);
             const sinT = Math.sin(theta);
@@ -2380,54 +2380,65 @@
             };
         }
 
-        // Calcula os pontos 3D (Ombro -> Cotovelo -> Mão) de cada braço respeitando:
-        // - Ombro Pitch (pra frente e pra trás / cima e baixo no plano sagital Y-Z)
-        // - Ombro Roll  (abertura vertical cima/baixo e afastamento lateral X-Y)
-        // - Cotovelo    (flexão real do antebraço para frente/cima em relação ao úmero)
+        // Calcula os pontos 3D (Ombro -> Cotovelo -> MÃ£o) de cada braÃ§o usando
+        // uma cadeia cinemÃ¡tica hierÃ¡rquica real de 3 juntas (Shoulder Pitch -> Shoulder Roll -> Elbow Hinge):
         function computeArm3DKinematics(side, pose, shoulderOrigin) {
             const isRight = (side === 'right');
-            const signX = isRight ? -1 : 1; // Braço Direito do robô fica em X < 0 (esquerda da tela frontal)
-            const L1 = 44; // Comprimento do braço superior (úmero)
-            const L2 = 38; // Comprimento do antebraço
+            const signX = isRight ? -1 : 1; // BraÃ§o Direito fica em X < 0 (esquerda da tela frontal); Esquerdo em X > 0
+            const L1 = 42; // Comprimento do braÃ§o superior (Ãºmero)
+            const L2 = 38; // Comprimento do antebraÃ§o
 
-            // Normaliza os ângulos dos servos (0..180°) para desvios em radianos a partir do neutro (90°)
-            // Na montagem física espelhada do Roboldo:
-            // - Pitch: controla avanço frontal/traseiro e elevação sagital
-            // - Roll: controla elevação/abaixamento lateral do braço
-            // - Elbow: controla dobra do cotovelo
+            // Desvios em graus a partir do centro neutro (90Â°) levando em conta a montagem simÃ©trica espelhada dos servos:
+            // - pitchDeltaDeg (>0: ombro gira para frente/cima; <0: para trÃ¡s/baixo)
+            // - rollDeltaDeg  (>0: ombro eleva/abre; <0: ombro abaixa)
+            // - elbowDeltaDeg (>0: cotovelo dobra para cima/dentro como no Aceno, AbraÃ§o e Cintura; <0: dobra para baixo)
             const pitchDeltaDeg = isRight ? (pose.pitch - 90) : (90 - pose.pitch);
             const rollDeltaDeg  = isRight ? (pose.roll - 90)  : (90 - pose.roll);
             const elbowDeltaDeg = isRight ? (pose.elbow - 90) : (90 - pose.elbow);
 
-            const pitchRad = (pitchDeltaDeg * Math.PI) / 180; // Positivo = ombro gira pra frente/cima
-            const rollRad  = (rollDeltaDeg  * Math.PI) / 180; // Positivo = braço sobe / fecha; Negativo = braço abaixa
-            const elbowRad = (elbowDeltaDeg * Math.PI) / 180; // Flexão do cotovelo
+            const pitchRad = (pitchDeltaDeg * Math.PI) / 180;
+            const rollRad  = (rollDeltaDeg  * Math.PI) / 180;
+            const elbowRad = (elbowDeltaDeg * Math.PI) / 180;
 
-            // Base local do ombro antes do Pitch/Roll: apontando para fora lateralmente (signX, 0, 0)
-            // 1) Aplicamos Roll (elevação cima/baixo no plano frontal X-Y e avanço no abraço):
-            // Quando Roll = 90° (0 rad), o braço está aberto horizontalmente.
-            // Quando Roll aumenta (>90°), o braço sobe/fecha para frente; quando diminui (<90°), abaixa.
-            let dirUpper = {
-                x: signX * Math.cos(rollRad * 0.85),
-                y: -Math.sin(rollRad * 0.75),
-                z: Math.sin(rollRad * 0.55)
-            };
-            // Normaliza dirUpper
-            const lenU = Math.hypot(dirUpper.x, dirUpper.y, dirUpper.z) || 1;
-            dirUpper = { x: dirUpper.x / lenU, y: dirUpper.y / lenU, z: dirUpper.z / lenU };
+            // Referencial ortonormal inicial do braÃ§o em pose neutra (90Â°, 90Â°, 90Â°):
+            // - uAxis: direÃ§Ã£o longitudinal do braÃ§o (apontando para fora lateralmente: signX)
+            // - vAxis: direÃ§Ã£o "para cima" local do braÃ§o (eixo para onde o cotovelo dobra ao aumentar o Ã¢ngulo)
+            // - wAxis: eixo da dobradiÃ§a (hinge) do cotovelo (apontando para frente +Z)
+            let uAxis = { x: signX, y: 0,  z: 0 };
+            let vAxis = { x: 0,     y: -1, z: 0 };
+            let wAxis = { x: 0,     y: 0,  z: 1 };
 
-            // 2) Aplicamos o Pitch do Ombro (rotação em torno do eixo lateral X: gira o braço para FRENTE +Z / TRÁS -Z e CIMA -Y / BAIXO +Y)
-            const axisX = { x: 1, y: 0, z: 0 };
-            dirUpper = rotateAroundAxis3D(dirUpper, axisX, pitchRad);
+            // 1Âº Grau de Liberdade (Ombro Roll â€” Cima / Baixo no plano frontal):
+            // Gira o conjunto do braÃ§o em torno do eixo frontal Z (signX * rollRad * 0.72)
+            // Quando Roll > 90Â°, o braÃ§o sobe (Y negativo); quando Roll < 90Â°, o braÃ§o desce (Y positivo).
+            const rollAngle = -signX * rollRad * 0.72;
+            uAxis = rotateAroundAxis3D(uAxis, wAxis, rollAngle);
+            vAxis = rotateAroundAxis3D(vAxis, wAxis, rollAngle);
 
-            // Vetor perpendicular para articulação do cotovelo (dobrando para frente/cima do robô)
-            let bendAxis = rotateAroundAxis3D({ x: 0, y: 1, z: 0 }, axisX, pitchRad);
-            const dirForearm = rotateAroundAxis3D(dirUpper, bendAxis, -signX * elbowRad * 0.9);
-            // Também aplica componente sagital direta do cotovelo (para frente/cima)
-            const dirForearmFinal = rotateAroundAxis3D(dirForearm, axisX, elbowRad * 0.55);
+            // TambÃ©m adiciona leve fechamento frontal quando Roll Ã© muito alto (ex: AbraÃ§o Roll=170Â°)
+            const hugCloseAngle = -signX * Math.max(0, rollRad) * 0.38;
+            const worldY = { x: 0, y: 1, z: 0 };
+            uAxis = rotateAroundAxis3D(uAxis, worldY, hugCloseAngle);
+            vAxis = rotateAroundAxis3D(vAxis, worldY, hugCloseAngle);
+            wAxis = rotateAroundAxis3D(wAxis, worldY, hugCloseAngle);
 
-            const elbowPos = vec3Add(shoulderOrigin, vec3Scale(dirUpper, L1));
-            const handPos  = vec3Add(elbowPos, vec3Scale(dirForearmFinal, L2));
+            // 2Âº Grau de Liberdade (Ombro Pitch â€” Frente / TrÃ¡s e elevaÃ§Ã£o sagital em torno do eixo lateral X):
+            // Quando Pitch > 90Â°, o braÃ§o gira para frente (+Z) e para cima (-Y).
+            // Quando Pitch < 90Â°, o braÃ§o gira para trÃ¡s (-Z) ou para baixo (+Y).
+            const worldX = { x: 1, y: 0, z: 0 };
+            const pitchAngle = pitchRad * 0.82;
+            uAxis = rotateAroundAxis3D(uAxis, worldX, pitchAngle);
+            vAxis = rotateAroundAxis3D(vAxis, worldX, pitchAngle);
+            wAxis = rotateAroundAxis3D(wAxis, worldX, pitchAngle);
+
+            // 3Âº Grau de Liberdade (Cotovelo â€” DobradiÃ§a pura de 1 eixo no plano do braÃ§o!):
+            // O antebraÃ§o parte da direÃ§Ã£o do Ãºmero (uAxis) e gira APENAS em torno do eixo da dobradiÃ§a do cotovelo (wAxis)
+            // em direÃ§Ã£o a vAxis (para cima/dentro quando elbowDeltaDeg > 0, ou para baixo quando < 0).
+            const elbowHingeAngle = -signX * elbowRad * 0.95;
+            const dirForearm = rotateAroundAxis3D(uAxis, wAxis, elbowHingeAngle);
+
+            const elbowPos = vec3Add(shoulderOrigin, vec3Scale(uAxis, L1));
+            const handPos  = vec3Add(elbowPos, vec3Scale(dirForearm, L2));
 
             return {
                 shoulder: shoulderOrigin,
@@ -2440,13 +2451,13 @@
             const yawRad   = (sim3DCamYaw * Math.PI) / 180;
             const pitchRad = (sim3DCamPitch * Math.PI) / 180;
 
-            // Rotação da câmera (Yaw em torno de Y)
+            // RotaÃ§Ã£o da cÃ¢mera (Yaw em torno de Y)
             const cosY = Math.cos(yawRad), sinY = Math.sin(yawRad);
             const x1 = pt.x * cosY + pt.z * sinY;
             const z1 = -pt.x * sinY + pt.z * cosY;
             const y1 = pt.y;
 
-            // Rotação da câmera (Pitch em torno de X)
+            // RotaÃ§Ã£o da cÃ¢mera (Pitch em torno de X)
             const cosP = Math.cos(pitchRad), sinP = Math.sin(pitchRad);
             const y2 = y1 * cosP - z1 * sinP;
             const z2 = y1 * sinP + z1 * cosP;
@@ -2481,7 +2492,7 @@
             ctx.strokeStyle = borderColor || '#1e40af';
             ctx.stroke();
 
-            // Preenchimento cilíndrico com gradiente 3D
+            // Preenchimento cilÃ­ndrico com gradiente 3D
             const grad = ctx.createLinearGradient(p1.x, p1.y - rAvg, p2.x, p2.y + rAvg);
             grad.addColorStop(0, colorStart);
             grad.addColorStop(1, colorEnd);
@@ -2563,7 +2574,7 @@
                 { idx: [0, 1, 2, 3], color: frontColors[0], name: 'front' }
             ];
 
-            // Ordena faces da mais distante para a mais próxima (Painter's Algorithm)
+            // Ordena faces da mais distante para a mais prÃ³xima (Painter's Algorithm)
             faces.forEach(f => {
                 f.avgZ = f.idx.reduce((acc, i) => acc + proj[i].z, 0) / 4;
             });
@@ -2607,7 +2618,7 @@
 
             ctx.clearRect(0, 0, W, H);
 
-            // 1. Piso 3D em perspectiva (Grid espacial para percepção imediata de frente/trás Z e altura Y)
+            // 1. Piso 3D em perspectiva (Grid espacial para percepÃ§Ã£o imediata de frente/trÃ¡s Z e altura Y)
             ctx.save();
             const floorY = 78;
             for (let gx = -90; gx <= 90; gx += 30) {
@@ -2631,7 +2642,7 @@
                 ctx.stroke();
             }
 
-            // Sombra projetada do robô no chão 3D
+            // Sombra projetada do robÃ´ no chÃ£o 3D
             const shadowCenter = projectPoint3D({ x: 0, y: floorY, z: 0 }, W, H);
             ctx.beginPath();
             ctx.ellipse(shadowCenter.x, shadowCenter.y, 58 * shadowCenter.scale, 18 * shadowCenter.scale, 0, 0, Math.PI * 2);
@@ -2639,16 +2650,16 @@
             ctx.fill();
             ctx.restore();
 
-            // 2. Calcula a cinemática 3D dos dois braços (Ombro -> Cotovelo -> Mão)
+            // 2. Calcula a cinemÃ¡tica 3D dos dois braÃ§os (Ombro -> Cotovelo -> MÃ£o)
             const rArm = computeArm3DKinematics('right', armState.customPose.right, { x: -50, y: 6, z: 0 });
             const lArm = computeArm3DKinematics('left',  armState.customPose.left,  { x:  50, y: 6, z: 0 });
 
-            // Sombra das mãos no chão para enxergar claramente quando o braço vai pra frente (+Z) ou pra trás (-Z)
+            // Sombra das mÃ£os no chÃ£o para enxergar claramente quando o braÃ§o vai pra frente (+Z) ou pra trÃ¡s (-Z)
             [rArm.hand, lArm.hand].forEach(hand3D => {
                 const hShadow = projectPoint3D({ x: hand3D.x, y: floorY, z: hand3D.z }, W, H);
                 const hProj   = projectPoint3D(hand3D, W, H);
                 ctx.save();
-                // Linha tracejada vertical de referência até o chão
+                // Linha tracejada vertical de referÃªncia atÃ© o chÃ£o
                 ctx.beginPath();
                 ctx.setLineDash([2, 3]);
                 ctx.moveTo(hProj.x, hProj.y);
@@ -2657,7 +2668,7 @@
                 ctx.lineWidth = 1;
                 ctx.stroke();
                 ctx.setLineDash([]);
-                // Sombra circular da mão no piso
+                // Sombra circular da mÃ£o no piso
                 ctx.beginPath();
                 ctx.ellipse(hShadow.x, hShadow.y, 7 * hShadow.scale, 3.5 * hShadow.scale, 0, 0, Math.PI * 2);
                 ctx.fillStyle = 'rgba(37, 99, 235, 0.22)';
@@ -2665,7 +2676,7 @@
                 ctx.restore();
             });
 
-            // 3. Monta a lista de componentes 3D ordenados por profundidade Z da câmera (Painter's Algorithm)
+            // 3. Monta a lista de componentes 3D ordenados por profundidade Z da cÃ¢mera (Painter's Algorithm)
             const headYawDeg   = (headState.neckAngle - 90) * 0.85;
             const headPitchDeg = (90 - headState.neckPitchAngle) * 0.75;
             const headCenter3D = {
@@ -2699,7 +2710,7 @@
                 }
             });
 
-            // Pescoço Cilíndrico 3D
+            // PescoÃ§o CilÃ­ndrico 3D
             const neckTop = { x: headCenter3D.x * 0.5, y: -14, z: headCenter3D.z * 0.5 };
             const neckBot = { x: 0, y: 2, z: 0 };
             const pNeckTop = projectPoint3D(neckTop, W, H);
@@ -2711,7 +2722,7 @@
                 }
             });
 
-            // Função auxiliar para enfileirar os segmentos de cada braço com ordenação Z individual
+            // FunÃ§Ã£o auxiliar para enfileirar os segmentos de cada braÃ§o com ordenaÃ§Ã£o Z individual
             function enqueueArm3D(armKin) {
                 const pShoulder = projectPoint3D(armKin.shoulder, W, H);
                 const pElbow    = projectPoint3D(armKin.elbow, W, H);
@@ -2722,7 +2733,7 @@
                     z: pShoulder.z,
                     draw: () => draw3DSphereJoint(ctx, pShoulder, 9.5, '#dbeafe', '#2563eb', true)
                 });
-                // Braço Superior (Úmero)
+                // BraÃ§o Superior (Ãšmero)
                 renderables.push({
                     z: (pShoulder.z + pElbow.z) * 0.5,
                     draw: () => draw3DCapsuleLimb(ctx, pShoulder, pElbow, 6.5, 6, '#3b82f6', '#1d4ed8', '#1e40af')
@@ -2732,12 +2743,12 @@
                     z: pElbow.z,
                     draw: () => draw3DSphereJoint(ctx, pElbow, 6.2, '#ffffff', '#2563eb', true)
                 });
-                // Antebraço
+                // AntebraÃ§o
                 renderables.push({
                     z: (pElbow.z + pHand.z) * 0.5,
                     draw: () => draw3DCapsuleLimb(ctx, pElbow, pHand, 5.5, 5, '#60a5fa', '#3b82f6', '#2563eb')
                 });
-                // Mão esférica azul original
+                // MÃ£o esfÃ©rica azul original
                 renderables.push({
                     z: pHand.z + 1,
                     draw: () => draw3DSphereJoint(ctx, pHand, 6.8, '#1a73e8', '#ffffff', true)
@@ -2747,7 +2758,7 @@
             enqueueArm3D(rArm);
             enqueueArm3D(lArm);
 
-            // Cabeça 3D com Orelhas Articuladas e Visor Branco/Azul Original
+            // CabeÃ§a 3D com Orelhas Articuladas e Visor Branco/Azul Original
             const headProj = projectPoint3D(headCenter3D, W, H);
             renderables.push({
                 z: headProj.z + 2,
@@ -2782,7 +2793,7 @@
                     });
                     draw3DCapsuleLimb(ctx, earLBase, earLTip, 5.5, 5, '#3b82f6', '#2563eb', '#1d4ed8');
 
-                    // Bloco 3D da Cabeça Azul com Visor Frontal Branco e Expressão Facial DWIN
+                    // Bloco 3D da CabeÃ§a Azul com Visor Frontal Branco e ExpressÃ£o Facial DWIN
                     draw3DRoundedPrism(
                         ctx,
                         headCenter3D,
@@ -2810,7 +2821,7 @@
                             ctxFace.strokeStyle = '#bfdbfe';
                             ctxFace.stroke();
 
-                            // Geometria das Sobrancelhas, Olhos e Boca no espaço 3D da face
+                            // Geometria das Sobrancelhas, Olhos e Boca no espaÃ§o 3D da face
                             let browLY1 = -14, browLY2 = -14, browRY1 = -14, browRY2 = -14;
                             let eyeRx = 7.5, eyeRy = 8.5;
                             let mouthType = 'smile'; // neutral, smile, sad, open, wave
@@ -2916,7 +2927,7 @@
             const r = armState.customPose.right;
             const l = armState.customPose.left;
 
-            document.getElementById('liveHeadAnglesBadge').textContent = `${headState.earRightAngle}°,${headState.earLeftAngle}° | Y:${headState.neckAngle}° P:${headState.neckPitchAngle}°`;
+            document.getElementById('liveHeadAnglesBadge').textContent = `${headState.earRightAngle}Â°,${headState.earLeftAngle}Â° | Y:${headState.neckAngle}Â° P:${headState.neckPitchAngle}Â°`;
             document.getElementById('liveArmAnglesBadge').textContent = `${r.pitch},${r.roll},${r.elbow} | ${l.pitch},${l.roll},${l.elbow}`;
 
             renderRobot3DScene();
@@ -2983,7 +2994,7 @@
             requisicaoAtual = controller;
 
             statusDiv.textContent = 'Sintetizando voz...';
-            badge.textContent = 'Gerando áudio...';
+            badge.textContent = 'Gerando Ã¡udio...';
 
             try {
                 const resposta = await fetch('/api/synthesize', {
@@ -3008,12 +3019,12 @@
 
                 return await new Promise((resolve) => {
                     audioAtual.onplay = () => {
-                        statusDiv.textContent = '🗣️ Roboldo falando...';
+                        statusDiv.textContent = 'ðŸ—£ï¸ Roboldo falando...';
                         badge.textContent = 'Falando';
                         applyHeadCommandFromString(talkStyleCmd);
                     };
                     audioAtual.onended = () => {
-                        statusDiv.textContent = '✅ Fala concluída!';
+                        statusDiv.textContent = 'âœ… Fala concluÃ­da!';
                         badge.textContent = 'Pronto';
                         applyHeadCommandFromString(endHeadCmd);
                         resolve();
@@ -3024,7 +3035,7 @@
             } catch (erro) {
                 if (erro.name === 'AbortError') return;
                 if ('speechSynthesis' in window) {
-                    statusDiv.textContent = '🗣️ Falando com voz do navegador...';
+                    statusDiv.textContent = 'ðŸ—£ï¸ Falando com voz do navegador...';
                     badge.textContent = 'Falando';
                     return await new Promise((resolve) => {
                         window.speechSynthesis.cancel();
@@ -3035,7 +3046,7 @@
                         utter.volume = Number(volInput.value);
                         utter.onstart = () => applyHeadCommandFromString(talkStyleCmd);
                         utter.onend = () => {
-                            statusDiv.textContent = '✅ Fala concluída!';
+                            statusDiv.textContent = 'âœ… Fala concluÃ­da!';
                             badge.textContent = 'Pronto';
                             applyHeadCommandFromString(endHeadCmd);
                             resolve();
@@ -3278,8 +3289,8 @@
             row.className = "border-b border-[#238689]/10 pb-1 flex items-center gap-2";
 
             const badge = (target === 'head')
-                ? `<span class="px-1.5 py-0.5 rounded badge-mint text-[10px] font-bold">CABEÇA</span>`
-                : `<span class="px-1.5 py-0.5 rounded bg-[#25C5E9]/15 text-[#238689] border border-[#25C5E9]/30 text-[10px] font-bold">BRAÇOS</span>`;
+                ? `<span class="px-1.5 py-0.5 rounded badge-mint text-[10px] font-bold">CABEÃ‡A</span>`
+                : `<span class="px-1.5 py-0.5 rounded bg-[#25C5E9]/15 text-[#238689] border border-[#25C5E9]/30 text-[10px] font-bold">BRAÃ‡OS</span>`;
 
             row.innerHTML = `<span class="text-slate-400">[${now}]</span> ${badge} <span class="text-[#021225] font-semibold">${escapeHtml(message)}</span>`;
             logBox.appendChild(row);
@@ -3317,7 +3328,7 @@
         }
 
         // =========================================================================
-        // MÓDULO DE MAPEAMENTO & CÂMERA (SLAM 2D) E VISÃO COMPUTACIONAL
+        // MÃ“DULO DE MAPEAMENTO & CÃ‚MERA (SLAM 2D) E VISÃƒO COMPUTACIONAL
         // =========================================================================
         let activeWebcamStream = null;
         let mapClickMode = 'goal';
@@ -3346,15 +3357,15 @@
                 activeWebcamStream = null;
                 mapVideo.classList.add('hidden');
                 cvVideo.classList.add('hidden');
-                btnMapTxt.textContent = "Ativar Câmera Real";
+                btnMapTxt.textContent = "Ativar CÃ¢mera Real";
                 btnCvTxt.textContent  = "Usar Webcam Real";
-                document.getElementById('mapCamModeLabel').textContent = "Modo Simulação 3D";
-                showToast("Câmera encerrada. Voltando ao modo simulação.", "info");
+                document.getElementById('mapCamModeLabel').textContent = "Modo SimulaÃ§Ã£o 3D";
+                showToast("CÃ¢mera encerrada. Voltando ao modo simulaÃ§Ã£o.", "info");
                 return;
             }
 
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                showToast("API de câmera não disponível neste navegador. Mantendo simulação visual.", "info");
+                showToast("API de cÃ¢mera nÃ£o disponÃ­vel neste navegador. Mantendo simulaÃ§Ã£o visual.", "info");
                 return;
             }
 
@@ -3362,12 +3373,12 @@
                 activeWebcamStream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 360 } });
                 mapVideo.srcObject = activeWebcamStream;
                 cvVideo.srcObject  = activeWebcamStream;
-                btnMapTxt.textContent = "Desativar Câmera";
+                btnMapTxt.textContent = "Desativar CÃ¢mera";
                 btnCvTxt.textContent  = "Desativar Webcam";
-                document.getElementById('mapCamModeLabel').textContent = "Câmera Ao Vivo";
-                showToast("Câmera conectada ao sistema de Mapeamento e Visão!", "success");
+                document.getElementById('mapCamModeLabel').textContent = "CÃ¢mera Ao Vivo";
+                showToast("CÃ¢mera conectada ao sistema de Mapeamento e VisÃ£o!", "success");
             } catch (err) {
-                showToast("Sem webcam disponível. Usando simulação inteligente de câmera.", "info");
+                showToast("Sem webcam disponÃ­vel. Usando simulaÃ§Ã£o inteligente de cÃ¢mera.", "info");
             }
         }
 
@@ -3388,7 +3399,7 @@
             if (mapClickMode === 'goal') {
                 goalMapCell = { x: gx, y: gy };
                 updateMapDistanceLabel();
-                showToast(`Novo destino marcado na célula (${gx}, ${gy})`, "info");
+                showToast(`Novo destino marcado na cÃ©lula (${gx}, ${gy})`, "info");
             } else if (mapClickMode === 'obstacle') {
                 const key = `${gx},${gy}`;
                 if (mapObstacles[key]) delete mapObstacles[key];
@@ -3421,9 +3432,9 @@
             const kp = 135 + Math.floor(Math.random() * 45);
             const dp = (1.4 + Math.random() * 1.1).toFixed(2);
             document.getElementById('slamKeypointsCount').textContent = `Keypoints ORB: ${kp} pts`;
-            document.getElementById('slamDepthEst').textContent = `Profundidade Média: ${dp} m`;
+            document.getElementById('slamDepthEst').textContent = `Profundidade MÃ©dia: ${dp} m`;
             drawOccupancyGrid();
-            showToast("Varredura visual SLAM concluída e mapa atualizado!", "success");
+            showToast("Varredura visual SLAM concluÃ­da e mapa atualizado!", "success");
         }
 
         function resetOccupancyMap() {
@@ -3432,12 +3443,12 @@
             goalMapCell  = { x: 8, y: 2 };
             updateMapDistanceLabel();
             drawOccupancyGrid();
-            showToast("Mapa de ocupação reiniciado.", "info");
+            showToast("Mapa de ocupaÃ§Ã£o reiniciado.", "info");
         }
 
         function navigateRobotAlongPath() {
             if (robotMapCell.x === goalMapCell.x && robotMapCell.y === goalMapCell.y) {
-                showToast("O Roboldo já está no destino selecionado!", "info");
+                showToast("O Roboldo jÃ¡ estÃ¡ no destino selecionado!", "info");
                 return;
             }
             const stepTimer = setInterval(() => {
@@ -3482,7 +3493,7 @@
                 }
             }
 
-            // Cone de visão da câmera do Roboldo
+            // Cone de visÃ£o da cÃ¢mera do Roboldo
             const rx = (robotMapCell.x + 0.5) * cw;
             const ry = (robotMapCell.y + 0.5) * ch;
             const gx = (goalMapCell.x + 0.5) * cw;
@@ -3532,7 +3543,7 @@
             ctx.lineWidth = 2;
             ctx.stroke();
 
-            // Posição do Roboldo
+            // PosiÃ§Ã£o do Roboldo
             ctx.fillStyle = "#238689";
             ctx.beginPath();
             ctx.arc(rx, ry, 10, 0, Math.PI * 2);
@@ -3596,9 +3607,9 @@
 
             const meta = {
                 face:    { cls: "Pessoa (Rosto Sorrindo)", conf: "98.4%", react: "Espelhando sorriso ('h') e mantendo contato visual com o visitante." },
-                hands:   { cls: "Gesto: Mão Aberta (Aceno)", conf: "96.1%", react: "Gesto de saudação reconhecido! Pronto para responder com Aceno Direito ('ad')." },
-                objects: { cls: "Tablet Assistivo & Crachá UERN", conf: "94.7%", react: "Objeto educacional identificado na bancada." },
-                aruco:   { cls: "ArUco ID #04 (Estação LAR)", conf: "99.2%", react: "Marcador de localização alinhado para aproximação precisa." }
+                hands:   { cls: "Gesto: MÃ£o Aberta (Aceno)", conf: "96.1%", react: "Gesto de saudaÃ§Ã£o reconhecido! Pronto para responder com Aceno Direito ('ad')." },
+                objects: { cls: "Tablet Assistivo & CrachÃ¡ UERN", conf: "94.7%", react: "Objeto educacional identificado na bancada." },
+                aruco:   { cls: "ArUco ID #04 (EstaÃ§Ã£o LAR)", conf: "99.2%", react: "Marcador de localizaÃ§Ã£o alinhado para aproximaÃ§Ã£o precisa." }
             }[mode];
 
             document.getElementById('cvDetectedClass').textContent = meta.cls;
@@ -3608,7 +3619,7 @@
 
         function toggleCvNeckTracking(enabled) {
             cvAutoTrackNeck = Boolean(enabled);
-            showToast(cvAutoTrackNeck ? "Auto-tracking do pescoço 2-DoF ativado!" : "Auto-tracking pausado.", "info");
+            showToast(cvAutoTrackNeck ? "Auto-tracking do pescoÃ§o 2-DoF ativado!" : "Auto-tracking pausado.", "info");
         }
 
         function onCvCanvasClick(event) {
@@ -3626,7 +3637,7 @@
                 const targetPitch = Math.round(125 - cvTargetPos.y * 70);
                 setHeadSlidersDOM(headState.earRightAngle, headState.earLeftAngle, targetYaw, targetPitch, headState.servoStepDelayMs);
                 updateInspectorAndVisuals();
-                document.getElementById('cvNeckTrackOutput').textContent = `Yaw: ${targetYaw}° | Pitch: ${targetPitch}°`;
+                document.getElementById('cvNeckTrackOutput').textContent = `Yaw: ${targetYaw}Â° | Pitch: ${targetPitch}Â°`;
             }
         }
 
@@ -3718,3 +3729,4 @@
     </script>
 </body>
 </html>
+
