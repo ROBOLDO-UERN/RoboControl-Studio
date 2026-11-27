@@ -48,7 +48,7 @@ class TTSHandler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_GET(self):
-        if self.path in {"/painel", "/painel.html"}:
+        if self.path in {"/", "/painel", "/painel.html", "/index.html"}:
             panel_file = ROOT / ("painel.html" if (ROOT / "painel.html").exists() else "painel_de_controle_rob_social_usb(2).html")
             html = panel_file.read_bytes()
             self.send_response(200)
@@ -59,7 +59,7 @@ class TTSHandler(BaseHTTPRequestHandler):
             self.wfile.write(html)
             return
 
-        if self.path in {"/", "/file.html"}:
+        if self.path == "/file.html":
             html = (ROOT / "file.html").read_bytes()
             self.send_response(200)
             self.send_cors_headers()
