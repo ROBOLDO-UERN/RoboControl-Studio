@@ -146,23 +146,29 @@
         .nav-pill-btn:hover {
             background: #f0f6ff;
             color: #1a73e8;
+            border-color: #d2e3fc;
         }
         .nav-pill-btn.nav-active {
             background: linear-gradient(135deg, #1a73e8 0%, #2563eb 100%);
             color: #ffffff;
             box-shadow: 0 4px 12px rgba(26, 115, 232, 0.25);
         }
+        .nav-pill-btn.nav-active span,
+        .nav-pill-btn.nav-active i,
+        .nav-pill-btn.nav-active div {
+            color: #ffffff !important;
+        }
 
         @keyframes pulse-glow {
-            0%, 100% { opacity: 0.9; }
-            50% { opacity: 1; filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.85)); }
+            0%, 100% { opacity: 0.92; }
+            50% { opacity: 1; filter: drop-shadow(0 0 6px rgba(37, 99, 235, 0.45)); }
         }
         .eye-glow {
             animation: pulse-glow 3s infinite ease-in-out;
         }
     </style>
 </head>
-<body class="font-sans min-h-screen flex flex-col selection:bg-blue-600 selection:text-white">
+<body class="font-sans h-screen overflow-hidden flex flex-col selection:bg-blue-600 selection:text-white">
 
     <!-- Notificação Toast Flutuante -->
     <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
@@ -285,8 +291,8 @@
     <!-- ======================================================================== -->
     <!-- TOPBAR MINIMALISTA (GOOGLE WORKSPACE STYLE)                              -->
     <!-- ======================================================================== -->
-    <header class="bg-white/90 backdrop-blur-md border-b border-slate-200/90 sticky top-0 z-30 px-6 py-3">
-        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+    <header class="bg-white/90 backdrop-blur-md border-b border-slate-200/90 shrink-0 z-30 px-6 py-3">
+        <div class="w-full flex flex-wrap items-center justify-between gap-4">
             <!-- Brand -->
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-2xl btn-blue-primary flex items-center justify-center">
@@ -302,34 +308,6 @@
                     <p class="text-[11px] text-slate-500">Roboldo IDE • Controle Dual-ESP & Coreografias (LAR / UERN)</p>
                 </div>
             </div>
-
-            <!-- Navegação Central Simples em Pílulas -->
-            <nav class="flex items-center gap-1 bg-slate-100/90 p-1 rounded-2xl border border-slate-200/80 overflow-x-auto" id="sidebarModuleNav">
-                <button type="button" onclick="switchModule('overview')" data-mod="overview" class="nav-pill-btn nav-active px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5">
-                    <i class="fa-solid fa-layer-group"></i>
-                    <span>1. Início & Partes</span>
-                </button>
-                <button type="button" onclick="switchModule('head')" data-mod="head" class="nav-pill-btn px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5">
-                    <i class="fa-regular fa-face-smile"></i>
-                    <span>2. Cabeça</span>
-                </button>
-                <button type="button" onclick="switchModule('arms')" data-mod="arms" class="nav-pill-btn px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5">
-                    <i class="fa-solid fa-hands-asl-interpreting"></i>
-                    <span>3. Braços</span>
-                </button>
-                <button type="button" onclick="switchModule('voice')" data-mod="voice" class="nav-pill-btn px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5">
-                    <i class="fa-solid fa-microphone-lines"></i>
-                    <span>4. Voz</span>
-                </button>
-                <button type="button" onclick="switchModule('sequencer')" data-mod="sequencer" class="nav-pill-btn px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5">
-                    <i class="fa-solid fa-film"></i>
-                    <span>5. Scripts</span>
-                </button>
-                <button type="button" onclick="switchModule('telemetry')" data-mod="telemetry" class="nav-pill-btn px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5">
-                    <i class="fa-solid fa-terminal"></i>
-                    <span>6. Serial</span>
-                </button>
-            </nav>
 
             <!-- Conexões USB Simplificadas & Perfil -->
             <div class="flex items-center gap-2">
@@ -367,19 +345,107 @@
 
     <!-- Elementos ocultos de compatibilidade -->
     <div class="hidden">
-        <span id="sidebarAvatarInitial">O</span>
-        <span id="sidebarUserName">Operador</span>
         <span id="headConnBadge"></span>
         <span id="armsConnBadge"></span>
     </div>
 
     <!-- ======================================================================== -->
-    <!-- CONTEÚDO PRINCIPAL: MÓDULO ATIVO (ESQUERDA) + SIMULADOR CLEAN (DIREITA)  -->
+    <!-- WORKSPACE PRINCIPAL: MENU LATERAL + MÓDULO ATIVO + SIMULADOR CLEAN       -->
     <!-- ======================================================================== -->
-    <main class="flex-1 max-w-7xl w-full mx-auto p-5 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <div class="flex-1 flex overflow-hidden">
 
-        <!-- COLUNA PRINCIPAL DOS MÓDULOS (8 COLUNAS) -->
-        <div class="lg:col-span-8 flex flex-col gap-5">
+        <!-- MENU LATERAL DE MÓDULOS (SIDEBAR CLEAN GOOGLE DESIGN) -->
+        <aside class="w-64 bg-white/85 backdrop-blur-md border-r border-slate-200/90 p-4 flex flex-col justify-between shrink-0 select-none">
+            <div class="flex flex-col gap-4">
+                <div>
+                    <div class="px-3 mb-2 flex items-center justify-between">
+                        <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Módulos do Roboldo</span>
+                        <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">6 Módulos</span>
+                    </div>
+
+                    <nav class="flex flex-col gap-1.5" id="sidebarModuleNav">
+                        <button type="button" onclick="switchModule('overview')" data-mod="overview" class="nav-pill-btn nav-active w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-3">
+                            <i class="fa-solid fa-layer-group text-sm w-5 text-center text-blue-600"></i>
+                            <div>
+                                <div>1. Início & Partes</div>
+                                <div class="text-[10px] font-normal text-slate-400">Visão geral e ações</div>
+                            </div>
+                        </button>
+                        <button type="button" onclick="switchModule('head')" data-mod="head" class="nav-pill-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-3">
+                            <i class="fa-regular fa-face-smile text-sm w-5 text-center text-blue-600"></i>
+                            <div>
+                                <div>2. Cabeça & Rosto</div>
+                                <div class="text-[10px] font-normal text-slate-400">Expressões e orelhas</div>
+                            </div>
+                        </button>
+                        <button type="button" onclick="switchModule('arms')" data-mod="arms" class="nav-pill-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-3">
+                            <i class="fa-solid fa-hands-asl-interpreting text-sm w-5 text-center text-blue-600"></i>
+                            <div>
+                                <div>3. Braços (3-DoF)</div>
+                                <div class="text-[10px] font-normal text-slate-400">Coreografias e 6 ângulos</div>
+                            </div>
+                        </button>
+                        <button type="button" onclick="switchModule('voice')" data-mod="voice" class="nav-pill-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-3">
+                            <i class="fa-solid fa-microphone-lines text-sm w-5 text-center text-blue-600"></i>
+                            <div>
+                                <div>4. Voz do Roboldo</div>
+                                <div class="text-[10px] font-normal text-slate-400">Piper TTS e lip-sync</div>
+                            </div>
+                        </button>
+                        <button type="button" onclick="switchModule('sequencer')" data-mod="sequencer" class="nav-pill-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-3">
+                            <i class="fa-solid fa-film text-sm w-5 text-center text-blue-600"></i>
+                            <div>
+                                <div>5. Montar Scripts</div>
+                                <div class="text-[10px] font-normal text-slate-400">Timeline e roteiros</div>
+                            </div>
+                        </button>
+                        <button type="button" onclick="switchModule('telemetry')" data-mod="telemetry" class="nav-pill-btn w-full text-left px-3.5 py-2.5 rounded-2xl text-xs font-bold flex items-center gap-3">
+                            <i class="fa-solid fa-terminal text-sm w-5 text-center text-blue-600"></i>
+                            <div>
+                                <div>6. Monitor Serial</div>
+                                <div class="text-[10px] font-normal text-slate-400">Comandos USB C++/JSON</div>
+                            </div>
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Ações Rápidas na Sidebar -->
+                <div class="bg-gradient-to-b from-blue-50/70 to-white border border-blue-100 rounded-2xl p-3 flex flex-col gap-2">
+                    <span class="text-[10px] font-extrabold uppercase tracking-wider text-blue-700">Atalhos</span>
+                    <button type="button" onclick="triggerCombinedMacro('neutral')" class="w-full py-2 px-3 rounded-xl text-xs font-bold btn-blue-primary flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-rotate-left"></i>
+                        <span>Posição Neutra</span>
+                    </button>
+                    <button type="button" onclick="startGuidedTour()" class="w-full py-2 px-3 rounded-xl text-xs font-bold btn-blue-soft flex items-center justify-center gap-1.5">
+                        <i class="fa-regular fa-compass"></i>
+                        <span>Mini Tutorial</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Perfil do Operador no Rodapé do Menu Lateral -->
+            <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-3 flex items-center justify-between">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <div class="w-8 h-8 rounded-xl btn-blue-primary flex items-center justify-center font-bold text-xs text-white shrink-0" id="sidebarAvatarInitial">
+                        O
+                    </div>
+                    <div class="min-w-0">
+                        <div class="font-bold text-xs text-slate-900 truncate" id="sidebarUserName">Operador</div>
+                        <div class="text-[10px] text-blue-600 font-semibold">Roboldo IDE • UERN</div>
+                    </div>
+                </div>
+                <button onclick="openOnboardingModal()" class="p-1.5 rounded-lg btn-blue-soft text-xs" title="Trocar Nome">
+                    <i class="fa-solid fa-pen"></i>
+                </button>
+            </div>
+        </aside>
+
+        <!-- ÁREA SCROLLABLE COM MÓDULO ATIVO + SIMULADOR -->
+        <div class="flex-1 overflow-y-auto p-5 lg:p-6">
+            <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+                <!-- COLUNA PRINCIPAL DOS MÓDULOS (8 COLUNAS) -->
+                <div class="lg:col-span-8 flex flex-col gap-5">
 
             <!-- ================================================================ -->
             <!-- MÓDULO 1: INÍCIO, PARTES DO ROBOLDO & MACROS RÁPIDAS             -->
@@ -1034,7 +1100,7 @@
                             </g>
                         </g>
 
-                        <!-- CABEÇA DWIN -->
+                        <!-- CABEÇA DWIN (Fundo do Rosto Branco com Olhos, Sobrancelhas e Boca Azuis) -->
                         <g id="svgHeadGroup" transform="translate(200, 75)">
                             <g id="svgEarRight" transform="translate(-62, 0) rotate(0)">
                                 <rect x="-12" y="-22" width="12" height="36" rx="6" fill="#3b82f6" stroke="#1d4ed8" stroke-width="1.5"/>
@@ -1043,12 +1109,14 @@
                                 <rect x="0" y="-22" width="12" height="36" rx="6" fill="#3b82f6" stroke="#1d4ed8" stroke-width="1.5"/>
                             </g>
                             <rect x="-60" y="-45" width="120" height="86" rx="24" fill="url(#bodyGrad)" stroke="#1e40af" stroke-width="2"/>
-                            <rect x="-48" y="-34" width="96" height="64" rx="16" fill="#0f172a"/>
-                            <line id="svgBrowLeft" x1="-34" y1="-20" x2="-14" y2="-20" stroke="#38bdf8" stroke-width="3.5" stroke-linecap="round"/>
-                            <line id="svgBrowRight" x1="14" y1="-20" x2="34" y2="-20" stroke="#38bdf8" stroke-width="3.5" stroke-linecap="round"/>
-                            <ellipse id="svgEyeLeft" cx="-24" cy="-6" rx="9" ry="10" fill="#38bdf8" class="eye-glow"/>
-                            <ellipse id="svgEyeRight" cx="24" cy="-6" rx="9" ry="10" fill="#38bdf8" class="eye-glow"/>
-                            <path id="svgMouth" d="M -18 14 Q 0 24 18 14" stroke="#38bdf8" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+                            <!-- Fundo do rosto branco -->
+                            <rect x="-48" y="-34" width="96" height="64" rx="16" fill="#ffffff" stroke="#bfdbfe" stroke-width="2"/>
+                            <!-- Sobrancelhas, Olhos e Boca em Azul -->
+                            <line id="svgBrowLeft" x1="-34" y1="-20" x2="-14" y2="-20" stroke="#1a73e8" stroke-width="3.5" stroke-linecap="round"/>
+                            <line id="svgBrowRight" x1="14" y1="-20" x2="34" y2="-20" stroke="#1a73e8" stroke-width="3.5" stroke-linecap="round"/>
+                            <ellipse id="svgEyeLeft" cx="-24" cy="-6" rx="9" ry="10" fill="#1a73e8" class="eye-glow"/>
+                            <ellipse id="svgEyeRight" cx="24" cy="-6" rx="9" ry="10" fill="#1a73e8" class="eye-glow"/>
+                            <path id="svgMouth" d="M -18 14 Q 0 24 18 14" stroke="#1a73e8" stroke-width="3.5" fill="none" stroke-linecap="round"/>
                         </g>
                     </svg>
 
@@ -1077,7 +1145,9 @@
             </div>
         </aside>
 
-    </main>
+            </div>
+        </div>
+    </div>
 
     <!-- JAVASCRIPT -->
     <script>
